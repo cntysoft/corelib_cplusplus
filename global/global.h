@@ -11,6 +11,5 @@
       #define SN_CORELIB_EXPORT Q_DECL_IMPORT
    #endif
 #endif
-
 #include "const.h"
 #endif // SN_CORELIB_GLOBAL_H
