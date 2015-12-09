@@ -6,6 +6,8 @@ namespace sn
 namespace corelib 
 {
 
+extern const char* CFG_GROUP_GLOABL;
+
 }//corelib
 }//sn
 

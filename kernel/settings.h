@@ -27,7 +27,7 @@ public:
    void sync();
    Status getStatus() const;
    QVariant getValue(const QString& key, const QString& group = CFG_GROUP_GLOABL, const QVariant & defaultValue = QVariant()) const;
-   void setValue(const QString& key, const QVariant& value, const QString& group = CFG_GROUP_GLOABL);
+   void setValue(const QString& key, const QVariant& value, const QString& group = "");
    QStringList getChildKeys(const QString& path = QString());
 private:
    QSettings* createQSettings();

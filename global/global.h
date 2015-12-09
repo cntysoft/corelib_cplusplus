@@ -12,4 +12,5 @@
    #endif
 #endif
 
+#include "const.h"
 #endif // SN_CORELIB_GLOBAL_H
