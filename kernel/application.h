@@ -4,6 +4,7 @@
 #include <QCoreApplication>
 
 #include "global/global.h"
+#include "settings.h"
 
 QT_BEGIN_NAMESPACE
 class QObject;
@@ -14,7 +15,10 @@ namespace sn
 {
 namespace corelib 
 {
-class SN_CORELIB_EXPORT Application
+
+class Settings;
+
+class SN_CORELIB_EXPORT Application : public QCoreApplication
 {
    Q_OBJECT
 public:
@@ -22,8 +26,13 @@ public:
    bool notify(QObject * receiver, QEvent * event);
    static Application *instance();
    Settings& getSettings();
-private:
-   Settings m_settings;
+public:
+   virtual ~Application();
+protected:
+   virtual QString getCfgFilename();
+   virtual Settings::CfgInitializerFnType getDefaultCfgInitializerFn();
+protected:
+   Settings* m_settings = nullptr;
 };
 
 }//corelib
