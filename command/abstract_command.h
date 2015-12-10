@@ -3,14 +3,14 @@
 
 #include "global/global.h"
 #include "io/terminal.h"
+#include "command/abstract_command_runner.h"
+#include "command/command_meta.h"
 
 namespace sn 
 {
 namespace corelib 
 {
 
-class AbstractCommandRunner;
-class CommandMeta;
 
 class SN_CORELIB_EXPORT AbstractCommand
 {

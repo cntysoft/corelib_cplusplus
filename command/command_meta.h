@@ -4,6 +4,8 @@
 #include <QLatin1String>
 #include <QVariant>
 
+#include "global/global.h"
+
 QT_BEGIN_NAMESPACE
 class QString;
 QT_END_NAMESPACE
@@ -13,7 +15,7 @@ namespace sn
 namespace corelib 
 {
 
-class CommandMeta
+class SN_CORELIB_EXPORT CommandMeta
 {
 public:
    using CmdArgType = QMap<QLatin1String, QVariant>;

@@ -24,10 +24,10 @@ class SN_CORELIB_EXPORT AbstractCommandRunner
 {
    Q_DISABLE_COPY(AbstractCommandRunner)
 public:
-   using CmdPoolType = QMap<QString, AbstractCommand* (*)(AbstractCommandRunner*, const CommandMeta& meta)>;
+   using CmdPoolType = QMap<QString, AbstractCommand* (*)(const AbstractCommandRunner&, const CommandMeta&)>;
    using UsageTextItemType = QPair<QString, TerminalColor>;
 public:
-   AbstractCommandRunner(const Application &app, const CommandParserMeta& commandParserMeta);
+   AbstractCommandRunner(Application &app, const CommandParserMeta& commandParserMeta);
    void printUsage()const;
    Settings& getSysSettings();
    QCommandLineParser* getCmdParserByCmdName(const QString& cmdName);
@@ -38,12 +38,13 @@ public:
    virtual ~AbstractCommandRunner();
    virtual void run() = 0;
 protected:
-   CommandMeta::CmdArgType parseSubCmdArgs(const QString& category, const QString& cmd, const QStringList& invokeArgs);
    void addUsageText(const QString& text, TerminalColor color = TerminalColor::Default);
 protected:
-   static const CmdPoolType m_cmdRegisterPool;
+   virtual void parseSubCmdArgs(CommandMeta::CmdArgType& args, QString& category, const QString& cmd, const QStringList& invokeArgs);
+protected:
+   CmdPoolType m_cmdRegisterPool;
    QList<UsageTextItemType> m_usageTextPool;
-   const Application& m_app;
+   Application& m_app;
    const CommandParserMeta& m_cmdParserMeta;
 };
 

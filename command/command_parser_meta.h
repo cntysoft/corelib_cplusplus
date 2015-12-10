@@ -21,12 +21,12 @@ public:
    using OptionMapType = QMap<QString, QCommandLineOption*>;
 public:
    CommandParserMeta();
-   OptionMapType getCmdOptionsByName(const QString& name);
-   QCommandLineParser* getCmdParserByName(const QString& name);
+   OptionMapType* getCmdOptionsByName(const QString& name) const;
+   QCommandLineParser* getCmdParserByName(const QString& name) const;
    ~CommandParserMeta();
 protected:
    QMap<QString, QCommandLineParser*> m_cmdParserPool;
-   QMap<QString, OptionMapType> m_cmdOptionsPool;
+   QMap<QString, OptionMapType*> m_cmdOptionsPool;
 };
 
 }//corelib
