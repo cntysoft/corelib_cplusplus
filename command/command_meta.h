@@ -1,5 +1,5 @@
-#ifndef SN_CORELIB_COMMAND_META_H
-#define SN_CORELIB_COMMAND_META_H
+#ifndef SN_CORELIB_COMMAND_COMMAND_META_H
+#define SN_CORELIB_COMMAND_COMMAND_META_H
 
 #include <QLatin1String>
 #include <QVariant>
@@ -32,4 +32,4 @@ private:
 }//corelib
 }//sn
 
-#endif // SN_CORELIB_COMMAND_META_H
+#endif // SN_CORELIB_COMMAND_COMMAND_META_H

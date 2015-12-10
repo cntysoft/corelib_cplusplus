@@ -13,9 +13,9 @@ Product
     cpp.defines: {
         var defines = [];
         if(product.type == "staticlibrary"){
-            defines.push("SE_STATIC_LIB");
+            defines.push("SN_CORELIB_STATIC_LIB");
         }else{
-            defines.push("SN_LIBRARY");
+            defines.push("SN_CORELIB_LIBRARY");
         }
         defines = defines.concat([
                                      'SN_INSTALL_ROOT="' + qbs.installRoot + '"',
@@ -84,8 +84,14 @@ Product
         name: "command"
         prefix: name+"/"
         files: [
+            "abstract_command.cpp",
+            "abstract_command.h",
+            "abstract_command_runner.cpp",
+            "abstract_command_runner.h",
             "command_meta.cpp",
             "command_meta.h",
+            "command_parser_meta.cpp",
+            "command_parser_meta.h",
         ]
     }
 }

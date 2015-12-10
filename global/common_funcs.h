@@ -1,5 +1,8 @@
 #ifndef SN_CORELIB_GLOBAL_COMMON_FUNCS_H
 #define SN_CORELIB_GLOBAL_COMMON_FUNCS_H
+
+#include <QCoreApplication>
+
 #include "global.h"
 
 QT_BEGIN_NAMESPACE
@@ -12,7 +15,7 @@ namespace corelib
 {
 
 SN_CORELIB_EXPORT QString get_current_user_home_dir();
-
+SN_CORELIB_EXPORT const QCoreApplication& get_core_application_ref();
 }//corelib
 }//sn
 
