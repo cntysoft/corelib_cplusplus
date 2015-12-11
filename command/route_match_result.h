@@ -16,14 +16,17 @@ class SN_CORELIB_EXPORT RouteMatchResult
 public:
    using RouteArgsType = QMap<QString, QString>;
 public:
-   RouteMatchResult(const RouteArgsType& params);
+   RouteMatchResult(const RouteArgsType& params, int length = 0);
    RouteMatchResult& setMatchedRouteName(const QString& name);
-   QString& getMatchedRouteName();
+   QString getMatchedRouteName()const;
    RouteMatchResult& setParam(const QString& name, const QString& value);
-   QString& getParam(const QString& name, const QString& defaultValue = QString());
-   RouteArgsType& getParams();
+   QString getParam(const QString& name, QString defaultValue = QString())const;
+   RouteArgsType getParams()const;
+   int getLength()const;
+   RouteMatchResult& merge(RouteMatchResult& routeMatchResult);
 protected:
    QString m_matchedRouteName;
+   int m_length;
    RouteArgsType m_params;
 };
 

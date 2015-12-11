@@ -96,8 +96,8 @@ Product
             "route_match_result.h",
             "route_matcher.cpp",
             "route_matcher.h",
-            "router.cpp",
-            "router.h",
+            "simple_route_item.cpp",
+            "simple_route_item.h",
         ]
     }
 }
