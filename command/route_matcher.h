@@ -26,13 +26,16 @@ public:
    };
 public:
    RouteMatcher(const QString& route);
+   
 protected:
    void parseDefinition(const QString& route);
+   QList<QString> getAliases(const QString& name);
+   QString getCanonicalName(const QString& name);
+   
 protected:
    QList<SyntaxPart> m_parts;
    QMap<QString, bool> m_defaults;
    QMap<QString, QString> m_aliases;
-   
 };
 
 }//corelib
