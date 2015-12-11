@@ -92,6 +92,12 @@ Product
             "command_meta.h",
             "command_parser_meta.cpp",
             "command_parser_meta.h",
+            "route_match_result.cpp",
+            "route_match_result.h",
+            "route_matcher.cpp",
+            "route_matcher.h",
+            "router.cpp",
+            "router.h",
         ]
     }
 }
