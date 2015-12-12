@@ -1,4 +1,5 @@
 #include <QRegularExpression>
+#include <QStringList>
 #include <QDebug>
 
 #include "route_matcher.h"
@@ -33,60 +34,60 @@ void RouteMatcher::parseDefinition(const QString &route)
    QRegularExpression regex11("\\G\\[ *?-(?P<name>[a-zA-Z0-9])(?:=(?P<type>[ns]))? *?\\](?: +|$)", QRegularExpression::DotMatchesEverythingOption);
    QRegularExpression regex12("\\G"
                               "\\["
-                                  "(?P<options>"
-                                      "(?:"
-                                          "\\ *?"
-                                          "(?P<name>[a-zA-Z][a-zA-Z0-9_\\-]*?)"
-                                          "\\ *?"
-                                          "(?:\\||(?=\\]))"
-                                          "\\ *?"
-                                      ")+"
-                                  ")"
+                              "(?P<options>"
+                              "(?:"
+                              "\\ *?"
+                              "(?P<name>[a-zA-Z][a-zA-Z0-9_\\-]*?)"
+                              "\\ *?"
+                              "(?:\\||(?=\\]))"
+                              "\\ *?"
+                              ")+"
+                              ")"
                               "\\]"
                               "(?:\\:(?P<groupName>[a-zA-Z0-9]+))?"
                               "(?:\\ +|$)"
                               , QRegularExpression::DotMatchesEverythingOption|QRegularExpression::ExtendedPatternSyntaxOption);
    QRegularExpression regex13("\\G"
                               "\\("
-                                  "(?P<options>"
-                                      "(?:"
-                                          "\\ *?"
-                                          "(?P<name>[a-zA-Z][a-zA-Z0-9_\\-]+)"
-                                          "\\ *?"
-                                          "(?:\\||(?=\\)))"
-                                          "\\ *?"
-                                      ")+"
-                                  ")"
+                              "(?P<options>"
+                              "(?:"
+                              "\\ *?"
+                              "(?P<name>[a-zA-Z][a-zA-Z0-9_\\-]+)"
+                              "\\ *?"
+                              "(?:\\||(?=\\)))"
+                              "\\ *?"
+                              ")+"
+                              ")"
                               "\\)"
                               "(?:\\:(?P<groupName>[a-zA-Z0-9]+))?"
                               "(?:\\ +|$)"
                               , QRegularExpression::DotMatchesEverythingOption|QRegularExpression::ExtendedPatternSyntaxOption);
    QRegularExpression regex14("\\G"
                               "\\("
-                                  "(?P<options>"
-                                      "(?:"
-                                          "\\ *?"
-                                          "\\-+(?P<name>[a-zA-Z0-9][a-zA-Z0-9_\\-]*?)"
-                                          "\\ *?"
-                                          "(?:\\||(?=\\)))"
-                                          "\\ *?"
-                                      ")+"
-                                  ")"
+                              "(?P<options>"
+                              "(?:"
+                              "\\ *?"
+                              "\\-+(?P<name>[a-zA-Z0-9][a-zA-Z0-9_\\-]*?)"
+                              "\\ *?"
+                              "(?:\\||(?=\\)))"
+                              "\\ *?"
+                              ")+"
+                              ")"
                               "\\)"
                               "(?:\\:(?P<groupName>[a-zA-Z0-9]+))?"
                               "(?:\\ +|$)"
                               , QRegularExpression::DotMatchesEverythingOption|QRegularExpression::ExtendedPatternSyntaxOption);
    QRegularExpression regex15("\\G"
                               "\\["
-                                  "(?P<options>"
-                                      "(?:"
-                                          "\\ *?"
-                                          "\\-+(?P<name>[a-zA-Z0-9][a-zA-Z0-9_\\-]*?)"
-                                          "\\ *?"
-                                          "(?:\\||(?=\\]))"
-                                          "\\ *?"
-                                      ")+"
-                                  ")"
+                              "(?P<options>"
+                              "(?:"
+                              "\\ *?"
+                              "\\-+(?P<name>[a-zA-Z0-9][a-zA-Z0-9_\\-]*?)"
+                              "\\ *?"
+                              "(?:\\||(?=\\]))"
+                              "\\ *?"
+                              ")+"
+                              ")"
                               "\\]"
                               "(?:\\:(?P<groupName>[a-zA-Z0-9]+))?"
                               "(?:\\ +|$)"
@@ -319,6 +320,94 @@ void RouteMatcher::parseDefinition(const QString &route)
       }
       pos += match.capturedTexts().first().size();
       m_parts.push_back(item);
+   }
+}
+
+RouteMatcher::MatchResult RouteMatcher::match(QStringList cmdArgs)
+{
+   MatchResult matches;
+   SyntaxPartListType positional;
+   SyntaxPartListType named;
+   SyntaxPartListType::const_iterator iterator = m_parts.cbegin();
+   while(iterator != m_parts.cend()){
+      if((*iterator).positional){
+         positional << *iterator;
+      }else{
+         named << *iterator;
+      }
+      iterator++;
+   }
+   iterator = named.cbegin();
+   for(int i = 0; i < named.count(); i++){
+      SyntaxPart part = named[i];
+      QString regexStr;
+      QRegularExpression regex;
+      if(!part.alternatives.isEmpty()){
+         // an alternative of flags
+         regexStr = "^\\-+(?P<name>";
+         QStringList alternativeAliases;
+         QStringList::const_iterator it = part.alternatives.cbegin();
+         while(it != part.alternatives.cend()){
+            alternativeAliases <<  "(?:" + getAliases(*it).join('|') + ")";
+            it++;
+         }
+         regexStr += alternativeAliases.join('|');
+         if(part.hasValue){
+            regexStr += ")(?:\\=(?P<value>.*?)$)?$";
+            regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+         }else{
+            regexStr += ")$";
+         }
+      }else{
+         // a single named flag
+         QString name("(?:" + getAliases(part.name).join('|') + ")");
+         if(part.isShort){
+            // short variant
+            if(part.hasValue){
+               regexStr = "^\\-" + name + "(?:\\=(?P<value>.*?)$)?$";
+            }else{
+               regexStr = "^\\-" + name + "$";
+            }
+            
+         }else{
+            // long variant
+            if(part.hasValue){
+               regexStr = "^\\-{2,}" + name + "(?:\\=(?P<value>.*?)$)?$";
+            }else{
+               regexStr = "^\\-{2,}" + name + "$";
+            }
+         }
+         regex.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+      }
+      //Look for param
+      QString value;
+      QString param;
+      QString matchedName;
+      regex.setPattern(regexStr);
+      qDebug() << regexStr;
+      for(int x = 0; x < cmdArgs.count(); x++){
+         QRegularExpressionMatch match = regex.match(cmdArgs[x]);
+         if(match.hasMatch()){
+            param = cmdArgs[x];
+            cmdArgs.removeAt(x);
+            if(!match.captured("value").isEmpty()){
+               value = match.captured("value");
+            }
+            if(!match.captured("name").isEmpty()){
+               matchedName = getCanonicalName(match.captured("name"));
+            }
+            break;
+         }
+      }
+      if(!param.isEmpty()){
+         if(part.required){
+            matches.status = false;
+            return matches;
+         }else{
+            continue;
+         }
+      }
+      
    }
 }
 

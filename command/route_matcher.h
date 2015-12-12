@@ -3,8 +3,13 @@
 
 #include <QList>
 #include <QMap>
+#include <QString>
 
 #include "global/global.h"
+
+QT_BEGIN_NAMESPACE
+class QStringList;
+QT_END_NAMESPACE
 
 namespace sn 
 {
@@ -24,16 +29,23 @@ public:
       bool hasValue;
       QList<QString> alternatives;
    };
+   struct MatchResult
+   {
+      bool status = true;
+      QMap<QString, QString> matches;
+   };
+
+   using SyntaxPartListType = QList<SyntaxPart>;
 public:
    RouteMatcher(const QString& route);
-   
+   RouteMatcher::MatchResult match(QStringList cmdArgs);
 protected:
    void parseDefinition(const QString& route);
    QList<QString> getAliases(const QString& name);
    QString getCanonicalName(const QString& name);
    
 protected:
-   QList<SyntaxPart> m_parts;
+   SyntaxPartListType m_parts;
    QMap<QString, bool> m_defaults;
    QMap<QString, QString> m_aliases;
 };
