@@ -474,6 +474,98 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList cmdArgs)
       }
       it++;
    }
+   //Go through all positional params
+   int argPos = 0;
+   for(int i = 0; i < positional.count(); i++){
+      SyntaxPart part = positional[i];
+      QString value;
+      //Check if param exists
+      if(cmdArgs[argPos].isEmpty()){
+         if(part.required){
+            matches.status = false;
+            return matches;
+         }else{
+            //stop matching
+            break;
+         }
+      }
+      value = cmdArgs[argPos];
+      //Check if literal param matches
+      if(part.isLiteral){
+         if((!part.alternatives.isEmpty() && !part.alternatives.contains(value)) ||
+               (part.alternatives.isEmpty() && value != part.name)){
+            matches.status = false;
+            return matches;
+         }
+      }
+      //Validate the value against constraints
+      if(part.hasValue && m_constraints.contains(part.name)){
+         QRegularExpression constraintRegex(m_constraints[part.name]);
+         if(!constraintRegex.match(value).hasMatch()){
+            // constraint failed
+            matches.status = false;
+            return matches;
+         }
+      }
+      //Store the value
+      if(part.hasValue){
+         matches.matches[part.name] = value;
+      }else if(!part.alternatives.isEmpty()){
+         QStringList::const_iterator it = part.alternatives.cbegin();
+         while(it != part.alternatives.cend()){
+            QString altName = *it;
+            if(altName == value){
+               matches.matches[altName] = m_defaults.contains(altName) ? m_defaults[altName] : "true";
+            }else{
+               matches.matches[altName] = "false";
+            }
+            it++;
+         }
+         //set alternatives group value
+         matches.matches[part.name] = value;
+      }else if(!part.required){
+         //set optional parameter flag
+         QString name = part.name;
+         matches.matches[name] = m_defaults.contains(name) ? m_defaults[name] : "true";
+      }
+      //Advance to next argument
+      argPos++;
+   }
+   //Check if we have consumed all positional parameters
+   if(argPos < cmdArgs.size()){
+      matches.status = false;
+      return matches;
+   }
+   //Any optional flags that were not entered have value false
+   for(int i = 0; i < m_parts.size(); i++){
+      SyntaxPart part = m_parts[i];
+      if(!part.required && !part.hasValue){
+         if(!matches.matches.contains(part.name)){
+            matches.matches[part.name] = "false";
+         }
+         //unset alternatives also should be false
+         if(!part.alternatives.isEmpty()){
+            QStringList::const_iterator it = part.alternatives.cbegin();
+            while(it != part.alternatives.cend()){
+               QString altName = *it;
+               if(!matches.matches.contains(altName)){
+                  matches.matches[altName] = "false";
+               }
+               it++;
+            }
+         }
+      }
+   }
+   QMap<QString, QString> defaults = m_defaults;
+   QMap<QString, QString>::const_iterator defaultsIt = defaults.cbegin();
+   while(defaultsIt != defaults.cend()){
+      QString argName = *defaultsIt;
+      if(!matches.matches.contains(argName)){
+          matches.matches[argName] = defaults[argName];
+      }
+      defaultsIt++;
+   }
+   return matches;
 }
 
 QList<QString> RouteMatcher::getAliases(const QString &name)
