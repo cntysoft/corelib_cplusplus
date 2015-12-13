@@ -399,7 +399,7 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList cmdArgs)
             break;
          }
       }
-      if(!param.isEmpty()){
+      if(param.isEmpty()){
          if(part.required){
             matches.status = false;
             return matches;
@@ -407,7 +407,72 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList cmdArgs)
             continue;
          }
       }
-      
+      //Value for flags is always boolean
+      if(!param.isEmpty() && !part.hasValue){
+         value = "true";
+      }
+      //Try to retrieve value if it is expected
+      if(value.isEmpty() && part.hasValue){
+         if((i < cmdArgs.count()+1)){
+            value = cmdArgs[i];
+            cmdArgs.removeAt(i);
+         }else{
+            // there are no more params available
+            matches.status = false;
+            return matches;
+         }
+      }
+      //Validate the value against constraints
+      if(part.hasValue && m_constraints.contains(part.name)){
+         QRegularExpression constraintRegex(m_constraints[part.name]);
+         if(!constraintRegex.match(value).hasMatch()){
+            // constraint failed
+            matches.status = false;
+            return matches;
+         }
+      }
+      //Store the value
+      if(part.hasValue){
+         matches.matches[part.name] = value;
+      }else{
+         matches.matches[part.name] = "true";
+      }
+      //If there are alternatives, fill them
+      if(!part.alternatives.isEmpty()){
+         if(part.hasValue){
+            QStringList::const_iterator it = part.alternatives.cbegin();
+            while(it != part.alternatives.cend()){
+               QString altName = *it;
+               if(altName == matchedName && !matches.matches.contains(altName)){
+                  matches.matches[altName] = value;
+               }else if(!matches.matches.contains(altName)){
+                  matches.matches[altName] = "null";
+               }
+               it++;
+            }
+         }else{
+            QStringList::const_iterator it = part.alternatives.cbegin();
+            while(it != part.alternatives.cend()){
+               QString altName = *it;
+               if(altName == matchedName && !matches.matches.contains(altName)){
+                  matches.matches[altName] = m_defaults.contains(altName) ? m_defaults[altName] : "true";
+               }else if(!matches.matches.contains(altName)){
+                  matches.matches[altName] = "false";
+               }
+               it++;
+            }
+         }
+      } 
+   }
+   //Scan for left-out flags that should result in a mismatch
+   QStringList::const_iterator it = cmdArgs.cbegin();
+   QRegularExpression stripMinusRegex("^\\-+");
+   while(it != cmdArgs.cend()){
+      if(stripMinusRegex.match(*it).hasMatch()){
+         //there is an unrecognized flag
+         matches.status = false;
+      }
+      it++;
    }
 }
 

@@ -27,7 +27,7 @@ public:
       bool required;
       bool positional;
       bool hasValue;
-      QList<QString> alternatives;
+      QStringList alternatives;
    };
    struct MatchResult
    {
@@ -46,8 +46,9 @@ protected:
    
 protected:
    SyntaxPartListType m_parts;
-   QMap<QString, bool> m_defaults;
+   QMap<QString, QString> m_defaults;
    QMap<QString, QString> m_aliases;
+   QMap<QString, QString> m_constraints;
 };
 
 }//corelib
