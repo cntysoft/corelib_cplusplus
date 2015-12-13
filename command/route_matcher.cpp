@@ -1,7 +1,5 @@
 #include <QRegularExpression>
 #include <QStringList>
-#include <QDebug>
-
 #include "route_matcher.h"
 #include "kernel/errorinfo.h"
 
@@ -384,7 +382,6 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList cmdArgs)
       QString param;
       QString matchedName;
       regex.setPattern(regexStr);
-      qDebug() << regexStr;
       for(int x = 0; x < cmdArgs.count(); x++){
          QRegularExpressionMatch match = regex.match(cmdArgs[x]);
          if(match.hasMatch()){

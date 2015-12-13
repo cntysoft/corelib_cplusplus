@@ -7,8 +7,9 @@ namespace sn
 namespace corelib 
 {
 
-RouteMatchResult::RouteMatchResult(const RouteArgsType &params, int length)
-   : m_length(length),
+RouteMatchResult::RouteMatchResult(bool status, const RouteArgsType &params, int length)
+   : m_status(status),
+     m_length(length),
      m_params(params)     
 {}
 
@@ -66,6 +67,11 @@ RouteMatchResult& RouteMatchResult::merge(RouteMatchResult& routeMatchResult)
 int RouteMatchResult::getLength()const
 {
    return m_length;
+}
+
+bool RouteMatchResult::getStatus()const
+{
+   return m_status;
 }
 
 }//corelib
