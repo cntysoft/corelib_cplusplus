@@ -105,7 +105,6 @@ Product
       name: "ds"
       prefix: name+"/"
       files: [
-           "priority_list.cpp",
            "priority_list.h",
        ]
    }
