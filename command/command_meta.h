@@ -18,16 +18,20 @@ namespace corelib
 class SN_CORELIB_EXPORT CommandMeta
 {
 public:
-   using CmdArgType = QMap<QLatin1String, QVariant>;
+   using CmdArgType = QMap<QString, QString>;
 public:
+   CommandMeta();
    CommandMeta(const QString& category, const QString& commandName, const CmdArgType& args);
    const QString& getCommandCategory()const;
    const QString& getCommandName()const;
    const CmdArgType& getCmdArgs()const;
+   CommandMeta& setCommandCategory(const QString& category);
+   CommandMeta& setCommandName(const QString& name);
+   CommandMeta& setCmdArgs(const CmdArgType& args);
 private:
-   const QString m_commandCategory;
-   const QString m_command;
-   const CmdArgType m_args;
+   QString m_commandCategory;
+   QString m_command;
+   CmdArgType m_args;
 };
 
 

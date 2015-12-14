@@ -33,10 +33,11 @@ public:
    void runCmd(const CommandMeta& meta);
 public:
    virtual ~AbstractCommandRunner();
-   virtual void run() = 0;
+   virtual void run();
 protected:
    void addUsageText(const QString& text, TerminalColor color = TerminalColor::Default);
-   void addCmdRoute(const QString& name, const QString& route, const QMap<QString, QString>& defaultParams = QMap<QString, QString>());
+   void addCmdRoute(const QString& name, const QString& route, int priority = 1, const QMap<QString, QString>& defaultParams = QMap<QString, QString>());
+   void parseCmdInvokeArgs(CommandMeta& meta);
 protected:
    CmdPoolType m_cmdRegisterPool;
    QList<UsageTextItemType> m_usageTextPool;
