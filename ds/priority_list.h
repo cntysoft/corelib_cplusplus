@@ -5,6 +5,7 @@
 #include <QString>
 #include <QStringList>
 #include <QList>
+#include <QPair>
 
 #include <algorithm>
 
@@ -29,12 +30,14 @@ public:
    PriorityList<DataType>& setPriority(const QString& name, int priority);
    PriorityList<DataType>& remove(const QString& name);
    void clear();
-   DataType& get(const QString& name, DataType defaultValue);
+   DataType& get(const QString& name);
    DataType& get(int pos);
+   bool hasItem(const QString& name);
    int count();
    void sort();
    QList<int> getPriorityItems();
-   QList<DataType> getDataItems();
+   QList<DataType&> getDataItems();
+   QPair<QString, DataType&> getDataPairByIndex(int pos);
 public:
    DataType& operator[](int i);
 protected:
@@ -86,12 +89,30 @@ void PriorityList<DataType>::clear()
 }
 
 template <typename DataType>
-DataType& PriorityList<DataType>::get(const QString& name, DataType defaultValue)
+bool PriorityList<DataType>::hasItem(const QString &name)
 {
-   if(m_items.contains(name)){
-      return m_items[name].data;
-   }
-   return defaultValue;
+   return m_items.contains(name);
+}
+
+template <typename DataType>
+DataType& PriorityList<DataType>::get(const QString& name)
+{
+   return m_items[name].data;
+}
+template <typename DataType>
+DataType& PriorityList<DataType>::get(int pos)
+{
+   Q_ASSERT_X(pos >= 0 && pos < m_items.size(), "PriorityList<T>::get()", "index out of range");
+   QString name = m_names[pos];
+   return m_items[name].data;
+}
+
+template <typename DataType>
+QPair<QString, DataType&> PriorityList<DataType>::getDataPairByIndex(int pos)
+{
+   Q_ASSERT_X(pos >= 0 && pos < m_items.size(), "PriorityList<T>::get()", "index out of range");
+   QString name = m_names[pos];
+   return QPair<QString, DataType&>(name, m_items[name].data);
 }
 
 template <typename DataType>
@@ -133,9 +154,9 @@ QList<int> PriorityList<DataType>::getPriorityItems()
 }
 
 template <typename DataType>
-QList<DataType> PriorityList<DataType>::getDataItems()
+QList<DataType&> PriorityList<DataType>::getDataItems()
 {
-   QList<DataType> ret;
+   QList<DataType&> ret;
    sort();
    QStringList::const_iterator it = m_names.cbegin();
    while(it != m_names.cend()){

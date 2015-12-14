@@ -7,9 +7,12 @@ namespace sn
 namespace corelib 
 {
 
-RouteMatchResult::RouteMatchResult(bool status, const RouteArgsType &params, int length)
+RouteMatchResult::RouteMatchResult(bool status)
+   : m_status(status)
+{}
+
+RouteMatchResult::RouteMatchResult(bool status, const RouteArgsType &params)
    : m_status(status),
-     m_length(length),
      m_params(params)     
 {}
 
@@ -59,14 +62,8 @@ RouteMatchResult& RouteMatchResult::merge(RouteMatchResult& routeMatchResult)
          m_params.insert(iterator.key(), iterator.value());
       }
    }
-   m_length += routeMatchResult.getLength();
    m_matchedRouteName = routeMatchResult.getMatchedRouteName();
    return *this;
-}
-
-int RouteMatchResult::getLength()const
-{
-   return m_length;
 }
 
 bool RouteMatchResult::getStatus()const

@@ -8,7 +8,14 @@ namespace sn
 namespace corelib 
 {
 
-RouteMatcher::RouteMatcher(const QString &route)
+RouteMatcher::RouteMatcher()
+{}
+
+RouteMatcher::RouteMatcher(const QString& route, const QMap<QString, QString>& defaults, const QMap<QString, QString>& aliases, const QMap<QString, QString>& constraints)
+  : m_rawRoute(route),
+    m_defaults(defaults),
+    m_aliases(aliases),
+    m_constraints(constraints)
 {
    parseDefinition(route);
 }
@@ -321,7 +328,7 @@ void RouteMatcher::parseDefinition(const QString &route)
    }
 }
 
-RouteMatcher::MatchResult RouteMatcher::match(QStringList cmdArgs)
+RouteMatcher::MatchResult RouteMatcher::match(QStringList& cmdArgs)
 {
    MatchResult matches;
    SyntaxPartListType positional;
@@ -556,9 +563,9 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList cmdArgs)
    QMap<QString, QString> defaults = m_defaults;
    QMap<QString, QString>::const_iterator defaultsIt = defaults.cbegin();
    while(defaultsIt != defaults.cend()){
-      QString argName = *defaultsIt;
+      QString argName = defaultsIt.key();
       if(!matches.matches.contains(argName)){
-          matches.matches[argName] = defaults[argName];
+          matches.matches[argName] = defaultsIt.value();
       }
       defaultsIt++;
    }

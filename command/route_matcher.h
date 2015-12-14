@@ -34,17 +34,22 @@ public:
       bool status = true;
       QMap<QString, QString> matches;
    };
-
+   
    using SyntaxPartListType = QList<SyntaxPart>;
 public:
-   RouteMatcher(const QString& route);
-   RouteMatcher::MatchResult match(QStringList cmdArgs);
+   RouteMatcher();
+   RouteMatcher(const QString& route, 
+                const QMap<QString, QString>& defaults, 
+                const QMap<QString, QString>& aliases, 
+                const QMap<QString, QString>& constraints);
+   MatchResult match(QStringList& cmdArgs);
 protected:
    void parseDefinition(const QString& route);
    QList<QString> getAliases(const QString& name);
    QString getCanonicalName(const QString& name);
    
 protected:
+   QString m_rawRoute;
    SyntaxPartListType m_parts;
    QMap<QString, QString> m_defaults;
    QMap<QString, QString> m_aliases;
