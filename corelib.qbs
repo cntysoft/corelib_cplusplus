@@ -90,8 +90,6 @@ Product
            "abstract_command_runner.h",
            "command_meta.cpp",
            "command_meta.h",
-           "command_parser_meta.cpp",
-           "command_parser_meta.h",
            "route_item.cpp",
            "route_item.h",
            "route_match_result.cpp",

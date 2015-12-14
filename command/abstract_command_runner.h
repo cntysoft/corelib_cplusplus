@@ -6,9 +6,9 @@
 #include <QString>
 
 #include "global/global.h"
-#include "command/command_parser_meta.h"
 #include "command_meta.h"
 #include "io/terminal.h"
+#include "route_stack.h"
 
 namespace sn 
 {
@@ -27,25 +27,21 @@ public:
    using CmdPoolType = QMap<QString, AbstractCommand* (*)(const AbstractCommandRunner&, const CommandMeta&)>;
    using UsageTextItemType = QPair<QString, TerminalColor>;
 public:
-   AbstractCommandRunner(Application &app, const CommandParserMeta& commandParserMeta);
+   AbstractCommandRunner(Application &app);
    void printUsage()const;
    Settings& getSysSettings();
-   QCommandLineParser* getCmdParserByCmdName(const QString& cmdName);
-   QList<QString> getSupportSubCommands() const;
    void runCmd(const CommandMeta& meta);
-   bool isSubCmdSupported(const QString& cmd) const;
 public:
    virtual ~AbstractCommandRunner();
    virtual void run() = 0;
 protected:
    void addUsageText(const QString& text, TerminalColor color = TerminalColor::Default);
-protected:
-   virtual void parseSubCmdArgs(CommandMeta::CmdArgType& args, QString& category, const QString& cmd, const QStringList& invokeArgs);
+   void addCmdRoute(const QString& name, const QString& route, const QMap<QString, QString>& defaultParams = QMap<QString, QString>());
 protected:
    CmdPoolType m_cmdRegisterPool;
    QList<UsageTextItemType> m_usageTextPool;
    Application& m_app;
-   const CommandParserMeta& m_cmdParserMeta;
+   RouteStack m_router;
 };
 
 }//corelib

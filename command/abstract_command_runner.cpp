@@ -3,7 +3,6 @@
 
 #include "abstract_command_runner.h"
 #include "kernel/application.h"
-#include "command_parser_meta.h"
 #include "abstract_command.h"
 #include "kernel/errorinfo.h"
 #include "command_meta.h"
@@ -13,9 +12,8 @@ namespace sn
 namespace corelib 
 {
 
-AbstractCommandRunner::AbstractCommandRunner(Application &app, const CommandParserMeta &commandParserMeta)
-   : m_app(app),
-     m_cmdParserMeta(commandParserMeta)
+AbstractCommandRunner::AbstractCommandRunner(Application &app)
+   : m_app(app)
 {}
 
 void AbstractCommandRunner::addUsageText(const QString& text, TerminalColor color)
@@ -41,6 +39,8 @@ void AbstractCommandRunner::runCmd(const CommandMeta& meta)
    cmd->exec();
 }
 
+
+
 void AbstractCommandRunner::printUsage()const
 {
    QListIterator<UsageTextItemType> iterator(m_usageTextPool);
@@ -48,20 +48,6 @@ void AbstractCommandRunner::printUsage()const
       UsageTextItemType item(iterator.next());
       Terminal::writeText(item.first.toLocal8Bit(), item.second);
    }
-}
-
-QList<QString> AbstractCommandRunner::getSupportSubCommands()const
-{
-   return m_cmdRegisterPool.keys();
-}
-
-void AbstractCommandRunner::parseSubCmdArgs(CommandMeta::CmdArgType&, QString&, const QString&, const QStringList&)
-{}
-
-bool AbstractCommandRunner::isSubCmdSupported(const QString& cmd) const
-{
-   QList<QString> cmds = getSupportSubCommands();
-   return cmds.contains(cmd);
 }
 
 AbstractCommandRunner::~AbstractCommandRunner()
