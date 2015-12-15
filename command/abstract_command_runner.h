@@ -24,7 +24,7 @@ class SN_CORELIB_EXPORT AbstractCommandRunner
 {
    Q_DISABLE_COPY(AbstractCommandRunner)
 public:
-   using CmdPoolType = QMap<QString, AbstractCommand* (*)(const AbstractCommandRunner&, const CommandMeta&)>;
+   using CmdPoolType = QMap<QString, AbstractCommand* (*)(AbstractCommandRunner&, const CommandMeta&)>;
    using UsageTextItemType = QPair<QString, TerminalColor>;
 public:
    AbstractCommandRunner(Application &app);

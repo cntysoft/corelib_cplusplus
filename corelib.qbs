@@ -4,6 +4,7 @@ Product
    type: "dynamiclibrary"
    name : "corelib"
    targetName : "sncore"
+   version : "0.1.1"
    Depends { 
       name: "Qt"; 
       submodules: ["core"]
@@ -19,18 +20,19 @@ Product
       }
       defines = defines.concat([
                                   'SN_INSTALL_ROOT="' + qbs.installRoot + '"',
-                                  'SN_SHARE_RES_DIR="' + qbs.installRoot+'/'+project.resourcesInstallDir+ '"'
+                                  'SN_SHARE_RES_DIR="' + qbs.installRoot+'/'+project.resourcesInstallDir+ '"',
+                                  'SN_CORELIB_VERSION="'+ version+'"'
                                ]);
       return defines;
    }
    cpp.visibility: "minimal"
    cpp.cxxLanguageVersion: "c++14"
-   version : "0.1.1"
+   
    cpp.includePaths: base.concat(["."])
    Group {
       fileTagsFilter: product.type.concat("dynamiclibrary_symlink")
       qbs.install: true
-      qbs.installDir: "bin"
+      qbs.installDir: "lib"
    }
    
    Export {
@@ -61,12 +63,11 @@ Product
       name : "global"
       prefix : name + '/'
       files : [
-         "common_funcs.cpp",
-         "common_funcs.h",
-         "const.h",
-         "global.h",
-         "global.cpp",
-      ]
+           "common_funcs.cpp",
+           "common_funcs.h",
+           "global.h",
+           "global.cpp",
+       ]
    }
    
    Group {

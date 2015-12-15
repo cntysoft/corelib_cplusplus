@@ -21,5 +21,10 @@ const QCoreApplication& get_core_application_ref()
    return *QCoreApplication::instance();
 }
 
+QString get_corelib_version()
+{
+   return QString(SN_CORELIB_VERSION);
+}
+
 }//corelib
 }//sn

@@ -12,6 +12,6 @@
    #endif
 #endif
 
-#include "const.h"
+#include "global/common_funcs.h"
 
 #endif // SN_CORELIB_GLOBAL_H

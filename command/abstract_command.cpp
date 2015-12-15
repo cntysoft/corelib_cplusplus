@@ -8,7 +8,7 @@ namespace sn
 namespace corelib 
 {
 
-AbstractCommand::AbstractCommand(const AbstractCommandRunner& runner, const CommandMeta& invokeMeta)
+AbstractCommand::AbstractCommand(AbstractCommandRunner& runner, const CommandMeta& invokeMeta)
    : m_cmdRunner(runner), m_invokeMeta(invokeMeta)
 {
 }

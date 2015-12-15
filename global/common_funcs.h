@@ -16,6 +16,7 @@ namespace corelib
 
 SN_CORELIB_EXPORT QString get_current_user_home_dir();
 SN_CORELIB_EXPORT const QCoreApplication& get_core_application_ref();
+SN_CORELIB_EXPORT QString get_corelib_version();
 }//corelib
 }//sn
 

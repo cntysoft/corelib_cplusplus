@@ -10,7 +10,7 @@ namespace corelib
 {
 
 Settings::Settings(const QString& filename, CfgInitializerFnType initializer)
-   : m_cfgFilename(StdDir::getSysConfDir()+"/"+filename+"/"), 
+   : m_cfgFilename(StdDir::getSysConfDir()+"/"+filename), 
      m_settings(createQSettings())
 {
    QFile cfgFilename(m_cfgFilename);

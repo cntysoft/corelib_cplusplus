@@ -37,7 +37,7 @@ void AbstractCommandRunner::runCmd(const CommandMeta& meta)
    if(!m_cmdRegisterPool.contains(cmdKey)){
       throw ErrorInfo(QString("command : %1 is not exist").arg(cmdKey));
    }
-   AbstractCommand* (*initializer)(const AbstractCommandRunner&, const CommandMeta&) = m_cmdRegisterPool[cmdKey];
+   AbstractCommand* (*initializer)(AbstractCommandRunner&, const CommandMeta&) = m_cmdRegisterPool[cmdKey];
    QScopedPointer<AbstractCommand> cmd(initializer(*this, meta));
    cmd->exec();
 }
