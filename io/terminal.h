@@ -4,7 +4,6 @@
 #include <QMap>
 #include "global/global.h"
 
-
 namespace sn
 {
 namespace corelib 
@@ -37,12 +36,19 @@ class SN_CORELIB_EXPORT Terminal
 public:
    static QByteArray getColorText(const char* str, TerminalColor color = TerminalColor::Default, bool underline = false, bool blink = false);
    static void writeText(const char* str, TerminalColor color = TerminalColor::Default, bool underline = false, bool blink = false);
+   static void clearScreen();
+   static void setPos(int x, int y);
+   static void showCursor();
+   static void hideCursor();
+   static void resetColor();
 protected:
    const static QMap<TerminalColor, int> colorMap;
    const static int BOLD_CODE = 1;
    const static int UNDERLINE_CODE = 4;
    const static int BLINK_CODE = 5;
    const static int REVERSE_CODE = 7;
+protected:
+   static QString lastTTYMode;
 };
 
 }//sn

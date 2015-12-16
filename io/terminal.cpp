@@ -1,5 +1,10 @@
 #include <QByteArray>
 #include <iostream>
+#include <QDebug>
+#include <QProcess>
+#include <termios.h>
+#include <cstdio>
+#include <unistd.h>
 
 #include "terminal.h"
 
@@ -50,6 +55,36 @@ void Terminal::writeText(const char *str, TerminalColor color, bool underline, b
 {
    std::cout << getColorText(str, color, underline, blink).constData() << std::flush;
 }
+
+void Terminal::clearScreen()
+{
+   std::cout << "\x1b[2J";      // reset bg color
+   setPos(1, 1); // reset cursor position
+}
+
+void Terminal::setPos(int x, int y)
+{
+   std::cout << QString("\x1b[%1;%2f").arg(y).arg(x).toStdString();
+}
+
+void Terminal::showCursor()
+{
+   std::cout << "\x1b[?25h";
+}
+
+void Terminal::hideCursor()
+{
+   std::cout << "\x1b[?25l";
+}
+
+void Terminal::resetColor()
+{
+   std::cout << "\x1b[0;49m";  // reset bg color
+   std::cout << "\x1b[22;39m"; // reset fg bold, bright and faint
+   std::cout << "\x1b[25;39m"; // reset fg blink
+   std::cout << "\x1b[24;39m"; // reset fg underline
+}
+
 
 }//corelib
 }//sn

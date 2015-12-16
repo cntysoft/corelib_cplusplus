@@ -333,6 +333,10 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList& cmdArgs)
    MatchResult matches;
    SyntaxPartListType positional;
    SyntaxPartListType named;
+   if(0 == cmdArgs.size()){
+      matches.status = false;
+      return matches;
+   }
    SyntaxPartListType::const_iterator iterator = m_parts.cbegin();
    while(iterator != m_parts.cend()){
       if((*iterator).positional){
