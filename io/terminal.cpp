@@ -80,12 +80,12 @@ void Terminal::hideCursor()
 
 void Terminal::forwardCursor(int step)
 {
-   std::cout << QString("\x1b[%1c").arg(step).toStdString() << std::flush;
+   std::cout << QString("\x1b[%1C").arg(step).toStdString() << std::flush;
 }
 
 void Terminal::backwardCursor(int step)
 {
-   std::cout << QString("\x1b[%1d").arg(step).toStdString() << std::flush;
+   std::cout << QString("\x1b[%1D").arg(step).toStdString() << std::flush;
 }
 
 void Terminal::resetColor()
