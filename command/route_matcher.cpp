@@ -421,7 +421,7 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList& cmdArgs)
       }
       //Try to retrieve value if it is expected
       if(value.isEmpty() && part.hasValue){
-         if((i < cmdArgs.count()+1)){
+         if(i < cmdArgs.count()){
             value = cmdArgs[i];
             cmdArgs.removeAt(i);
          }else{
