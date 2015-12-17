@@ -1,6 +1,6 @@
 #ifndef SN_CORELIB_IO_TERMINAL_H
 #define SN_CORELIB_IO_TERMINAL_H
-
+#include <QPair>
 #include <QMap>
 #include "global/global.h"
 
@@ -37,10 +37,13 @@ public:
    static QByteArray getColorText(const char* str, TerminalColor color = TerminalColor::Default, bool underline = false, bool blink = false);
    static void writeText(const char* str, TerminalColor color = TerminalColor::Default, bool underline = false, bool blink = false);
    static void clearScreen();
-   static void setPos(int x, int y);
+   static void setCursorPos(int x, int y);
    static void showCursor();
    static void hideCursor();
    static void resetColor();
+   static void forwardCursor(int step = 1);
+   static void backwardCursor(int step = 1);
+   static QPair<int, int> getWindowSize();
 protected:
    const static QMap<TerminalColor, int> colorMap;
    const static int BOLD_CODE = 1;

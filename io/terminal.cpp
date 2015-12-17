@@ -1,13 +1,14 @@
-#include <QByteArray>
-#include <iostream>
-#include <QDebug>
 #include <QProcess>
+#include <QStringList>
+#include <QByteArray>
+
+#include <sys/ioctl.h>
+#include <iostream>
 #include <termios.h>
 #include <cstdio>
 #include <unistd.h>
 
 #include "terminal.h"
-
 namespace sn 
 {
 namespace corelib 
@@ -58,23 +59,33 @@ void Terminal::writeText(const char *str, TerminalColor color, bool underline, b
 
 void Terminal::clearScreen()
 {
-   std::cout << "\x1b[2J";      // reset bg color
-   setPos(1, 1); // reset cursor position
+   std::cout << "\x1b[2J" << std::flush;      // reset bg color
+   setCursorPos(1, 1); // reset cursor position
 }
 
-void Terminal::setPos(int x, int y)
+void Terminal::setCursorPos(int x, int y)
 {
-   std::cout << QString("\x1b[%1;%2f").arg(y).arg(x).toStdString();
+   std::cout << QString("\x1b[%1;%2f").arg(y).arg(x).toStdString() << std::flush;
 }
 
 void Terminal::showCursor()
 {
-   std::cout << "\x1b[?25h";
+   std::cout << "\x1b[?25h" << std::flush;;
 }
 
 void Terminal::hideCursor()
 {
-   std::cout << "\x1b[?25l";
+   std::cout << "\x1b[?25l" << std::flush;;
+}
+
+void Terminal::forwardCursor(int step)
+{
+   std::cout << QString("\x1b[%1c").arg(step).toStdString() << std::flush;
+}
+
+void Terminal::backwardCursor(int step)
+{
+   std::cout << QString("\x1b[%1d").arg(step).toStdString() << std::flush;
 }
 
 void Terminal::resetColor()
@@ -83,8 +94,19 @@ void Terminal::resetColor()
    std::cout << "\x1b[22;39m"; // reset fg bold, bright and faint
    std::cout << "\x1b[25;39m"; // reset fg blink
    std::cout << "\x1b[24;39m"; // reset fg underline
+   std::cout << std::flush;
 }
 
+QPair<int, int> Terminal::getWindowSize()
+{
+   struct winsize windowSize;
+   QPair<int, int> pair;
+   if(-1 != ioctl(STDIN_FILENO, TIOCGWINSZ, &windowSize)){
+      pair.first = windowSize.ws_col;
+      pair.second = windowSize.ws_row;
+   }
+   return pair;
+}
 
 }//corelib
 }//sn
