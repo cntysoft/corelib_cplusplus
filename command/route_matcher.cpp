@@ -346,7 +346,6 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList& cmdArgs)
       }
       iterator++;
    }
-   iterator = named.cbegin();
    for(int i = 0; i < named.count(); i++){
       SyntaxPart part = named[i];
       QString regexStr;
@@ -479,6 +478,7 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList& cmdArgs)
       if(stripMinusRegex.match(*it).hasMatch()){
          //there is an unrecognized flag
          matches.status = false;
+         return matches;
       }
       it++;
    }
