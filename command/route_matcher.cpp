@@ -346,7 +346,6 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList& cmdArgs)
       }
       iterator++;
    }
-   iterator = named.cbegin();
    for(int i = 0; i < named.count(); i++){
       SyntaxPart part = named[i];
       QString regexStr;
@@ -421,7 +420,7 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList& cmdArgs)
       }
       //Try to retrieve value if it is expected
       if(value.isEmpty() && part.hasValue){
-         if((i < cmdArgs.count()+1)){
+         if(i < cmdArgs.count()){
             value = cmdArgs[i];
             cmdArgs.removeAt(i);
          }else{
@@ -479,6 +478,7 @@ RouteMatcher::MatchResult RouteMatcher::match(QStringList& cmdArgs)
       if(stripMinusRegex.match(*it).hasMatch()){
          //there is an unrecognized flag
          matches.status = false;
+         return matches;
       }
       it++;
    }
