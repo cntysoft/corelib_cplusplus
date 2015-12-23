@@ -48,7 +48,15 @@ Settings::Status Settings::getStatus()const
    return m_settings->status();
 }
 
-QVariant Settings::getValue(const QString &key, const QString &group, const QVariant &defaultValue) const
+bool Settings::hasKey(const QString& key, const QString& group)
+{
+   m_settings->beginGroup(group);
+   bool exist = m_settings->contains(key);
+   m_settings->endGroup();
+   return exist;
+}
+
+QVariant Settings::getValue(const QString& key, const QString& group, const QVariant& defaultValue) const
 {
    m_settings->beginGroup(group);
    QVariant value = m_settings->value(key, defaultValue);
@@ -56,14 +64,14 @@ QVariant Settings::getValue(const QString &key, const QString &group, const QVar
    return value;
 }
 
-void Settings::setValue(const QString &key, const QVariant &value, const QString &group)
+void Settings::setValue(const QString& key, const QVariant& value, const QString& group)
 {
    m_settings->beginGroup(group);
    m_settings->setValue(key,value);
    m_settings->endGroup();
 }
 
-int Settings::enterGroup(const QString &path)
+int Settings::enterGroup(const QString& path)
 {
    QStringList parts = path.split('.');
    auto it = parts.cbegin();

@@ -2,6 +2,7 @@
 #define SN_CORELIB_APPLICATION_H
 
 #include <QCoreApplication>
+#include <QBasicTimer>
 
 #include "global/global.h"
 #include "settings.h"
@@ -29,6 +30,8 @@ public:
    bool createPidFile();
    void deletePidFile();
    void ensureImportantDir();
+   //几个信号处理
+   static void watchUnixSignal(int sig, bool watch = true);
 public:
    virtual ~Application();
 protected:
@@ -38,6 +41,7 @@ protected:
    Settings* m_settings = nullptr;
    QString m_runtimeDir;
    QString m_pidFilename;
+   QBasicTimer m_timer;
 };
 
 }//corelib

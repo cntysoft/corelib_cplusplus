@@ -27,6 +27,7 @@ public:
    Status getStatus() const;
    QVariant getValue(const QString& key, const QString& group = "Global", const QVariant& defaultValue = QVariant()) const;
    void setValue(const QString& key, const QVariant& value, const QString& group = "Global");
+   bool hasKey(const QString& key, const QString& group = "Global");
    QStringList getChildKeys(const QString& path = QString());
    ~Settings();
 private:

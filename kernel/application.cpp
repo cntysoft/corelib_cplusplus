@@ -1,6 +1,8 @@
 #include <QDir>
 #include <QFile>
 
+#include <csignal>
+
 #include "application.h"
 #include "errorinfo.h"
 #include "io/terminal.h"
@@ -8,6 +10,13 @@
 
 namespace sn{
 namespace corelib{
+
+static volatile std::sig_atomic_t unixSignal = -1;
+
+static void default_signal_handler(int signal)
+{
+   unixSignal = signal;
+}
 
 Application::Application(int &argc, char **argv)
    :QCoreApplication(argc, argv)
@@ -99,6 +108,21 @@ void Application::ensureImportantDir()
 Settings::CfgInitializerFnType Application::getDefaultCfgInitializerFn()
 {
    return nullptr;
+}
+
+void Application::watchUnixSignal(int sig, bool watch)
+{
+   if(sig < NSIG){
+      struct sigaction sa;
+      memset(&sa, 0, sizeof(sa));
+      sa.sa_flags = SA_RESTART;
+      if(watch){
+         sa.sa_handler = default_signal_handler;
+         m_timer.start(500, this);
+      }else{
+         sa.sa_handler = SIG_IGN;
+      }
+   }
 }
 
 Application::~Application()
