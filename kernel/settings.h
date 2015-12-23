@@ -36,6 +36,8 @@ private:
 private:
    QString m_cfgFilename;
    QSettings* const m_settings;
+private:
+   Q_DISABLE_COPY(Settings)
 };
 
 }//corelib

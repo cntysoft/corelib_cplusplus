@@ -1,0 +1,14 @@
+#ifndef SN_CORELIB_NETWORK_ABSTRACT_MULTI_THREAD_SERVER_H
+#define SN_CORELIB_NETWORK_ABSTRACT_MULTI_THREAD_SERVER_H
+
+#include <QTcpServer>
+
+namespace sn{
+namespace network{
+
+
+
+}//network
+}//sn
+
+#endif // SN_CORELIB_NETWORK_ABSTRACT_MULTI_THREAD_SERVER_H

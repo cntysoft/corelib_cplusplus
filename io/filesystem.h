@@ -36,6 +36,7 @@ public:
    static bool isReadable(const QString& filename);
    static bool isWritable(const QString& filename);
    static bool fileExist(const QString& filePath);
+   static bool dirExist(const QString& dirPath);
    static bool createPath(const QString& dirPath);
    static bool createDir(const QString& dirName);
 private:

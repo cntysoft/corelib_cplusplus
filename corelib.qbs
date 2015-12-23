@@ -7,7 +7,7 @@ Product
    version : "0.1.1"
    Depends { 
       name: "Qt"; 
-      submodules: ["core"]
+      submodules: ["core","network"]
    }
    Depends { name:"cpp"}
    destinationDirectory: "lib"
@@ -63,11 +63,11 @@ Product
       name : "global"
       prefix : name + '/'
       files : [
-           "common_funcs.cpp",
-           "common_funcs.h",
-           "global.h",
-           "global.cpp",
-       ]
+         "common_funcs.cpp",
+         "common_funcs.h",
+         "global.h",
+         "global.cpp",
+      ]
    }
    
    Group {
@@ -85,28 +85,39 @@ Product
       name: "command"
       prefix: name+"/"
       files: [
-           "abstract_command.cpp",
-           "abstract_command.h",
-           "abstract_command_runner.cpp",
-           "abstract_command_runner.h",
-           "command_meta.cpp",
-           "command_meta.h",
-           "route_item.cpp",
-           "route_item.h",
-           "route_match_result.cpp",
-           "route_match_result.h",
-           "route_matcher.cpp",
-           "route_matcher.h",
-           "route_stack.cpp",
-           "route_stack.h",
-       ]
+         "abstract_command.cpp",
+         "abstract_command.h",
+         "abstract_command_runner.cpp",
+         "abstract_command_runner.h",
+         "command_meta.cpp",
+         "command_meta.h",
+         "route_item.cpp",
+         "route_item.h",
+         "route_match_result.cpp",
+         "route_match_result.h",
+         "route_matcher.cpp",
+         "route_matcher.h",
+         "route_stack.cpp",
+         "route_stack.h",
+      ]
    }
    
    Group {
       name: "ds"
       prefix: name+"/"
       files: [
-           "priority_list.h",
+         "priority_list.h",
+      ]
+   }
+   
+   Group {
+      name: "network"
+      prefix: name+"/"
+      files:[
+           "abstract_multi_thread_server.cpp",
+           "abstract_multi_thread_server.h",
+           "rpc/abstract_api_binder.h",
+           "rpc/api_provider.h",
        ]
    }
 }

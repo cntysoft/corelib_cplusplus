@@ -108,5 +108,10 @@ bool Filesystem::fileExist(const QString &filePath)
    return QFileInfo(filePath).exists();
 }
 
+bool Filesystem::dirExist(const QString &dirPath)
+{
+   return QDir(dirPath).exists();
+}
+
 }//corelib
 }//sn

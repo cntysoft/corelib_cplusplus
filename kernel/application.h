@@ -11,10 +11,8 @@ class QObject;
 class QEvent;
 QT_END_NAMESPACE
 
-namespace sn 
-{
-namespace corelib 
-{
+namespace sn{
+namespace corelib{
 
 class Settings;
 
@@ -26,6 +24,11 @@ public:
    bool notify(QObject * receiver, QEvent * event);
    static Application *instance();
    Settings& getSettings();
+   QString& getRuntimeDir();
+   QString& getPidFilename();
+   bool createPidFile();
+   void deletePidFile();
+   void ensureImportantDir();
 public:
    virtual ~Application();
 protected:
@@ -33,6 +36,8 @@ protected:
    virtual Settings::CfgInitializerFnType getDefaultCfgInitializerFn();
 protected:
    Settings* m_settings = nullptr;
+   QString m_runtimeDir;
+   QString m_pidFilename;
 };
 
 }//corelib

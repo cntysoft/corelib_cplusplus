@@ -4,10 +4,8 @@
 #include "settings.h"
 #include "stddir.h"
 
-namespace sn 
-{
-namespace corelib 
-{
+namespace sn{
+namespace corelib{
 
 Settings::Settings(const QString& filename, CfgInitializerFnType initializer)
    : m_cfgFilename(StdDir::getSysConfDir()+"/"+filename), 
@@ -90,7 +88,9 @@ void Settings::sync()
 
 Settings::~Settings()
 {
-   delete m_settings;
+   if(nullptr != m_settings){
+      delete m_settings;
+   }
 }
 
 }//corelib
