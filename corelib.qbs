@@ -117,7 +117,7 @@ Product
            "abstract_multi_thread_server.cpp",
            "abstract_multi_thread_server.h",
            "rpc/abstract_api_binder.h",
-           "rpc/api_provider.h",
+           "rpc/abstract_api_provider.h",
        ]
    }
 }

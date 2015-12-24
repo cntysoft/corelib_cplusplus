@@ -118,7 +118,7 @@ void Application::watchUnixSignal(int sig, bool watch)
       sa.sa_flags = SA_RESTART;
       if(watch){
          sa.sa_handler = default_signal_handler;
-         m_timer.start(500, this);
+         //m_timer.start(500, this);
       }else{
          sa.sa_handler = SIG_IGN;
       }
