@@ -16,7 +16,7 @@ class SN_CORELIB_EXPORT AbstractMultiThreadServer : public QTcpServer
 {
    Q_OBJECT
 public:
-   AbstractMultiThreadServer( QObject* parent = nullptr);
+   AbstractMultiThreadServer(Application& app, QObject* parent = nullptr);
    bool run();
    AbstractMultiThreadServer& setHost(const QHostAddress& host);
    QHostAddress& getHost();
@@ -25,7 +25,7 @@ public:
    AbstractMultiThreadServer& setEnableSsl(bool flag);
    bool getEnableSsl();
 protected:
-//   Application& m_app;
+   Application& m_app;
    bool m_enableSsl = false;
    QHostAddress m_host;
    quint16 m_port;

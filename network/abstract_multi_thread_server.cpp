@@ -6,25 +6,16 @@ namespace network{
 
 
 
-AbstractMultiThreadServer::AbstractMultiThreadServer( QObject *parent)
-   : QTcpServer(parent)
+AbstractMultiThreadServer::AbstractMultiThreadServer(Application& app, QObject *parent)
+   : QTcpServer(parent),
+     m_app(app)
 {}
 
 bool AbstractMultiThreadServer::run()
 {
-   QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-   QNetworkRequest request;
-   request.setUrl(QUrl("http://qt-project.org"));
-   request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
-   
-   QNetworkReply *reply = manager->get(request);
-   connect(reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-   
-//   //暂时简单的监听
-//   bool ret = listen(m_host, m_port);
-   
-//   return ret;
-   return true;
+   //暂时简单的监听
+   bool ret = listen(m_host, m_port);
+   return ret;
 }
 void AbstractMultiThreadServer::slotReadyRead()
 {
