@@ -29,10 +29,10 @@ public:
    QString& getPidFilename();
    bool createPidFile();
    void deletePidFile();
-   void ensureImportantDir();
    //几个信号处理
    static void watchUnixSignal(int sig, bool watch = true);
 public:
+   virtual void ensureImportantDir();
    virtual ~Application();
 protected:
    virtual QString getCfgFilename();
