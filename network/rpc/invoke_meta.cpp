@@ -54,29 +54,29 @@ QByteArray& ApiInvokeRequest::getExtraData()
 }
 
 ApiInvokeResponse::ApiInvokeResponse(const QString &signature, bool status)
-   : m_apiSignature(signature),
+   : m_signature(signature),
      m_status(status)
 {}
 
-ApiInvokeResponse::setSignature(const QString &signature)
+ApiInvokeResponse& ApiInvokeResponse::setSignature(const QString &signature)
 {
    m_signature = signature;
    return *this;
 }
 
-ApiInvokeResponse::setStatus(bool status)
+ApiInvokeResponse& ApiInvokeResponse::setStatus(bool status)
 {
    m_status = status;
    return *this;
 }
 
-ApiInvokeResponse::setData(const QMap<QString, QString> &data)
+ApiInvokeResponse& ApiInvokeResponse::setData(const QMap<QString, QString> &data)
 {
    m_data = data;
    return *this;
 }
 
-ApiInvokeResponse::setExtraData(const QByteArray &extraData)
+ApiInvokeResponse& ApiInvokeResponse::setExtraData(const QByteArray &extraData)
 {
    m_extraData = extraData;
    return *this;

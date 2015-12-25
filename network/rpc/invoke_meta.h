@@ -42,7 +42,7 @@ class SN_CORELIB_EXPORT ApiInvokeResponse
    ApiInvokeResponse& setExtraData(const QByteArray &extraData);
    ApiInvokeResponse& setError(const QPair<int, QString>& error);
    
-   QString getSignature();
+   QString& getSignature();
    bool getStatus();
    QMap<QString, QString>& getData();
    QByteArray& getExtraData();
