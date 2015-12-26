@@ -116,10 +116,11 @@ Product
       files:[
            "abstract_multi_thread_server.cpp",
            "abstract_multi_thread_server.h",
-           "rpc/abstract_api_binder.h",
-           "rpc/abstract_api_provider.h",
+           "rpc/abstract_api.h",
            "rpc/api_invoker.cpp",
            "rpc/api_invoker.h",
+           "rpc/api_provider.cpp",
+           "rpc/api_provider.h",
            "rpc/invoke_meta.cpp",
            "rpc/invoke_meta.h",
        ]
