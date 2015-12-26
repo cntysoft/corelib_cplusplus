@@ -9,8 +9,7 @@ namespace sn{
 namespace corelib{
 
 History::History(const QString &historyDir, const QString &group, int sizeLimit)
-   : m_curIndex(0),
-     m_limit(sizeLimit)
+   : m_limit(sizeLimit)
 {
    if(!Filesystem::dirExist(historyDir) && !Filesystem::createPath(historyDir)){
       throw ErrorInfo(QString("create history directory %1 fail").arg(historyDir));
@@ -26,41 +25,48 @@ History::History(const QString &historyDir, const QString &group, int sizeLimit)
          if(i > 9){
             break;
          }
-         m_items << file.readLine();
+         QByteArray cur(file.readLine());
+         cur.remove(cur.count() - 1, 1);
+         m_items << cur;
          i++;
       }
    }
+   m_curIndex = qMax(0, m_items.size() - 1);
 }
 
 QString History::prev()
 {
-   int limit = qMin(m_items.size(), m_limit);
-   if(0 == limit){
+   if(m_items.isEmpty()){
       return QString();
    }else{
-      m_curIndex = m_curIndex + (limit -1) % limit;
-      return m_items[m_curIndex];
+      QString command = m_items[m_curIndex];
+      m_curIndex = qMax(m_curIndex - 1, 0);
+      return command;
    }
 }
 
 QString History::next()
 {
-   int limit = qMin(m_items.size(), m_limit);
-   if(0 == limit){
+   if(m_items.isEmpty()){
       return QString();
    }else{
-      m_curIndex = (m_curIndex + 1) % limit;
+      m_curIndex = qMin(m_curIndex + 1, m_items.size() - 1);
       return m_items[m_curIndex];
    }
 }
 
+bool History::isLast()
+{
+   return m_curIndex == (m_items.size() - 1);
+}
+
 History& History::addItem(const QString &command)
 {
-   if(m_items.size() < m_limit){
+   if(m_items.isEmpty() || (m_items.size() < m_limit && m_items.last() != command)){
       m_items << command;
-   }else{
-      int index = (m_curIndex + 1) % m_limit;
-      m_items[index] = command;
+   }else if(m_items.size() == m_limit){
+      m_items.removeFirst();
+      m_items << command;
    }
    QFile file(m_historyFilename);
    if(!file.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)){
@@ -70,6 +76,8 @@ History& History::addItem(const QString &command)
       QString item(m_items[i]+"\n");
       file.write(item.toLocal8Bit());
    }
+   m_curIndex = m_items.size() - 1;
+   return *this;
 }
 
 History& History::clear()
@@ -79,6 +87,7 @@ History& History::clear()
    if(file.exists()){
       file.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text);
    }
+   return *this;
 }
 
 }//command

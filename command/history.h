@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QStringList>
+#include <QDebug>
 
 #include "global/global.h"
 
@@ -18,6 +19,7 @@ public:
    History& clear();
    QString next();
    QString prev();
+   bool isLast();
 protected:
    QString m_historyFilename;
    QStringList m_items;

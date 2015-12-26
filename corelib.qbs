@@ -46,19 +46,19 @@ Product
       name: "kernel"
       prefix: name+"/"
       files :[
-         "settings.cpp",
-         "settings.h",
-         "application.cpp",
-         "application.h",
-         "erroritem.cpp",
-         "erroritem.h",
-         "errorinfo.h",
-         "errorinfo.cpp",
-         "code_location.h",
-         "code_location.cpp",
-         "stddir.cpp",
-         "stddir.h",
-      ]
+           "settings.cpp",
+           "settings.h",
+           "application.cpp",
+           "application.h",
+           "erroritem.cpp",
+           "erroritem.h",
+           "errorinfo.h",
+           "errorinfo.cpp",
+           "code_location.h",
+           "code_location.cpp",
+           "stddir.cpp",
+           "stddir.h",
+       ]
    }
    
    Group {
