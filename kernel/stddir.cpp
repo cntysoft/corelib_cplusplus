@@ -2,7 +2,7 @@
 #include <QDir>
 
 #include "stddir.h"
-#include "global/common_funcs.h"
+#include "global/global.h"
 
 namespace sn 
 {

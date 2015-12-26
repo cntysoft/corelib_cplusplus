@@ -41,10 +41,13 @@ Product
       cpp.rpaths: ["$ORIGIN/../lib"]
       cpp.includePaths: [product.sourceDirectory]
    }
+   
    Group {
       name: "kernel"
       prefix: name+"/"
       files :[
+         "settings.cpp",
+         "settings.h",
          "application.cpp",
          "application.h",
          "erroritem.cpp",
@@ -53,23 +56,25 @@ Product
          "errorinfo.cpp",
          "code_location.h",
          "code_location.cpp",
-         "settings.cpp",
-         "settings.h",
          "stddir.cpp",
          "stddir.h",
       ]
    }
+   
    Group {
       name : "global"
       prefix : name + '/'
       files : [
+         "global.h",
+         "global.cpp",
            "common_funcs.cpp",
            "common_funcs.h",
-           "global.h",
-           "global.cpp",
+           
        ]
    }
    
+   
+
    Group {
       name : "io"
       prefix : name + '/'
@@ -85,21 +90,23 @@ Product
       name: "command"
       prefix: name+"/"
       files: [
-         "abstract_command.cpp",
-         "abstract_command.h",
-         "abstract_command_runner.cpp",
-         "abstract_command_runner.h",
-         "command_meta.cpp",
-         "command_meta.h",
-         "route_item.cpp",
-         "route_item.h",
-         "route_match_result.cpp",
-         "route_match_result.h",
-         "route_matcher.cpp",
-         "route_matcher.h",
-         "route_stack.cpp",
-         "route_stack.h",
-      ]
+           "abstract_command.cpp",
+           "abstract_command.h",
+           "abstract_command_runner.cpp",
+           "abstract_command_runner.h",
+           "command_meta.cpp",
+           "command_meta.h",
+           "history.cpp",
+           "history.h",
+           "route_item.cpp",
+           "route_item.h",
+           "route_match_result.cpp",
+           "route_match_result.h",
+           "route_matcher.cpp",
+           "route_matcher.h",
+           "route_stack.cpp",
+           "route_stack.h",
+       ]
    }
    
    Group {

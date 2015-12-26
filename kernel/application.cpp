@@ -22,9 +22,9 @@ Application::Application(int &argc, char **argv)
    :QCoreApplication(argc, argv)
 {}
 
-Application *Application::instance()
+Application* Application::instance()
 {
-   return qobject_cast<Application *>(QCoreApplication::instance());
+   return qobject_cast<Application*>(QCoreApplication::instance());
 }
 
 bool Application::notify(QObject *receiver, QEvent *event)

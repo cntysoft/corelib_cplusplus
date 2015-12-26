@@ -1,12 +1,10 @@
 #include <QCoreApplication>
 
 #include "abstract_command.h"
-#include "global/common_funcs.h"
+#include "global/global.h"
 
-namespace sn 
-{
-namespace corelib 
-{
+namespace sn{
+namespace corelib{
 
 AbstractCommand::AbstractCommand(AbstractCommandRunner& runner, const CommandMeta& invokeMeta)
    : m_cmdRunner(runner), m_invokeMeta(invokeMeta)
@@ -15,8 +13,9 @@ AbstractCommand::AbstractCommand(AbstractCommandRunner& runner, const CommandMet
 
 void AbstractCommand::exit(int exitCode) const
 {
-   const QCoreApplication& app = get_core_application_ref();
-   app.exit(exitCode);
+//   Application* app = get_application_ref();
+//   app->exit(exitCode);
+   QCoreApplication::instance()->exit(exitCode);
 }
 
 void AbstractCommand::printConsoleMsg(const char *str, TerminalColor color, bool underline, bool blink) const

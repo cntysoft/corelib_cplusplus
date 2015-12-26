@@ -1,11 +1,10 @@
 #ifndef SN_CORELIB_APPLICATION_H
 #define SN_CORELIB_APPLICATION_H
-
 #include <QCoreApplication>
 #include <QBasicTimer>
 
 #include "global/global.h"
-#include "settings.h"
+#include "kernel/settings.h"
 
 QT_BEGIN_NAMESPACE
 class QObject;
@@ -14,8 +13,6 @@ QT_END_NAMESPACE
 
 namespace sn{
 namespace corelib{
-
-class Settings;
 
 class SN_CORELIB_EXPORT Application : public QCoreApplication
 {

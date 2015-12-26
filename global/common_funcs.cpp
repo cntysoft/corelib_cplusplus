@@ -1,14 +1,12 @@
-#include <QCoreApplication>
 #include <QString>
 #include <pwd.h>
 #include <unistd.h>
 
 #include "common_funcs.h"
+#include "kernel/application.h"
 
-namespace sn 
-{
-namespace corelib 
-{
+namespace sn{
+namespace corelib{
 
 QString get_current_user_home_dir()
 {
@@ -16,9 +14,9 @@ QString get_current_user_home_dir()
    return QString(pwd->pw_dir);
 }
 
-const QCoreApplication& get_core_application_ref()
+Application* get_application_ref()
 {
-   return *QCoreApplication::instance();
+   return Application::instance();
 }
 
 QString get_corelib_version()

@@ -1,9 +1,7 @@
 #include "global.h"
-
-namespace sn 
-{
-namespace corelib 
-{
+#include "kernel/application.h"
+namespace sn{
+namespace corelib{
 
 
 }//corelib
