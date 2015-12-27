@@ -2,6 +2,7 @@
 #include <QFile>
 
 #include <csignal>
+#include <cerrno>
 
 #include "application.h"
 #include "errorinfo.h"
@@ -118,10 +119,53 @@ void Application::watchUnixSignal(int sig, bool watch)
       sa.sa_flags = SA_RESTART;
       if(watch){
          sa.sa_handler = default_signal_handler;
-         //m_timer.start(500, this);
+         m_timer.start(500, this);
       }else{
          sa.sa_handler = SIG_IGN;
       }
+      if(sigaction(sig, &sa, 0) != 0){
+         throw ErrorInfo(QString("sigaction failed errno : %1").arg(errno));
+      }
+   }
+}
+
+void Application::ignoreUnixSignal(int sig, bool ignore)
+{
+   if(sig < NSIG){
+      struct sigaction sa;
+      memset(&sa, 0, sizeof(sa));
+      sa.sa_flags = SA_RESTART;
+      sa.sa_handler = ignore ? SIG_IGN : SIG_DFL;
+      if(sigaction(sig, &sa, 0) != 0){
+         throw ErrorInfo(QString("sigaction failed errno : %1").arg(errno));
+      }
+   }
+}
+
+int Application::getCatchedSignalNumber()
+{
+   return sn::corelib::unixSignal;
+}
+
+void Application::resetCatchedSignalNumber()
+{
+   sn::corelib::unixSignal = -1;
+}
+
+void Application::setCatchedSignalNumber(int sig)
+{
+   sn::corelib::unixSignal = sig;
+}
+
+void Application::timerEvent(QTimerEvent *event)
+{
+   if (event->timerId() == m_timer.timerId()) {
+      if (getCatchedSignalNumber() >= 0) {
+         Terminal::writeText(QString("system trapped signal  number: %1").arg(getCatchedSignalNumber()).toLocal8Bit());
+         exit(getCatchedSignalNumber());
+      }
+   } else {
+      QCoreApplication::timerEvent(event);
    }
 }
 

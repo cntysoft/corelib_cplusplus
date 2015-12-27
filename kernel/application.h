@@ -27,13 +27,19 @@ public:
    bool createPidFile();
    void deletePidFile();
    //几个信号处理
-   static void watchUnixSignal(int sig, bool watch = true);
+   void watchUnixSignal(int sig, bool watch = true);
+   void ignoreUnixSignal(int sig, bool ignore = true);
+   int getCatchedSignalNumber();
+   void setCatchedSignalNumber(int sig);
+   static void resetCatchedSignalNumber();
 public:
    virtual void ensureImportantDir();
    virtual ~Application();
 protected:
    virtual QString getCfgFilename();
    virtual Settings::CfgInitializerFnType getDefaultCfgInitializerFn();
+protected:
+   virtual void timerEvent(QTimerEvent *event);
 protected:
    Settings* m_settings = nullptr;
    QString m_runtimeDir;
