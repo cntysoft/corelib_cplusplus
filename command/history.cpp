@@ -39,9 +39,14 @@ QString History::prev()
    if(m_items.isEmpty()){
       return QString();
    }else{
-      QString command = m_items[m_curIndex];
-      m_curIndex = qMax(m_curIndex - 1, 0);
-      return command;
+      if(isLast()){
+         QString command = m_items[m_curIndex];
+         m_curIndex = qMax(m_curIndex - 1, 0);
+         return command;
+      }else{
+         m_curIndex = qMax(m_curIndex - 1, 0);
+         return m_items[m_curIndex];
+      }
    }
 }
 
