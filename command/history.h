@@ -19,6 +19,7 @@ public:
    History& clear();
    QString next();
    QString prev();
+   QString last();
    bool isLast();
 protected:
    QString m_historyFilename;

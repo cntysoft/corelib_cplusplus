@@ -22,7 +22,7 @@ History::History(const QString &historyDir, const QString &group, int sizeLimit)
       }
       int i = 0;
       while(!file.atEnd()){
-         if(i > 9){
+         if(i > sizeLimit){
             break;
          }
          QByteArray cur(file.readLine());
@@ -53,6 +53,11 @@ QString History::next()
       m_curIndex = qMin(m_curIndex + 1, m_items.size() - 1);
       return m_items[m_curIndex];
    }
+}
+
+QString History::last()
+{
+   return m_items.last();
 }
 
 bool History::isLast()

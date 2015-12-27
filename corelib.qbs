@@ -28,7 +28,7 @@ Product
    cpp.visibility: "minimal"
    cpp.cxxLanguageVersion: "c++14"
    
-   cpp.includePaths: base.concat(["../", "."])
+   cpp.includePaths: base.concat(["."])
    Group {
       fileTagsFilter: product.type.concat("dynamiclibrary_symlink")
       qbs.install: true

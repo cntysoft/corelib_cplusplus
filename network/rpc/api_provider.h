@@ -3,7 +3,7 @@
 
 #include <QTcpSocket>
 
-#include "corelib/global/global.h"
+#include "global/global.h"
 
 namespace sn{
 namespace network{

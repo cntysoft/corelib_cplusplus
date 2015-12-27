@@ -19,7 +19,7 @@ class SN_CORELIB_EXPORT ApiInvoker : public QObject
 public:
    ApiInvoker(const QTcpSocket& socket);
    bool request(const ApiInvokeRequest& request);
-   ApiInvokeResponse requestSync(const ApiInvokeRequest& request);
+   ApiInvokeResponse requestSync(const ApiInvokeRequest& request); 
 protected:
    const QTcpSocket &m_socket;
 };
