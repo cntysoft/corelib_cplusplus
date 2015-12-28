@@ -9,6 +9,10 @@
 
 #include "global/global.h"
 
+QT_BEGIN_NAMESPACE
+class QDataStream;
+QT_END_NAMESPACE
+
 namespace sn{
 namespace corelib{
 namespace network{
@@ -17,34 +21,42 @@ class SN_CORELIB_EXPORT ApiInvokeRequest
 {
 public:
    ApiInvokeRequest();
-   ApiInvokeRequest(const QString& name, const QString& method, const QList<QVariant>& args);
+   ApiInvokeRequest(const QString& name, const QString& method, const QList<QVariant>& args = QList<QVariant>());
    ApiInvokeRequest& setName(const QString& name);
+   ApiInvokeRequest& setSerial(int serial);
    ApiInvokeRequest& setMethod(const QString& method);
    ApiInvokeRequest& setArgs(const QList<QVariant>& args);
    ApiInvokeRequest& setExtraData(const QByteArray& extraData);
    
-   QString& getName();
-   QString& getMethod();
-   QList<QVariant>& getArgs();
-   QByteArray& getExtraData();
+   const QString& getName() const;
+   const QString& getMethod()const;
+   int getSerial()const;
+   const QList<QVariant>& getArgs()const;
+   const QByteArray& getExtraData()const;
 protected:
    QString m_name;
    QString m_method;
    QList<QVariant> m_args;
    QByteArray m_extraData;
+   int m_serial;
 };
+
+SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ApiInvokeRequest &request);
+SN_CORELIB_EXPORT QDataStream &operator>>(QDataStream &inS, ApiInvokeRequest &request);
 
 class SN_CORELIB_EXPORT ApiInvokeResponse
 {
    ApiInvokeResponse();
    ApiInvokeResponse(const QString &signature, bool status);
    ApiInvokeResponse& setSignature(const QString &signature);
+   ApiInvokeResponse& setSerial(int serial);
    ApiInvokeResponse& setStatus(bool status);
    ApiInvokeResponse& setData(const QMap<QString, QString> &data);
    ApiInvokeResponse& setExtraData(const QByteArray &extraData);
    ApiInvokeResponse& setError(const QPair<int, QString>& error);
    
    QString& getSignature();
+   int getSerial();
    bool getStatus();
    QMap<QString, QString>& getData();
    QByteArray& getExtraData();
@@ -56,7 +68,11 @@ protected:
    QMap<QString, QString> m_data;
    QPair<int, QString> m_error;
    QByteArray m_extraData;
+   int m_serial;
 };
+
+SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ApiInvokeResponse &request);
+SN_CORELIB_EXPORT QDataStream &operator>>(QDataStream &inS, ApiInvokeResponse &request);
 
 }//network
 }//corelib
