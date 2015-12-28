@@ -46,6 +46,7 @@ SN_CORELIB_EXPORT QDataStream &operator>>(QDataStream &inS, ApiInvokeRequest &re
 
 class SN_CORELIB_EXPORT ApiInvokeResponse
 {
+public:
    ApiInvokeResponse();
    ApiInvokeResponse(const QString &signature, bool status);
    ApiInvokeResponse& setSignature(const QString &signature);

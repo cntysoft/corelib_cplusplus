@@ -17,6 +17,20 @@ ApiProvider& ApiProvider::instance()
    return *ApiProvider::sm_self;
 }
 
+ApiProvider& ApiProvider::setUnderlineSocket(QTcpSocket* socket)
+{
+   m_socket = socket;
+   return *this;
+}
+
+ApiProvider& ApiProvider::addApiToPool(const QString &key, ApiInitializerType initializerFn)
+{
+   if(!m_apiIntializerPool.contains(key)){
+      m_apiIntializerPool.insert(key, initializerFn);
+   }
+   return *this;
+}
+
 }//network
 }//corelib
 }//sn

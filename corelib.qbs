@@ -123,6 +123,7 @@ Product
       files:[
            "abstract_multi_thread_server.cpp",
            "abstract_multi_thread_server.h",
+           "rpc/abstract_api.cpp",
            "rpc/abstract_api.h",
            "rpc/api_invoker.cpp",
            "rpc/api_invoker.h",
