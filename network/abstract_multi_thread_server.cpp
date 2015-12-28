@@ -2,9 +2,8 @@
 #include <QNetworkAccessManager>
 
 namespace sn{
+namespace corelib{
 namespace network{
-
-
 
 AbstractMultiThreadServer::AbstractMultiThreadServer(Application& app, QObject *parent)
    : QTcpServer(parent),
@@ -56,4 +55,5 @@ bool AbstractMultiThreadServer::getEnableSsl()
 }
 
 }//network
+}//corelib
 }//sn

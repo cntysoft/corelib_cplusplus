@@ -1,6 +1,7 @@
 #include "api_provider.h"
 
 namespace sn{
+namespace corelib{
 namespace network{
 
 ApiProvider* ApiProvider::sm_self = nullptr;
@@ -17,4 +18,5 @@ ApiProvider& ApiProvider::instance()
 }
 
 }//network
+}//corelib
 }//sn
