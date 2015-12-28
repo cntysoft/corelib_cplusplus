@@ -1,7 +1,11 @@
 #include "invoke_meta.h"
 
 namespace sn{
+namespace corelib{
 namespace network{
+
+ApiInvokeRequest::ApiInvokeRequest()
+{}
 
 ApiInvokeRequest::ApiInvokeRequest(const QString &name, const QString &method, const QList<QVariant> &args)
    : m_name(name),
@@ -52,6 +56,9 @@ QByteArray& ApiInvokeRequest::getExtraData()
 {
    return m_extraData;
 }
+
+ApiInvokeResponse::ApiInvokeResponse()
+{}
 
 ApiInvokeResponse::ApiInvokeResponse(const QString &signature, bool status)
    : m_signature(signature),
@@ -104,4 +111,5 @@ QByteArray& ApiInvokeResponse::getExtraData()
 
 
 }//network
+}//corelib
 }//sn

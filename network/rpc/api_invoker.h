@@ -11,6 +11,7 @@ class QTcpSocket;
 QT_END_NAMESPACE
 
 namespace sn{
+namespace corelib{
 namespace network{
 
 class SN_CORELIB_EXPORT ApiInvoker : public QObject
@@ -25,6 +26,7 @@ protected:
 };
 
 }//network
+}//corelib
 }//sn
 
 #endif // SN_CORELIB_NETWORK_RPC_API_INVOKER_H

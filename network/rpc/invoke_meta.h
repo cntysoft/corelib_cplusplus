@@ -10,11 +10,13 @@
 #include "global/global.h"
 
 namespace sn{
+namespace corelib{
 namespace network{
 
 class SN_CORELIB_EXPORT ApiInvokeRequest
 {
 public:
+   ApiInvokeRequest();
    ApiInvokeRequest(const QString& name, const QString& method, const QList<QVariant>& args);
    ApiInvokeRequest& setName(const QString& name);
    ApiInvokeRequest& setMethod(const QString& method);
@@ -34,8 +36,8 @@ protected:
 
 class SN_CORELIB_EXPORT ApiInvokeResponse
 {
+   ApiInvokeResponse();
    ApiInvokeResponse(const QString &signature, bool status);
-   
    ApiInvokeResponse& setSignature(const QString &signature);
    ApiInvokeResponse& setStatus(bool status);
    ApiInvokeResponse& setData(const QMap<QString, QString> &data);
@@ -57,6 +59,7 @@ protected:
 };
 
 }//network
+}//corelib
 }//sn
 
 #endif // SN_CORELIB_NETWORK_RPC_INVOKE_META_H

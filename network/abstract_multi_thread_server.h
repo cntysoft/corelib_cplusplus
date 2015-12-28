@@ -8,6 +8,7 @@
 #include <QNetworkReply>
 
 namespace sn{
+namespace corelib{
 namespace network{
 
 using sn::corelib::Application;
@@ -34,6 +35,7 @@ public slots:
 };
 
 }//network
+}//corelib
 }//sn
 
 #endif // SN_CORELIB_NETWORK_ABSTRACT_MULTI_THREAD_SERVER_H

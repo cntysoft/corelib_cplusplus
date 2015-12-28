@@ -6,6 +6,7 @@
 #include "global/global.h"
 
 namespace sn{
+namespace corelib{
 namespace network{
 
 class SN_CORELIB_EXPORT ApiProvider
@@ -21,6 +22,7 @@ protected:
 
 
 }//network
+}//corelib
 }//sn
 
 #endif // SN_CORELIB_NETWORK_RPC_ABSTRACT_API_PROVIDER_H

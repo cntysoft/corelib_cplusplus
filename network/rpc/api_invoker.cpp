@@ -5,6 +5,7 @@
 #include "kernel/errorinfo.h"
 
 namespace sn{
+namespace corelib{
 namespace network{
 
 using sn::corelib::ErrorInfo;
@@ -23,4 +24,5 @@ ApiInvokeResponse ApiInvoker::requestSync(const ApiInvokeRequest& request)
 }
 
 }//network
+}//corelib
 }//sn
