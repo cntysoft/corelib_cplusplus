@@ -30,8 +30,6 @@ protected:
    bool m_enableSsl = false;
    QHostAddress m_host;
    quint16 m_port;
-public slots:
-   void slotReadyRead();
 };
 
 }//network

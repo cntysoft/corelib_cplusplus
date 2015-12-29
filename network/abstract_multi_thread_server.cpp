@@ -16,10 +16,6 @@ bool AbstractMultiThreadServer::run()
    bool ret = listen(m_host, m_port);
    return ret;
 }
-void AbstractMultiThreadServer::slotReadyRead()
-{
-   qDebug() << "asdasdas";
-}
 
 AbstractMultiThreadServer& AbstractMultiThreadServer::setHost(const QHostAddress &host)
 {

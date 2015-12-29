@@ -1,4 +1,10 @@
+#include <QDataStream>
+
 #include "api_provider.h"
+#include "abstract_api.h"
+#include "invoke_meta.h"
+
+#include <QDebug>
 
 namespace sn{
 namespace corelib{
@@ -17,10 +23,26 @@ ApiProvider& ApiProvider::instance()
    return *ApiProvider::sm_self;
 }
 
-ApiProvider& ApiProvider::setUnderlineSocket(QTcpSocket* socket)
+ApiProvider& ApiProvider::setUnderlineSocket(int index, QTcpSocket* socket)
 {
-   m_socket = socket;
+   if(!m_socketPool.contains(index)){
+      m_socketPool.insert(index, socket);
+      //绑定处理函数
+      QObject::connect(socket, &QTcpSocket::disconnected, this, &ApiProvider::socketDisconnectHandler);
+   }
    return *this;
+}
+
+void ApiProvider::socketDisconnectHandler()
+{
+   QTcpSocket *sockect = qobject_cast<QTcpSocket*>(sender());
+   int socketNum = (int)sockect->socketDescriptor();
+   QMap<QString, AbstractApi*>::const_iterator it = m_apiPool.cbegin();
+   while(it != m_apiPool.cend()){
+      it.value()->notifySocketDisconnect(socketNum);
+      it++;
+   }
+   m_socketPool.remove(socketNum);
 }
 
 ApiProvider& ApiProvider::addApiToPool(const QString &key, ApiInitializerType initializerFn)
@@ -29,6 +51,32 @@ ApiProvider& ApiProvider::addApiToPool(const QString &key, ApiInitializerType in
       m_apiIntializerPool.insert(key, initializerFn);
    }
    return *this;
+}
+
+void ApiProvider::callApi(const ApiInvokeRequest &request)
+{
+   QString key(request.getName()+'/'+request.getMethod());
+   if(!m_apiPool.contains(key) && !m_apiIntializerPool.contains(key)){
+      ApiInvokeResponse response("system/error", false);
+      response.setSerial(request.getSerial());
+      response.setError(QPair<int, QString>(1, "api not exist"));
+      writeResponseToSocket(request.getSocketNum(), response);
+      return;
+   }
+}
+
+void ApiProvider::writeResponseToSocket(int socketIndex, const ApiInvokeResponse &response)
+{
+   if(!m_socketPool.contains(socketIndex)){
+      //这里是否写入出错提示
+      return;
+   }
+   QTcpSocket *socket = m_socketPool[socketIndex];
+   QDataStream out(socket);
+   out.setVersion(QDataStream::Qt_5_5);
+   out << response;
+   socket->write("\r\n");
+   socket->flush();
 }
 
 }//network

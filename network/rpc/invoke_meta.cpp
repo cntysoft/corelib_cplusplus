@@ -27,6 +27,12 @@ ApiInvokeRequest& ApiInvokeRequest::setSerial(int serial)
    return *this;
 }
 
+ApiInvokeRequest& ApiInvokeRequest::setSocketNum(int num)
+{
+   m_socketNum = num;
+   return *this;
+}
+
 ApiInvokeRequest& ApiInvokeRequest::setMethod(const QString &method)
 {
    m_method = method;
@@ -53,6 +59,11 @@ const QString& ApiInvokeRequest::getName()const
 int ApiInvokeRequest::getSerial()const
 {
    return m_serial;
+}
+
+int ApiInvokeRequest::getSocketNum()const
+{
+   return m_socketNum;
 }
 
 const QString& ApiInvokeRequest::getMethod()const
@@ -161,31 +172,106 @@ ApiInvokeResponse& ApiInvokeResponse::setExtraData(const QByteArray &extraData)
    return *this;
 }
 
-QString& ApiInvokeResponse::getSignature()
+ApiInvokeResponse& ApiInvokeResponse::setError(const QPair<int, QString> &error)
+{
+   m_error = error;
+   return *this;
+}
+
+const QString& ApiInvokeResponse::getSignature()const
 {
    return m_signature;
 }
 
-int ApiInvokeResponse::getSerial()
+int ApiInvokeResponse::getSerial() const
 {
    return m_serial;
 }
 
-bool ApiInvokeResponse::getStatus()
+bool ApiInvokeResponse::getStatus()const
 {
    return m_status;
 }
 
-QMap<QString, QString>& ApiInvokeResponse::getData()
+const QMap<QString, QString>& ApiInvokeResponse::getData()const
 {
    return m_data;
 }
 
-QByteArray& ApiInvokeResponse::getExtraData()
+const QByteArray& ApiInvokeResponse::getExtraData()const
 {
    return m_extraData;
 }
 
+const QPair<int, QString>& ApiInvokeResponse::getError()const
+{
+   return m_error;
+}
+
+QDataStream &operator<<(QDataStream &outStream, const ApiInvokeResponse &response)
+{
+   outStream << response.getSignature();
+   outStream << (quint32)response.getSerial();
+   bool status = response.getStatus();
+   if(status){
+      bool hasData = false;
+      const QMap<QString, QString>& data = response.getData();
+      if(!data.empty()){
+         hasData = true;
+      }
+      outStream << hasData;
+      if(hasData){
+         outStream << response.getData();
+      }
+   }else{
+      //出错必须有出错信息
+      outStream << response.getError();
+   }
+   bool hasExtraData = false;
+   const QByteArray& extraData = response.getExtraData();
+   if(!extraData.isEmpty()){
+      hasExtraData = true;
+   }
+   outStream << hasExtraData;
+   if(hasExtraData){
+      outStream << extraData;
+   }
+   return outStream;
+}
+
+QDataStream &operator>>(QDataStream &inStream, ApiInvokeResponse &response)
+{
+   QString signature;
+   quint32 serial;
+   inStream >> signature;
+   inStream >> serial;
+   response.setSignature(signature);
+   response.setSerial(serial);
+   bool status;
+   inStream >> status;
+   response.setStatus(status);
+   if(status){
+      bool hasData;
+      inStream >> hasData;
+      if(hasData){
+         QMap<QString, QString> data;
+         inStream >> data;
+         response.setData(data);
+      }
+   }else{
+      QPair<int, QString> error;
+      inStream >> error;
+      response.setError(error);
+   }
+   bool hasExtraData;
+   inStream >> hasExtraData;
+   if(hasExtraData){
+      QByteArray extraData;
+      inStream >> extraData;
+      response.setExtraData(extraData);
+   }
+   return inStream;
+}
 
 }//network
 }//corelib

@@ -12,8 +12,11 @@ namespace network{
 class SN_CORELIB_EXPORT AbstractApi : public QObject
 {
    Q_OBJECT
+friend class ApiProvider;
 public:
    AbstractApi(ApiProvider &provider);
+protected:
+   virtual void notifySocketDisconnect(int socketDescriptor);
 };
 
 }//network

@@ -27,10 +27,12 @@ public:
    ApiInvokeRequest& setMethod(const QString& method);
    ApiInvokeRequest& setArgs(const QList<QVariant>& args);
    ApiInvokeRequest& setExtraData(const QByteArray& extraData);
+   ApiInvokeRequest& setSocketNum(int num);
    
    const QString& getName() const;
    const QString& getMethod()const;
    int getSerial()const;
+   int getSocketNum()const;
    const QList<QVariant>& getArgs()const;
    const QByteArray& getExtraData()const;
 protected:
@@ -39,6 +41,7 @@ protected:
    QList<QVariant> m_args;
    QByteArray m_extraData;
    int m_serial;
+   int m_socketNum;
 };
 
 SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ApiInvokeRequest &request);
@@ -56,12 +59,12 @@ public:
    ApiInvokeResponse& setExtraData(const QByteArray &extraData);
    ApiInvokeResponse& setError(const QPair<int, QString>& error);
    
-   QString& getSignature();
-   int getSerial();
-   bool getStatus();
-   QMap<QString, QString>& getData();
-   QByteArray& getExtraData();
-   QPair<int, QString>& getError();
+   const QString& getSignature()const;
+   int getSerial()const;
+   bool getStatus()const;
+   const QMap<QString, QString>& getData()const;
+   const QByteArray& getExtraData()const;
+   const QPair<int, QString>& getError()const;
    
 protected:
    QString m_signature;

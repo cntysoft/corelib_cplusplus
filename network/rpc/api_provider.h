@@ -3,6 +3,8 @@
 
 #include <QSharedPointer>
 #include <QTcpSocket>
+#include <QMap>
+#include <QObject>
 
 #include "global/global.h"
 
@@ -14,27 +16,31 @@ class AbstractApi;
 class ApiInvokeResponse;
 class ApiInvokeRequest;
 
-class SN_CORELIB_EXPORT ApiProvider
+class SN_CORELIB_EXPORT ApiProvider : public QObject
 {
    Q_DISABLE_COPY(ApiProvider)
+   Q_OBJECT
 public:
    using ApiInitializerType = AbstractApi* (*)(ApiProvider&);
    using ApiInitializerPoolType = QMap<QString, ApiInitializerType>;
    using ApiPoolType = QMap<QString, AbstractApi*>;
 public:
-   ApiInvokeResponse callApi(const ApiInvokeRequest &request);
+   void callApi(const ApiInvokeRequest &request);
    ApiProvider& addApiToPool(const QString &key, ApiInitializerType initializerFn);
-   ApiProvider& setUnderlineSocket(QTcpSocket *socket);
+   ApiProvider& setUnderlineSocket(int index, QTcpSocket *socket);
 public:
    static ApiProvider& instance();
 protected:
    ApiProvider();
-   void writeResponse(const ApiInvokeResponse& response);
+   void writeResponseToSocket(int socketIndex, const ApiInvokeResponse& response);
    void initResponseByRequest(const ApiInvokeRequest &request, ApiInvokeResponse &response);
+protected slots:
+   void socketDisconnectHandler();
 protected:
    static ApiProvider *sm_self;
    ApiInitializerPoolType m_apiIntializerPool;
    ApiPoolType m_apiPool;
+   QMap<int, QTcpSocket*> m_socketPool;
    QTcpSocket *m_socket;
 };
 
