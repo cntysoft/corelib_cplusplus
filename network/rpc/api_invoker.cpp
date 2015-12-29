@@ -1,8 +1,9 @@
 #include <QDataStream>
+#include <QDebug>
 
 #include "api_invoker.h"
 #include "kernel/errorinfo.h"
-
+#include <QThread>
 namespace sn{
 namespace corelib{
 namespace network{
@@ -14,7 +15,8 @@ ApiInvoker::ApiInvoker(const QSharedPointer<QTcpSocket> &socket)
    if(!m_socket->isValid()){
       throw ErrorInfo("socket is invalid");
    }
-   QObject::connect(m_socket.data(), &QTcpSocket::readyRead, this, &ApiInvoker::responseArriveHandler);
+//   qDebug() << "api invoker" <<QThread::currentThreadId();
+   
 }
 
 bool ApiInvoker::request(ApiInvokeRequest &request, RequestCallbackType callback, void *callbackArgs)
@@ -23,12 +25,13 @@ bool ApiInvoker::request(ApiInvokeRequest &request, RequestCallbackType callback
    request.setSerial(serial);
    m_callbackPool.insert(serial, CallbackUnitType(callback, callbackArgs));
    writeRequestToSocket(request);
+   //qDebug() << m_socket->thread()->currentThreadId();
    return true;
 }
 
 void ApiInvoker::responseArriveHandler()
 {
-   
+   qDebug() << "xiuxiuuix";
 }
 
 void ApiInvoker::writeRequestToSocket(const ApiInvokeRequest &request)
