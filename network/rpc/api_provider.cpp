@@ -25,7 +25,9 @@ ApiProvider& ApiProvider::instance()
 
 ApiProvider& ApiProvider::setUnderlineSocket(int index, QTcpSocket* socket)
 {
+   qDebug() << socket;
    if(!m_socketPool.contains(index)){
+      qDebug() << "insert";
       m_socketPool.insert(index, socket);
       //绑定处理函数
       QObject::connect(socket, &QTcpSocket::disconnected, this, &ApiProvider::socketDisconnectHandler);
@@ -35,14 +37,17 @@ ApiProvider& ApiProvider::setUnderlineSocket(int index, QTcpSocket* socket)
 
 void ApiProvider::socketDisconnectHandler()
 {
+   qDebug() << "disconnect";
    QTcpSocket *sockect = qobject_cast<QTcpSocket*>(sender());
+   qDebug() << sockect;
    int socketNum = (int)sockect->socketDescriptor();
+   qDebug() << socketNum;
    QMap<QString, AbstractApi*>::const_iterator it = m_apiPool.cbegin();
    while(it != m_apiPool.cend()){
       it.value()->notifySocketDisconnect(socketNum);
       it++;
    }
-   m_socketPool.remove(socketNum);
+   m_socketPool.remove(m_socketPool.key(sockect));
 }
 
 ApiProvider& ApiProvider::addApiToPool(const QString &key, ApiInitializerType initializerFn)
@@ -59,7 +64,6 @@ void ApiProvider::callApi(const ApiInvokeRequest &request)
    if(!m_apiPool.contains(key) && !m_apiIntializerPool.contains(key)){
       ApiInvokeResponse response("system/error", false);
       response.setSerial(request.getSerial());
-      response.setError(QPair<int, QString>(1, "api not exist"));
       writeResponseToSocket(request.getSocketNum(), response);
       return;
    }
