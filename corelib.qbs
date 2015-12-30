@@ -131,6 +131,8 @@ Product
            "rpc/api_provider.h",
            "rpc/invoke_meta.cpp",
            "rpc/invoke_meta.h",
+           "rpc/tcpsocket_data_dispatch_worker.cpp",
+           "rpc/tcpsocket_data_dispatch_worker.h",
        ]
    }
 }

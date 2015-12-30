@@ -68,11 +68,11 @@ public:
    
 protected:
    QString m_signature;
-   bool m_status;
+   bool m_status = true;
    QMap<QString, QString> m_data;
    QPair<int, QString> m_error;
    QByteArray m_extraData;
-   int m_serial;
+   int m_serial = 0;
 };
 
 SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ApiInvokeResponse &request);

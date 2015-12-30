@@ -32,7 +32,7 @@ public:
    static ApiProvider& instance();
 protected:
    ApiProvider();
-   void writeResponseToSocket(int socketIndex, const ApiInvokeResponse& response);
+   void writeResponseToSocket(int socketIndex, const ApiInvokeResponse &response);
    void initResponseByRequest(const ApiInvokeRequest &request, ApiInvokeResponse &response);
 protected slots:
    void socketDisconnectHandler();

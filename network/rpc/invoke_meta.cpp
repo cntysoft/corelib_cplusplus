@@ -213,6 +213,7 @@ QDataStream &operator<<(QDataStream &outStream, const ApiInvokeResponse &respons
    outStream << response.getSignature();
    outStream << (quint32)response.getSerial();
    bool status = response.getStatus();
+   outStream << status;
    if(status){
       bool hasData = false;
       const QMap<QString, QString>& data = response.getData();
