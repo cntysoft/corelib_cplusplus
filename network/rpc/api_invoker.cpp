@@ -19,7 +19,10 @@ using sn::corelib::ErrorInfo;
 
 ApiInvoker::ApiInvoker(const QString& host, quint16 port)
    : m_host(host), 
-     m_port(port)
+     m_port(port),
+     m_status(false),
+     m_error(ErrorType::ServerOffline),
+     m_errorString("server is offline")
 {
 }
 
@@ -31,6 +34,8 @@ void ApiInvoker::connectToServer()
       QObject::connect(this, &ApiInvoker::requestSendBufferReady, worker, &TcpSocketDataDispatchWorker::requestSendBufferReadyHandler);
       QObject::connect(&m_dataDispatchThread, &QThread::finished, worker, &TcpSocketDataDispatchWorker::deleteLater);
       QObject::connect(worker, SIGNAL(connected()), this, SIGNAL(connectedToServerSignal()), Qt::DirectConnection);
+      QObject::connect(worker, SIGNAL(disconnected()), this, SLOT(serverOfflineHandler()), Qt::DirectConnection);
+      QObject::connect(worker, SIGNAL(connectError(QAbstractSocket::SocketError, const QString&)), this, SLOT(connectErrorHandler(QAbstractSocket::SocketError, const QString&)), Qt::DirectConnection);
       QObject::connect(worker, &TcpSocketDataDispatchWorker::responseReceiveBufferReady, this, &ApiInvoker::responseDataReceivedHandler, Qt::DirectConnection);
       worker->moveToThread(&m_dataDispatchThread);
       m_dataDispatchThread.start();
@@ -38,9 +43,36 @@ void ApiInvoker::connectToServer()
    }
 }
 
+void ApiInvoker::resetStatus()
+{
+   m_sendBuffer.clear();
+   m_receiveBuffer.clear();
+   m_status = false;
+   m_error = ErrorType::ServerOffline;
+   m_errorString = "server offline";
+}
+
+void ApiInvoker::serverOfflineHandler()
+{
+   resetStatus();
+   m_dataDispatchThread.exit(0);
+   emit serverOfflineSignal();
+}
+
+void ApiInvoker::connectErrorHandler(QAbstractSocket::SocketError, const QString &errorString)
+{
+   m_error = ErrorType::ConnectError;
+   m_status = false;
+   m_errorString = errorString;
+   emit connectErrorSignal(m_error, m_errorString);
+}
+
 void ApiInvoker::disconnectFromServer()
 {
-   m_dataDispatchThread.exit(0);
+   if(m_dataDispatchThread.isRunning()){
+      m_dataDispatchThread.exit(0);
+      resetStatus();
+   }
 }
 
 bool ApiInvoker::request(ApiInvokeRequest &request, RequestCallbackType callback, void *callbackArgs)
@@ -95,11 +127,23 @@ void ApiInvoker::writeRequestToSocket(const ApiInvokeRequest &request)
    emit requestSendBufferReady();
 }
 
+bool ApiInvoker::getStatus()
+{
+   return m_status;
+}
+
+ApiInvoker::ErrorType ApiInvoker::getError()
+{
+   return m_error;
+}
+
+QString& ApiInvoker::getErrorString()
+{
+   return m_errorString;
+}
+
 ApiInvoker::~ApiInvoker()
 {
-   //m_dataDispatchThread.exit(0);
-   qDebug() << "destroy";
-   //QObject::disconnect(m_socket.data(), &QTcpSocket::readyRead, this, &ApiInvoker::responseArriveHandler);
 }
 
 QAtomicInt ApiInvoker::sm_serial = 0;

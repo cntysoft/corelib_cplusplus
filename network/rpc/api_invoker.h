@@ -29,6 +29,12 @@ class SN_CORELIB_EXPORT ApiInvoker : public QObject
    Q_OBJECT
    friend class TcpSocketDataDispatchWorker;
 public:
+   enum class ErrorType{
+      None,
+      ServerOffline,
+      ConnectError
+   };
+public:
    using RequestCallbackType = void (*)(ApiInvokeResponse&, void*);
    using CallbackUnitType = QPair<RequestCallbackType, void*>;
 public:
@@ -38,16 +44,23 @@ public:
    ApiInvokeResponse requestSync(const ApiInvokeRequest& request);
    void connectToServer();
    void disconnectFromServer();
-
+   bool getStatus();
+   ErrorType getError();
+   QString& getErrorString();
 protected:
    void writeRequestToSocket(const ApiInvokeRequest &request);
    void unboxResponse(const QByteArray &boxedRequest, ApiInvokeResponse &response);
+   void resetStatus();
 signals:
    void beginListenTcpSocketSignal();
    void connectedToServerSignal();
+   void serverOfflineSignal();
    void requestSendBufferReady();
+   void connectErrorSignal(ErrorType error, const QString &errorString);
 public slots:
    void responseDataReceivedHandler();
+   void serverOfflineHandler();
+   void connectErrorHandler(QAbstractSocket::SocketError error, const QString &errorString);
 protected:
    QMap<int, CallbackUnitType> m_callbackPool;
    static QAtomicInt sm_serial;
@@ -59,6 +72,9 @@ protected:
    quint16 m_port;
    QMutex m_sendBufferMutex;
    QMutex m_receiveBufferMutex;
+   bool m_status;
+   ErrorType m_error;
+   QString m_errorString;
 };
 
 }//network

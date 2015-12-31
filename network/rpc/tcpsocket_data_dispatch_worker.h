@@ -18,11 +18,14 @@ public:
    ~TcpSocketDataDispatchWorker();
 signals:
    void connected();
+   void disconnected();
    void responseReceiveBufferReady();
+   void connectError(QAbstractSocket::SocketError error, const QString& errorString);
 public slots:
    void beginListenSocket();
    void requestSendBufferReadyHandler();
    void responseDataProcessHandler();
+   void connectErrorHandler(QAbstractSocket::SocketError error);
 protected:
    QSharedPointer<QTcpSocket> m_socket;
    QString m_host;
