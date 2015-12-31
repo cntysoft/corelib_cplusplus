@@ -20,9 +20,12 @@ void TcpSocketDataDispatchWorker::beginListenSocket()
    connect(m_socket.data(), &QTcpSocket::connected, this, [&](){
       emit connected();
    }, Qt::QueuedConnection);
+   connect(m_socket.data(), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(connectErrorHandler(QAbstractSocket::SocketError)));
    connect(m_socket.data(), &QTcpSocket::readyRead, this, &TcpSocketDataDispatchWorker::responseDataProcessHandler, Qt::QueuedConnection);
+   connect(m_socket.data(), SIGNAL(disconnected()), this, SIGNAL(disconnected()));
    m_socket->connectToHost(m_host, m_port);
 }
+
 
 void TcpSocketDataDispatchWorker::requestSendBufferReadyHandler()
 {
@@ -30,6 +33,11 @@ void TcpSocketDataDispatchWorker::requestSendBufferReadyHandler()
    m_socket->write(m_apiInvoker->m_sendBuffer);
    m_socket->flush();
    m_apiInvoker->m_sendBuffer.clear();
+}
+
+void TcpSocketDataDispatchWorker::connectErrorHandler(QAbstractSocket::SocketError error)
+{
+   emit connectError(error, m_socket->errorString());
 }
 
 void TcpSocketDataDispatchWorker::responseDataProcessHandler()

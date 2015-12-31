@@ -25,7 +25,6 @@ ApiProvider& ApiProvider::instance()
 
 ApiProvider& ApiProvider::setUnderlineSocket(int index, QTcpSocket* socket)
 {
-   qDebug() << socket;
    if(!m_socketPool.contains(index)){
       qDebug() << "insert";
       m_socketPool.insert(index, socket);
