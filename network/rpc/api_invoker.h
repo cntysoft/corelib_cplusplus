@@ -22,8 +22,6 @@ namespace sn{
 namespace corelib{
 namespace network{
 
-
-
 class SN_CORELIB_EXPORT ApiInvoker : public QObject
 {
    Q_OBJECT

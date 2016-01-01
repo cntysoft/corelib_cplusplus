@@ -17,6 +17,7 @@ public:
    AbstractApi(ApiProvider &provider);
 protected:
    virtual void notifySocketDisconnect(int socketDescriptor);
+   
 };
 
 }//network

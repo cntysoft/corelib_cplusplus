@@ -1,8 +1,11 @@
 #include <QDataStream>
+#include <QMetaObject>
+#include <QMetaMethod>
 
 #include "api_provider.h"
 #include "abstract_api.h"
 #include "invoke_meta.h"
+#include "api_error_code.h"
 
 #include <QDebug>
 
@@ -55,13 +58,37 @@ ApiProvider& ApiProvider::addApiToPool(const QString &key, ApiInitializerType in
 
 void ApiProvider::callApi(const ApiInvokeRequest &request)
 {
-   QString key(request.getName()+'/'+request.getMethod());
+   AbstractApi *api = nullptr;
+   QString key(request.getName());
    if(!m_apiPool.contains(key) && !m_apiIntializerPool.contains(key)){
       ApiInvokeResponse response("system/error", false);
+      response.setError({API_CLS_NOT_EXIST, "指定的API类不存在"});
+      response.setSerial(request.getSerial());
+      writeResponseToSocket(request.getSocketNum(), response);
+      return;
+   }else if(!m_apiPool.contains(key)){
+      //初始化api对象
+      ApiInitializerType initializer = m_apiIntializerPool.value(key);
+      api = initializer(*this);
+      m_apiPool[key] = api;
+   }
+   //判断函数是否存在
+   const QMetaObject *metaObject = api->metaObject();
+   QString method = QString("%1(ApiInvokeRequest)").arg(request.getMethod());
+   if(-1 == metaObject->indexOfMethod(method.toLatin1())){
+      ApiInvokeResponse response("system/error", false);
+      response.setError({API_METHOD_NOT_EXIST, QString("API %1 中没有函数 %2 ").arg(request.getName(), method)});
       response.setSerial(request.getSerial());
       writeResponseToSocket(request.getSocketNum(), response);
       return;
    }
+   ApiInvokeResponse response;
+   if(!metaObject->invokeMethod(api, request.getMethod().toLatin1(), Qt::DirectConnection, Q_RETURN_ARG(ApiInvokeResponse, response), Q_ARG(ApiInvokeRequest, request))){
+      response.setStatus(false);
+      response.setError({API_INVOKE_METHOD_ERROR, "there is no such member or the parameters did not match"});
+      response.setSerial(request.getSerial());
+   }
+   writeResponseToSocket(request.getSocketNum(), response);
 }
 
 void ApiProvider::writeResponseToSocket(int socketIndex, const ApiInvokeResponse &response)
