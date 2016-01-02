@@ -121,6 +121,9 @@ void ApiInvoker::processRequest(const ApiInvokeResponse &response)
    if(m_callbackPool.contains(slotNum)){
       CallbackUnitType callbackUint = m_callbackPool.value(slotNum);
       callbackUint.first(response, callbackUint.second);
+      if(response.isFinal()){
+         m_callbackPool.remove(slotNum);
+      }
    }else{
       //出错处理
    }
