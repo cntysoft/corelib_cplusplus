@@ -56,6 +56,7 @@ signals:
    void serverOfflineSignal();
    void requestSendBufferReady();
    void connectErrorSignal(ErrorType error, const QString &errorString);
+   void responseArrived(const ApiInvokeResponse &response);
 public slots:
    void responseDataReceivedHandler();
    void serverOfflineHandler();

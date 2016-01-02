@@ -85,4 +85,7 @@ SN_CORELIB_EXPORT QDataStream &operator>>(QDataStream &inS, ApiInvokeResponse &r
 }//corelib
 }//sn
 
+Q_DECLARE_METATYPE(sn::corelib::network::ApiInvokeRequest)
+Q_DECLARE_METATYPE(sn::corelib::network::ApiInvokeResponse)
+
 #endif // SN_CORELIB_NETWORK_RPC_INVOKE_META_H

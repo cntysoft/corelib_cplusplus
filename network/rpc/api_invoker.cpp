@@ -104,6 +104,7 @@ void ApiInvoker::responseDataReceivedHandler()
             ApiInvokeResponse response;
             stream >> response;
             processRequest(response);
+            emit responseArrived(response);
             m_packageUnitBuffer.clear();
             buffer.read(&forward, 1);
             continue;
