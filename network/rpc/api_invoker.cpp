@@ -103,7 +103,7 @@ void ApiInvoker::responseDataReceivedHandler()
             QDataStream stream(m_packageUnitBuffer);
             ApiInvokeResponse response;
             stream >> response;
-            //processRequest(response);
+            processRequest(response);
             m_packageUnitBuffer.clear();
             buffer.read(&forward, 1);
             continue;
@@ -121,6 +121,9 @@ void ApiInvoker::processRequest(const ApiInvokeResponse &response)
    if(m_callbackPool.contains(slotNum)){
       CallbackUnitType callbackUint = m_callbackPool.value(slotNum);
       callbackUint.first(response, callbackUint.second);
+      if(response.isFinal()){
+         m_callbackPool.remove(slotNum);
+      }
    }else{
       //出错处理
    }
