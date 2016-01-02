@@ -33,7 +33,7 @@ public:
       ConnectError
    };
 public:
-   using RequestCallbackType = void (*)(ApiInvokeResponse&, void*);
+   using RequestCallbackType = void (*)(const ApiInvokeResponse&, void*);
    using CallbackUnitType = QPair<RequestCallbackType, void*>;
 public:
    ApiInvoker(const QString &host, quint16 port);
@@ -48,6 +48,7 @@ public:
 protected:
    void writeRequestToSocket(const ApiInvokeRequest &request);
    void unboxResponse(const QByteArray &boxedRequest, ApiInvokeResponse &response);
+   void processRequest(const ApiInvokeResponse &response);
    void resetStatus();
 signals:
    void beginListenTcpSocketSignal();

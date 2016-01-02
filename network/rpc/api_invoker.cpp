@@ -59,12 +59,14 @@ void ApiInvoker::serverOfflineHandler()
    emit serverOfflineSignal();
 }
 
-void ApiInvoker::connectErrorHandler(QAbstractSocket::SocketError, const QString &errorString)
+void ApiInvoker::connectErrorHandler(QAbstractSocket::SocketError error, const QString &errorString)
 {
    m_error = ErrorType::ConnectError;
    m_status = false;
    m_errorString = errorString;
-   emit connectErrorSignal(m_error, m_errorString);
+   if(error != QAbstractSocket::SocketError::RemoteHostClosedError){
+      emit connectErrorSignal(m_error, m_errorString);
+   }
 }
 
 void ApiInvoker::disconnectFromServer()
@@ -79,7 +81,9 @@ bool ApiInvoker::request(ApiInvokeRequest &request, RequestCallbackType callback
 {
    int serial = ++ApiInvoker::sm_serial;
    request.setSerial(serial);
-   m_callbackPool.insert(serial, CallbackUnitType(callback, callbackArgs));
+   if(nullptr != callback){
+      m_callbackPool.insert(serial, CallbackUnitType(callback, callbackArgs));
+   }
    writeRequestToSocket(request);
    return true;
 }
@@ -99,9 +103,7 @@ void ApiInvoker::responseDataReceivedHandler()
             QDataStream stream(m_packageUnitBuffer);
             ApiInvokeResponse response;
             stream >> response;
-            qDebug() << "package";
-            //            qDebug() << response.getSignature();
-            //            processRequest(request);
+            //processRequest(response);
             m_packageUnitBuffer.clear();
             buffer.read(&forward, 1);
             continue;
@@ -110,6 +112,18 @@ void ApiInvoker::responseDataReceivedHandler()
       m_packageUnitBuffer.append(byte);
    }
    m_receiveBuffer.clear();
+}
+
+void ApiInvoker::processRequest(const ApiInvokeResponse &response)
+{
+   int slotNum = response.getSerial();
+   //这里必须存在
+   if(m_callbackPool.contains(slotNum)){
+      CallbackUnitType callbackUint = m_callbackPool.value(slotNum);
+      callbackUint.first(response, callbackUint.second);
+   }else{
+      //出错处理
+   }
 }
 
 void ApiInvoker::writeRequestToSocket(const ApiInvokeRequest &request)
