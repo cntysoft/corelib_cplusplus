@@ -148,6 +148,12 @@ ApiInvokeResponse& ApiInvokeResponse::setSignature(const QString &signature)
    return *this;
 }
 
+ApiInvokeResponse& ApiInvokeResponse::setIsFinal(bool flag)
+{
+   m_isFinal = flag;
+   return *this;
+}
+
 ApiInvokeResponse& ApiInvokeResponse::setSerial(int serial)
 {
    m_serial = serial;
@@ -188,6 +194,11 @@ int ApiInvokeResponse::getSerial() const
    return m_serial;
 }
 
+bool ApiInvokeResponse::isFinal()const
+{
+   return m_isFinal;
+}
+
 bool ApiInvokeResponse::getStatus()const
 {
    return m_status;
@@ -212,6 +223,7 @@ QDataStream &operator<<(QDataStream &outStream, const ApiInvokeResponse &respons
 {
    outStream << response.getSignature();
    outStream << (quint32)response.getSerial();
+   outStream << response.isFinal();
    bool status = response.getStatus();
    outStream << status;
    if(status){
@@ -244,10 +256,13 @@ QDataStream &operator>>(QDataStream &inStream, ApiInvokeResponse &response)
 {
    QString signature;
    quint32 serial;
+   bool isFinal;
    inStream >> signature;
    inStream >> serial;
+   inStream >> isFinal;
    response.setSignature(signature);
    response.setSerial(serial);
+   response.setIsFinal(isFinal);
    bool status;
    inStream >> status;
    response.setStatus(status);

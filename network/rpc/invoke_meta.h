@@ -55,6 +55,7 @@ public:
    ApiInvokeResponse& setSignature(const QString &signature);
    ApiInvokeResponse& setSerial(int serial);
    ApiInvokeResponse& setStatus(bool status);
+   ApiInvokeResponse& setIsFinal(bool flag);
    ApiInvokeResponse& setData(const QMap<QString, QString> &data);
    ApiInvokeResponse& setExtraData(const QByteArray &extraData);
    ApiInvokeResponse& setError(const QPair<int, QString>& error);
@@ -63,6 +64,7 @@ public:
    int getSerial()const;
    bool getStatus()const;
    const QMap<QString, QString>& getData()const;
+   bool isFinal()const;
    const QByteArray& getExtraData()const;
    const QPair<int, QString>& getError()const;
    
@@ -73,6 +75,7 @@ protected:
    QPair<int, QString> m_error;
    QByteArray m_extraData;
    int m_serial = 0;
+   int m_isFinal = true;
 };
 
 SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ApiInvokeResponse &request);
