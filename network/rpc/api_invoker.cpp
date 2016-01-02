@@ -103,7 +103,7 @@ void ApiInvoker::responseDataReceivedHandler()
             QDataStream stream(m_packageUnitBuffer);
             ApiInvokeResponse response;
             stream >> response;
-            //processRequest(response);
+            processRequest(response);
             m_packageUnitBuffer.clear();
             buffer.read(&forward, 1);
             continue;
