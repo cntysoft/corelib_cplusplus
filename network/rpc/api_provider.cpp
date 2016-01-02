@@ -71,6 +71,8 @@ void ApiProvider::callApi(const ApiInvokeRequest &request)
       ApiInitializerType initializer = m_apiIntializerPool.value(key);
       api = initializer(*this);
       m_apiPool[key] = api;
+   }else{
+      api = m_apiPool[key];
    }
    //判断函数是否存在
    const QMetaObject *metaObject = api->metaObject();
