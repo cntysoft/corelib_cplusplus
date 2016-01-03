@@ -20,6 +20,7 @@ public:
    QString next();
    QString prev();
    QString last();
+   History& resetPointer();
    bool isLast();
 protected:
    QString m_historyFilename;

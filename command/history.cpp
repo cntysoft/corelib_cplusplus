@@ -35,7 +35,7 @@ History::History(const QString &historyDir, const QString &group, int sizeLimit)
          i++;
       }
    }
-   m_curIndex = qMax(0, m_items.size() - 1);
+   m_curIndex = m_items.size();
 }
 
 QString History::prev()
@@ -72,6 +72,12 @@ bool History::isLast()
    return m_curIndex == (m_items.size() - 1);
 }
 
+History& History::resetPointer()
+{
+   m_curIndex = m_items.size();
+   return *this;
+}
+
 History& History::addItem(const QString &command)
 {
    bool needWriteToFile = false;
@@ -94,7 +100,7 @@ History& History::addItem(const QString &command)
       QString item(m_items[i]+"\n");
       file.write(item.toLocal8Bit());
    }
-   m_curIndex = m_items.size() - 1;
+   m_curIndex = m_items.size();
    return *this;
 }
 
