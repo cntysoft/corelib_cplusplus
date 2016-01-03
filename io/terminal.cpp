@@ -57,6 +57,11 @@ void Terminal::writeText(const char *str, TerminalColor color, bool underline, b
    std::cout << getColorText(str, color, underline, blink).constData() << std::flush;
 }
 
+void Terminal::clearCurrentLine()
+{
+   std::cout << "\x1b[1A\x1b[2K" << std::flush;
+}
+
 void Terminal::clearScreen()
 {
    std::cout << "\x1b[2J" << std::flush;      // reset bg color

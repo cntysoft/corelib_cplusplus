@@ -37,6 +37,7 @@ public:
    static QByteArray getColorText(const char* str, TerminalColor color = TerminalColor::Default, bool underline = false, bool blink = false);
    static void writeText(const char* str, TerminalColor color = TerminalColor::Default, bool underline = false, bool blink = false);
    static void clearScreen();
+   static void clearCurrentLine();
    static void setCursorPos(int x, int y);
    static void showCursor();
    static void hideCursor();
