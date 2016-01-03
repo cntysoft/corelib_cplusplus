@@ -27,7 +27,11 @@ History::History(const QString &historyDir, const QString &group, int sizeLimit)
          }
          QByteArray cur(file.readLine());
          cur.remove(cur.count() - 1, 1);
-         m_items << cur;
+         if(!m_items.isEmpty() && m_items.last() != cur){
+            m_items << cur;
+         }else if(m_items.isEmpty()){
+            m_items << cur;
+         }
          i++;
       }
    }
@@ -67,11 +71,17 @@ bool History::isLast()
 
 History& History::addItem(const QString &command)
 {
+   bool needWriteToFile = false;
    if(m_items.isEmpty() || (m_items.size() < m_limit && m_items.last() != command)){
       m_items << command;
-   }else if(m_items.size() == m_limit){
+      needWriteToFile = true;
+   }else if(m_items.size() == m_limit && m_items.last() != command){
       m_items.removeFirst();
       m_items << command;
+      needWriteToFile = true;
+   }
+   if(!needWriteToFile){
+      return *this;
    }
    QFile file(m_historyFilename);
    if(!file.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)){
