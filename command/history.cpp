@@ -43,9 +43,8 @@ QString History::prev()
    if(m_items.isEmpty()){
       return QString();
    }else{
-      QString command = m_items[m_curIndex];
       m_curIndex = qMax(m_curIndex - 1, 0);
-      return command;
+      return m_items[m_curIndex];
    }
 }
 
@@ -54,6 +53,10 @@ QString History::next()
    if(m_items.isEmpty()){
       return QString();
    }else{
+      if(m_curIndex == (m_items.size() -1) || m_curIndex == m_items.size()){
+         m_curIndex = m_items.size();
+         return QString();
+      }
       m_curIndex = qMin(m_curIndex + 1, m_items.size() - 1);
       return m_items[m_curIndex];
    }
