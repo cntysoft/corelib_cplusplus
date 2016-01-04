@@ -56,14 +56,14 @@ public:
    ApiInvokeResponse& setSerial(int serial);
    ApiInvokeResponse& setStatus(bool status);
    ApiInvokeResponse& setIsFinal(bool flag);
-   ApiInvokeResponse& setData(const QMap<QString, QString> &data);
+   ApiInvokeResponse& setData(const QMap<QString, QVariant> &data);
    ApiInvokeResponse& setExtraData(const QByteArray &extraData);
    ApiInvokeResponse& setError(const QPair<int, QString>& error);
    
    const QString& getSignature()const;
    int getSerial()const;
    bool getStatus()const;
-   const QMap<QString, QString>& getData()const;
+   const QMap<QString, QVariant>& getData()const;
    bool isFinal()const;
    const QByteArray& getExtraData()const;
    const QPair<int, QString>& getError()const;

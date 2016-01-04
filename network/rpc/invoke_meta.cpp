@@ -166,7 +166,7 @@ ApiInvokeResponse& ApiInvokeResponse::setStatus(bool status)
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::setData(const QMap<QString, QString> &data)
+ApiInvokeResponse& ApiInvokeResponse::setData(const QMap<QString, QVariant> &data)
 {
    m_data = data;
    return *this;
@@ -204,7 +204,7 @@ bool ApiInvokeResponse::getStatus()const
    return m_status;
 }
 
-const QMap<QString, QString>& ApiInvokeResponse::getData()const
+const QMap<QString, QVariant>& ApiInvokeResponse::getData()const
 {
    return m_data;
 }
