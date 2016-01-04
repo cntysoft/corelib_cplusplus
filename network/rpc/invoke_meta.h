@@ -71,7 +71,7 @@ public:
 protected:
    QString m_signature;
    bool m_status = true;
-   QMap<QString, QString> m_data;
+   QMap<QString, QVariant> m_data;
    QPair<int, QString> m_error;
    QByteArray m_extraData;
    int m_serial = 0;

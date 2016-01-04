@@ -228,7 +228,7 @@ QDataStream &operator<<(QDataStream &outStream, const ApiInvokeResponse &respons
    outStream << status;
    if(status){
       bool hasData = false;
-      const QMap<QString, QString>& data = response.getData();
+      const QMap<QString, QVariant>& data = response.getData();
       if(!data.empty()){
          hasData = true;
       }
@@ -270,7 +270,7 @@ QDataStream &operator>>(QDataStream &inStream, ApiInvokeResponse &response)
       bool hasData;
       inStream >> hasData;
       if(hasData){
-         QMap<QString, QString> data;
+         QMap<QString, QVariant> data;
          inStream >> data;
          response.setData(data);
       }
