@@ -13,8 +13,6 @@ AbstractCommand::AbstractCommand(AbstractCommandRunner& runner, const CommandMet
 
 void AbstractCommand::exit(int exitCode) const
 {
-//   Application* app = get_application_ref();
-//   app->exit(exitCode);
    QCoreApplication::instance()->exit(exitCode);
 }
 

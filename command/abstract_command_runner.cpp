@@ -10,10 +10,8 @@
 #include "command/route_item.h"
 #include "command/route_match_result.h"
 
-namespace sn 
-{
-namespace corelib 
-{
+namespace sn{
+namespace corelib{
 
 AbstractCommandRunner::AbstractCommandRunner(Application &app)
    : m_app(app)
