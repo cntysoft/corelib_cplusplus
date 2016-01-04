@@ -48,7 +48,7 @@ public:
 protected:
    void writeRequestToSocket(const ApiInvokeRequest &request);
    void unboxResponse(const QByteArray &boxedRequest, ApiInvokeResponse &response);
-   void processRequest(const ApiInvokeResponse &response);
+   void processResponse(const ApiInvokeResponse &response);
    void resetStatus();
 signals:
    void beginListenTcpSocketSignal();

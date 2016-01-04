@@ -90,7 +90,7 @@ bool ApiInvoker::request(ApiInvokeRequest &request, RequestCallbackType callback
 
 void ApiInvoker::responseDataReceivedHandler()
 {
-   //QMutexLocker locker(&m_receiveBufferMutex);
+   QMutexLocker locker(&m_receiveBufferMutex);
    QBuffer buffer(&m_receiveBuffer);
    buffer.open(QIODevice::ReadOnly);
    char byte;
@@ -103,7 +103,7 @@ void ApiInvoker::responseDataReceivedHandler()
             QDataStream stream(m_packageUnitBuffer);
             ApiInvokeResponse response;
             stream >> response;
-            processRequest(response);
+            processResponse(response);
             emit responseArrived(response);
             m_packageUnitBuffer.clear();
             buffer.read(&forward, 1);
@@ -115,7 +115,7 @@ void ApiInvoker::responseDataReceivedHandler()
    m_receiveBuffer.clear();
 }
 
-void ApiInvoker::processRequest(const ApiInvokeResponse &response)
+void ApiInvoker::processResponse(const ApiInvokeResponse &response)
 {
    int slotNum = response.getSerial();
    //这里必须存在
@@ -132,7 +132,8 @@ void ApiInvoker::processRequest(const ApiInvokeResponse &response)
 
 void ApiInvoker::writeRequestToSocket(const ApiInvokeRequest &request)
 {
-   //QMutexLocker locker(&m_sendBufferMutex);
+   QMutexLocker locker(&m_sendBufferMutex);
+   //qDebug() << "fill send buffer";
    //这里需要锁保护吗？
    QBuffer buffer(&m_sendBuffer);
    buffer.open(QIODevice::ReadWrite|QIODevice::Truncate);
@@ -141,7 +142,7 @@ void ApiInvoker::writeRequestToSocket(const ApiInvokeRequest &request)
    out << request;
    buffer.write("\r\n");
    buffer.close();
-   //locker.unlock();
+   locker.unlock();
    emit requestSendBufferReady();
 }
 

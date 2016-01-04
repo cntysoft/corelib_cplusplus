@@ -29,11 +29,12 @@ void TcpSocketDataDispatchWorker::beginListenSocket()
 
 void TcpSocketDataDispatchWorker::requestSendBufferReadyHandler()
 {
-   //QMutexLocker locker(&m_apiInvoker->m_sendBufferMutex);
+   QMutexLocker locker(&m_apiInvoker->m_sendBufferMutex);
+//   qDebug() << "clear send buffer";
    m_socket->write(m_apiInvoker->m_sendBuffer);
    m_socket->flush();
    m_apiInvoker->m_sendBuffer.clear();
-   //locker.unlock();
+   locker.unlock();
 }
 
 
@@ -45,12 +46,12 @@ void TcpSocketDataDispatchWorker::connectErrorHandler(QAbstractSocket::SocketErr
 void TcpSocketDataDispatchWorker::responseDataProcessHandler()
 {
    //监听线程只负责投递数据， 不负责解析数据
-   //QMutexLocker locker(&m_apiInvoker->m_receiveBufferMutex);
+   QMutexLocker locker(&m_apiInvoker->m_receiveBufferMutex);
    QBuffer buffer(&m_apiInvoker->m_receiveBuffer);
    buffer.open(QIODevice::WriteOnly|QIODevice::Append);
    buffer.write(m_socket->readAll());
    buffer.close();
-   //locker.unlock();
+   locker.unlock();
    emit responseReceiveBufferReady();
 }
 
