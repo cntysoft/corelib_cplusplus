@@ -30,7 +30,6 @@ void TcpSocketDataDispatchWorker::beginListenSocket()
 void TcpSocketDataDispatchWorker::requestSendBufferReadyHandler()
 {
    QMutexLocker locker(&m_apiInvoker->m_sendBufferMutex);
-//   qDebug() << "clear send buffer";
    m_socket->write(m_apiInvoker->m_sendBuffer);
    m_socket->flush();
    m_apiInvoker->m_sendBuffer.clear();

@@ -36,7 +36,7 @@ void ApiInvoker::connectToServer()
       QObject::connect(worker, SIGNAL(connected()), this, SIGNAL(connectedToServerSignal()), Qt::DirectConnection);
       QObject::connect(worker, SIGNAL(disconnected()), this, SLOT(serverOfflineHandler()), Qt::DirectConnection);
       QObject::connect(worker, SIGNAL(connectError(QAbstractSocket::SocketError, const QString&)), this, SLOT(connectErrorHandler(QAbstractSocket::SocketError, const QString&)), Qt::DirectConnection);
-      QObject::connect(worker, &TcpSocketDataDispatchWorker::responseReceiveBufferReady, this, &ApiInvoker::responseDataReceivedHandler, Qt::DirectConnection);
+      QObject::connect(worker, &TcpSocketDataDispatchWorker::responseReceiveBufferReady, this, &ApiInvoker::responseDataReceivedHandler, Qt::QueuedConnection);
       worker->moveToThread(&m_dataDispatchThread);
       m_dataDispatchThread.start();
       emit beginListenTcpSocketSignal();
@@ -97,20 +97,28 @@ void ApiInvoker::responseDataReceivedHandler()
    while(!buffer.atEnd()){
       buffer.read(&byte, 1);
       if('\r' == byte){
-         char forward;
-         if(buffer.peek(&forward, 1) && '\n' == forward){
-            //解压当前的包
-            QDataStream stream(m_packageUnitBuffer);
-            ApiInvokeResponse response;
-            stream >> response;
-            processResponse(response);
-            emit responseArrived(response);
-            m_packageUnitBuffer.clear();
-            buffer.read(&forward, 1);
-            continue;
+         if(buffer.bytesAvailable() >= 2){
+            char forward1;
+            char forward2;
+            buffer.read(&forward1, 1);
+            buffer.read(&forward2, 1);
+            if('\n' == forward1 && '\t' == forward2){
+               //解压当前的包
+               QDataStream stream(m_packageUnitBuffer);
+               ApiInvokeResponse response;
+               stream >> response;
+               processResponse(response);
+               emit responseArrived(response);
+               m_packageUnitBuffer.clear();
+            }else{
+               m_packageUnitBuffer.append(byte);
+               m_packageUnitBuffer.append(forward1);
+               m_packageUnitBuffer.append(forward2);
+            }
          }
+      }else{
+         m_packageUnitBuffer.append(byte);
       }
-      m_packageUnitBuffer.append(byte);
    }
    m_receiveBuffer.clear();
 }
@@ -133,14 +141,13 @@ void ApiInvoker::processResponse(const ApiInvokeResponse &response)
 void ApiInvoker::writeRequestToSocket(const ApiInvokeRequest &request)
 {
    QMutexLocker locker(&m_sendBufferMutex);
-   //qDebug() << "fill send buffer";
    //这里需要锁保护吗？
    QBuffer buffer(&m_sendBuffer);
    buffer.open(QIODevice::ReadWrite|QIODevice::Truncate);
    QDataStream out(&buffer);
    out.setVersion(QDataStream::Qt_5_5);
    out << request;
-   buffer.write("\r\n");
+   buffer.write("\r\n\t");
    buffer.close();
    locker.unlock();
    emit requestSendBufferReady();
