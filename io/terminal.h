@@ -42,6 +42,7 @@ public:
    static void showCursor();
    static void hideCursor();
    static void resetColor();
+   static QPair<int, int> getCurrentCursorPos();
    static void forwardCursor(int step = 1);
    static void backwardCursor(int step = 1);
    static QPair<int, int> getWindowSize();

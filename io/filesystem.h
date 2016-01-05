@@ -25,23 +25,24 @@ public:
       ChildFirst
    };
 public:
-   static bool deleteDirRecusive(const QString& dir);
-   static bool deleteDir(const QString& dir);
-   static QFileInfoList ls(const QString& path, int level = 1);
+   static bool deleteDirRecusive(const QString &dir);
+   static bool deleteDir(const QString &dir);
+   static QFileInfoList ls(const QString &path, int level = 1);
    template <typename FnType>
-   static bool traverseFs(const QString& path, int level = 0, FnType fn = nullptr, FsTraverFlag flag = FsTraverFlag::SelfFirst);
-   static bool copyFile(const QString& source, const QString& destination, bool overwrite = false);
-   static QByteArray fileGetContents(const QString& filename);
-   static int filePutContents(const QString& filename, const QString& content);
-   static bool isReadable(const QString& filename);
-   static bool isWritable(const QString& filename);
-   static bool fileExist(const QString& filePath);
-   static bool dirExist(const QString& dirPath);
-   static bool createPath(const QString& dirPath);
-   static bool createDir(const QString& dirName);
+   static bool traverseFs(const QString &path, int level = 0, FnType fn = nullptr, FsTraverFlag flag = FsTraverFlag::SelfFirst);
+   static bool copyFile(const QString &source, const QString &destination, bool overwrite = false);
+   static QByteArray fileGetContents(const QString &filename);
+   static int filePutContents(const QString &filename, const QString &content);
+   static bool isReadable(const QString &filename);
+   static bool isWritable(const QString &filename);
+   static bool fileExist(const QString &filePath);
+   static bool deleteFile(const QString &filePath);
+   static bool dirExist(const QString &dirPath);
+   static bool createPath(const QString &dirPath);
+   static bool createDir(const QString &dirName);
 private:
    template <typename FnType>
-   static void doTraverseFs(const QString& path, bool limitDepth = true, int level = 0, int depth = 0, FnType fn = nullptr, FsTraverFlag flag = FsTraverFlag::SelfFirst);
+   static void doTraverseFs(const QString &path, bool limitDepth = true, int level = 0, int depth = 0, FnType fn = nullptr, FsTraverFlag flag = FsTraverFlag::SelfFirst);
 };
 
 template <typename FnType>

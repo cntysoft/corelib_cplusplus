@@ -103,7 +103,7 @@ void ApiProvider::writeResponseToSocket(int socketIndex, const ApiInvokeResponse
    QDataStream out(socket);
    out.setVersion(QDataStream::Qt_5_5);
    out << response;
-   socket->write("\r\n");
+   socket->write("\r\n\t");
    socket->flush();
 }
 

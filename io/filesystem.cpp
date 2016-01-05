@@ -98,6 +98,11 @@ bool Filesystem::isReadable(const QString &filename)
    return QFileInfo(filename).isReadable();
 }
 
+bool Filesystem::deleteFile(const QString &filePath)
+{
+   return QFile::remove(filePath);
+}
+
 bool Filesystem::isWritable(const QString &filename)
 {
    return QFileInfo(filename).isWritable();

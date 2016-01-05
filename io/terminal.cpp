@@ -1,6 +1,8 @@
 #include <QProcess>
 #include <QStringList>
 #include <QByteArray>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 #include <sys/ioctl.h>
 #include <iostream>
@@ -81,6 +83,23 @@ void Terminal::showCursor()
 void Terminal::hideCursor()
 {
    std::cout << "\x1b[?25l" << std::flush;;
+}
+
+QPair<int, int> Terminal::getCurrentCursorPos()
+{
+   char buf[32] = "\033[6n";
+   write(STDOUT_FILENO, buf, sizeof(buf));
+   memset(buf, 0, sizeof(buf));
+   read (STDIN_FILENO ,buf ,sizeof(buf));
+   QString ret(buf);
+   QRegularExpression regex("\\[(?P<y>\\d+);(?P<x>\\d+)");
+   QRegularExpressionMatch match = regex.match(ret);
+   QPair<int, int> pos;
+   if(match.hasMatch()){
+      pos.first = match.captured("x").toInt();
+      pos.second = match.captured("y").toInt();
+   }
+   return pos;
 }
 
 void Terminal::forwardCursor(int step)
