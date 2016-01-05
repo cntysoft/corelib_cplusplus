@@ -170,7 +170,6 @@ QString& ApiInvoker::getErrorString()
 
 ApiInvoker::~ApiInvoker()
 {
-   qDebug() << "destroy";
 }
 
 QAtomicInt ApiInvoker::sm_serial = 0;
