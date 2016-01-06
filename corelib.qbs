@@ -4,7 +4,6 @@ Product
    type: "dynamiclibrary"
    name : "corelib"
    targetName : "sncore"
-   version : "0.1.1"
    Depends { 
       name: "Qt"; 
       submodules: ["core","network"]
