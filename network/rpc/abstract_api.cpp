@@ -9,7 +9,7 @@ AbstractApi::AbstractApi(ApiProvider &provider)
    : m_apiProvider(provider)
 {}
 
-void AbstractApi::notifySocketDisconnect(int)
+void AbstractApi::notifySocketDisconnect(int socketDescriptor)
 {
 }
 
