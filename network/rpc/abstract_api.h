@@ -15,6 +15,7 @@ class SN_CORELIB_EXPORT AbstractApi : public QObject
 friend class ApiProvider;
 public:
    AbstractApi(ApiProvider &provider);
+   virtual ~AbstractApi();
 protected:
    virtual void notifySocketDisconnect(int socketDescriptor);
 protected:

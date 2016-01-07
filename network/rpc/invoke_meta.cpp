@@ -172,6 +172,18 @@ ApiInvokeResponse& ApiInvokeResponse::setData(const QMap<QString, QVariant> &dat
    return *this;
 }
 
+ApiInvokeResponse& ApiInvokeResponse::addDataItem(const QString &key, const QVariant &value)
+{
+   m_data.insert(key, value);
+   return *this;
+}
+
+ApiInvokeResponse& ApiInvokeResponse::removeDataItem(const QString &key)
+{
+   m_data.remove(key);
+   return *this;
+}
+
 ApiInvokeResponse& ApiInvokeResponse::setExtraData(const QByteArray &extraData)
 {
    m_extraData = extraData;
@@ -207,6 +219,14 @@ bool ApiInvokeResponse::getStatus()const
 const QMap<QString, QVariant>& ApiInvokeResponse::getData()const
 {
    return m_data;
+}
+
+const QVariant ApiInvokeResponse::getDataItem(const QString &key)const
+{
+   if(m_data.contains(key)){
+      return m_data.value(key);
+   }
+   return QVariant();
 }
 
 const QByteArray& ApiInvokeResponse::getExtraData()const

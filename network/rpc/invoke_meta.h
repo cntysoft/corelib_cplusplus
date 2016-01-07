@@ -57,13 +57,15 @@ public:
    ApiInvokeResponse& setStatus(bool status);
    ApiInvokeResponse& setIsFinal(bool flag);
    ApiInvokeResponse& setData(const QMap<QString, QVariant> &data);
+   ApiInvokeResponse& addDataItem(const QString &key, const QVariant &value);
+   ApiInvokeResponse& removeDataItem(const QString &key);
    ApiInvokeResponse& setExtraData(const QByteArray &extraData);
    ApiInvokeResponse& setError(const QPair<int, QString>& error);
-   
    const QString& getSignature()const;
    int getSerial()const;
    bool getStatus()const;
    const QMap<QString, QVariant>& getData()const;
+   const QVariant getDataItem(const QString &key)const;
    bool isFinal()const;
    const QByteArray& getExtraData()const;
    const QPair<int, QString>& getError()const;

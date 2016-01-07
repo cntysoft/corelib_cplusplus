@@ -13,6 +13,11 @@ void AbstractApi::notifySocketDisconnect(int)
 {
 }
 
+AbstractApi::~AbstractApi()
+{
+   
+}
+
 }//network
 }//corelib
 }//sn
