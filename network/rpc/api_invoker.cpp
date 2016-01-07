@@ -169,6 +169,12 @@ QString& ApiInvoker::getErrorString()
 
 ApiInvoker::~ApiInvoker()
 {
+   if(m_dataDispatchThread.isRunning()){
+      m_dataDispatchThread.exit(0);
+      while(m_dataDispatchThread.isRunning()){
+         
+      }
+   }
 }
 
 QAtomicInt ApiInvoker::sm_serial = 0;
