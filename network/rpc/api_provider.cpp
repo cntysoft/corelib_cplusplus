@@ -1,6 +1,8 @@
 #include <QDataStream>
 #include <QMetaObject>
 #include <QMetaMethod>
+#include <QList>
+#include <QDebug>
 
 #include "api_provider.h"
 #include "abstract_api.h"
@@ -45,7 +47,9 @@ void ApiProvider::socketDisconnectHandler()
       it.value()->notifySocketDisconnect(socketNum);
       it++;
    }
-   m_socketPool.remove(m_socketPool.key(sockect));
+   if(!m_batchDisconnectMode){
+      m_socketPool.remove(m_socketPool.key(sockect));
+   }
 }
 
 ApiProvider& ApiProvider::addApiToPool(const QString &key, ApiInitializerType initializerFn)
@@ -100,11 +104,38 @@ void ApiProvider::writeResponseToSocket(int socketIndex, const ApiInvokeResponse
       return;
    }
    QTcpSocket *socket = m_socketPool[socketIndex];
+   if(!socket->isOpen()){
+      return;
+   }
    QDataStream out(socket);
    out.setVersion(QDataStream::Qt_5_5);
    out << response;
    socket->write("\r\n\t");
    socket->flush();
+}
+
+void ApiProvider::disconnectUnderlineSockets()
+{
+   if(m_socketPool.empty()){
+      return;
+   }
+   m_batchDisconnectMode = true;
+   QList<int> keys = m_socketPool.keys();
+   QList<int>::const_iterator it = keys.begin();
+   while(it != keys.cend()){
+      QTcpSocket* socket = m_socketPool.take(*it);
+      socket->close();
+      m_socketPool.remove(*it);
+      it++;
+   }
+   m_batchDisconnectMode = false;
+}
+
+ApiProvider::~ApiProvider()
+{
+   m_batchDisconnectMode = true;
+   disconnectUnderlineSockets();
+   m_batchDisconnectMode = false;
 }
 
 }//network

@@ -28,8 +28,10 @@ public:
    void callApi(const ApiInvokeRequest &request);
    ApiProvider& addApiToPool(const QString &key, ApiInitializerType initializerFn);
    ApiProvider& setUnderlineSocket(int index, QTcpSocket *socket);
+   void disconnectUnderlineSockets();
 public:
    static ApiProvider& instance();
+    ~ApiProvider();
 protected:
    ApiProvider();
    void writeResponseToSocket(int socketIndex, const ApiInvokeResponse &response);
@@ -42,6 +44,7 @@ protected:
    ApiPoolType m_apiPool;
    QMap<int, QTcpSocket*> m_socketPool;
    QTcpSocket *m_socket;
+   bool m_batchDisconnectMode = false;
 };
 
 

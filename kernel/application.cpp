@@ -1,5 +1,6 @@
 #include <QDir>
 #include <QFile>
+#include <QByteArray>
 
 #include <csignal>
 #include <cerrno>
@@ -94,8 +95,14 @@ bool Application::createPidFile()
 
 void Application::deletePidFile()
 {
-   QFile(getPidFilename()).remove();
-   
+   QFile file(getPidFilename());
+   if(file.exists()){
+      file.open(QIODevice::ReadOnly);
+      QByteArray pid = file.readAll();
+      if(pid.toInt() == QCoreApplication::applicationPid()){
+         file.remove();
+      }
+   }
 }
 
 void Application::ensureImportantDir()

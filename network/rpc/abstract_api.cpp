@@ -6,11 +6,11 @@ namespace corelib{
 namespace network{
 
 AbstractApi::AbstractApi(ApiProvider &provider)
+   : m_apiProvider(provider)
 {}
 
-void AbstractApi::notifySocketDisconnect(int socketDescriptor)
+void AbstractApi::notifySocketDisconnect(int)
 {
-   qDebug() << "asdas";
 }
 
 }//network

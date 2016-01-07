@@ -1,6 +1,5 @@
 #include <QDataStream>
 #include <QObject>
-#include <QDebug>
 #include <QSharedPointer>
 #include <QMutexLocker>
 
