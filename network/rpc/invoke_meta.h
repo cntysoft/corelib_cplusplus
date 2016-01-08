@@ -58,7 +58,7 @@ public:
    ApiInvokeResponse& setStatus(bool status);
    ApiInvokeResponse& setIsFinal(bool flag);
    ApiInvokeResponse& setData(const QMap<QString, QVariant> &data);
-   ApiInvokeResponse& addDataItem(const QString &key, const QVariant &value);
+   ApiInvokeResponse& setDataItem(const QString &key, const QVariant &value);
    ApiInvokeResponse& removeDataItem(const QString &key);
    ApiInvokeResponse& setExtraData(const QByteArray &extraData);
    ApiInvokeResponse& setError(const QPair<int, QString>& error);

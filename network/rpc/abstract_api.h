@@ -17,6 +17,8 @@ public:
    AbstractApi(ApiProvider &provider);
    virtual ~AbstractApi();
 protected:
+   void writeInterResponse(int socketNum, ApiInvokeResponse &response);
+protected:
    virtual void notifySocketDisconnect(int socketDescriptor);
 protected:
    ApiProvider& m_apiProvider;

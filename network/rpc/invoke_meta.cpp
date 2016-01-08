@@ -178,7 +178,7 @@ ApiInvokeResponse& ApiInvokeResponse::setData(const QMap<QString, QVariant> &dat
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::addDataItem(const QString &key, const QVariant &value)
+ApiInvokeResponse& ApiInvokeResponse::setDataItem(const QString &key, const QVariant &value)
 {
    m_data.insert(key, value);
    return *this;

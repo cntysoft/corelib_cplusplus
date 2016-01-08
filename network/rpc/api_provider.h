@@ -20,6 +20,7 @@ class SN_CORELIB_EXPORT ApiProvider : public QObject
 {
    Q_DISABLE_COPY(ApiProvider)
    Q_OBJECT
+   friend class AbstractApi;
 public:
    using ApiInitializerType = AbstractApi* (*)(ApiProvider&);
    using ApiInitializerPoolType = QMap<QString, ApiInitializerType>;

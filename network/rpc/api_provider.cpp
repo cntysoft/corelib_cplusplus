@@ -94,6 +94,7 @@ void ApiProvider::callApi(const ApiInvokeRequest &request)
       response.setError({API_INVOKE_METHOD_ERROR, "there is no such member or the parameters did not match"});
       response.setSerial(request.getSerial());
    }
+   response.setIsFinal(true);
    writeResponseToSocket(request.getSocketNum(), response);
 }
 
