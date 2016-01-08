@@ -45,6 +45,12 @@ ApiInvokeRequest& ApiInvokeRequest::setArgs(const QList<QVariant> &args)
    return *this;
 }
 
+ApiInvokeRequest& ApiInvokeRequest::appendArg(const QVariant &arg)
+{
+   m_args.append(arg);
+   return *this;
+}
+
 ApiInvokeRequest& ApiInvokeRequest::setExtraData(const QByteArray &extraData)
 {
    m_extraData = extraData;

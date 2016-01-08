@@ -21,11 +21,12 @@ class SN_CORELIB_EXPORT ApiInvokeRequest
 {
 public:
    ApiInvokeRequest();
-   ApiInvokeRequest(const QString& name, const QString& method, const QList<QVariant>& args = QList<QVariant>());
-   ApiInvokeRequest& setName(const QString& name);
+   ApiInvokeRequest(const QString &name, const QString &method, const QList<QVariant> &args = QList<QVariant>());
+   ApiInvokeRequest& setName(const QString &name);
    ApiInvokeRequest& setSerial(int serial);
-   ApiInvokeRequest& setMethod(const QString& method);
-   ApiInvokeRequest& setArgs(const QList<QVariant>& args);
+   ApiInvokeRequest& setMethod(const QString &method);
+   ApiInvokeRequest& setArgs(const QList<QVariant> &args);
+   ApiInvokeRequest& appendArg(const QVariant &arg);
    ApiInvokeRequest& setExtraData(const QByteArray& extraData);
    ApiInvokeRequest& setSocketNum(int num);
    
