@@ -168,7 +168,7 @@ void Application::timerEvent(QTimerEvent *event)
 {
    if (event->timerId() == m_timer.timerId()) {
       if (getCatchedSignalNumber() >= 0) {
-         Terminal::writeText(QString("system trapped signal  number: %1").arg(getCatchedSignalNumber()).toLocal8Bit());
+         Terminal::writeText(QString("system trapped signal  number: %1\n").arg(getCatchedSignalNumber()).toLocal8Bit());
          exit(getCatchedSignalNumber());
       }
    } else {
