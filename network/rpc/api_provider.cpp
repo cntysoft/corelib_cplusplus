@@ -41,6 +41,9 @@ ApiProvider& ApiProvider::setUnderlineSocket(int index, QTcpSocket* socket)
 void ApiProvider::socketDisconnectHandler()
 {
    QTcpSocket *sockect = qobject_cast<QTcpSocket*>(sender());
+   if(nullptr == sockect){
+      return;
+   }
    int socketNum = (int)sockect->socketDescriptor();
    QMap<QString, AbstractApi*>::const_iterator it = m_apiPool.cbegin();
    while(it != m_apiPool.cend()){
@@ -123,9 +126,14 @@ void ApiProvider::disconnectUnderlineSockets()
    m_batchDisconnectMode = true;
    QList<int> keys = m_socketPool.keys();
    QList<int>::const_iterator it = keys.begin();
-   while(it != keys.cend()){
+   while(it != keys.end()){
       QTcpSocket* socket = m_socketPool.take(*it);
-      socket->close();
+      if(nullptr == socket){
+         continue;
+      }
+      if(socket->isOpen()){
+         socket->close();
+      }
       m_socketPool.remove(*it);
       it++;
    }
