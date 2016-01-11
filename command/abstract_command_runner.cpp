@@ -67,7 +67,9 @@ void AbstractCommandRunner::addCmdRoute(const QString& name, const QString& rout
 {
    Q_ASSERT_X(defaultParams.contains("category") && defaultParams.contains("name"), 
               "AbstractCommandRunner::addCmdRoute()", "must contain key category and key name");
-   m_router.addRoute(name, RouteItem(route, defaultParams), priority);
+   if(!m_router.hasRoute(name)){
+      m_router.addRoute(name, RouteItem(route, defaultParams), priority);
+   }
 }
 
 void AbstractCommandRunner::run()
