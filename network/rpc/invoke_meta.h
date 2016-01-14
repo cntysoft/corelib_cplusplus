@@ -6,6 +6,7 @@
 #include <QList>
 #include <QVariant>
 #include <QPair>
+#include <QMap>
 
 #include "global/global.h"
 
@@ -25,24 +26,28 @@ public:
    ServiceInvokeRequest& setName(const QString &name);
    ServiceInvokeRequest& setSerial(int serial);
    ServiceInvokeRequest& setMethod(const QString &method);
-   ServiceInvokeRequest& setArgs(const QList<QVariant> &args);
-   ServiceInvokeRequest& appendArg(const QVariant &arg);
+   ServiceInvokeRequest& setArgs(const QMap<QString, QVariant> &args);
+   ServiceInvokeRequest& setArg(const QString &name, const QVariant &value);
    ServiceInvokeRequest& setExtraData(const QByteArray& extraData);
    ServiceInvokeRequest& setSocketNum(int num);
+   ServiceInvokeRequest& setIsWebSocket(bool flag);
    
    const QString& getName() const;
    const QString& getMethod()const;
    int getSerial()const;
    int getSocketNum()const;
    const QList<QVariant>& getArgs()const;
+   const QVariant getArg(const QString &name);
    const QByteArray& getExtraData()const;
+   bool isWebSocket();
 protected:
    QString m_name;
    QString m_method;
-   QList<QVariant> m_args;
+   QMap<QString, QVariant> m_args;
    QByteArray m_extraData;
    int m_serial;
    int m_socketNum;
+   bool m_isWebsocket = false;
 };
 
 SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ServiceInvokeRequest &request);

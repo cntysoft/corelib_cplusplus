@@ -5,7 +5,6 @@
 #include "kernel/application.h"
 
 #include <QTcpServer>
-#include <QNetworkReply>
 
 namespace sn{
 namespace corelib{

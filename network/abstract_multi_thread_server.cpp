@@ -1,5 +1,4 @@
 #include "abstract_multi_thread_server.h"
-#include <QNetworkAccessManager>
 
 namespace sn{
 namespace corelib{

@@ -21,6 +21,12 @@ ServiceInvokeRequest& ServiceInvokeRequest::setName(const QString &name)
    return *this;
 }
 
+ServiceInvokeRequest& ServiceInvokeRequest::setIsWebSocket(bool flag)
+{
+   m_isWebsocket = flag;
+   return *this;
+}
+
 ServiceInvokeRequest& ServiceInvokeRequest::setSerial(int serial)
 {
    m_serial = serial;
@@ -45,6 +51,12 @@ ServiceInvokeRequest& ServiceInvokeRequest::setArgs(const QList<QVariant> &args)
    return *this;
 }
 
+ServiceInvokeRequest& ServiceInvokeRequest::setArg(const QString &name, const QVariant &value)
+{
+   m_args.insert(name, value);
+   return *this;
+}
+
 ServiceInvokeRequest& ServiceInvokeRequest::appendArg(const QVariant &arg)
 {
    m_args.append(arg);
@@ -60,6 +72,11 @@ ServiceInvokeRequest& ServiceInvokeRequest::setExtraData(const QByteArray &extra
 const QString& ServiceInvokeRequest::getName()const
 {
    return m_name;
+}
+
+bool ServiceInvokeRequest::isWebSocket()const
+{
+   return m_isWebsocket;
 }
 
 int ServiceInvokeRequest::getSerial()const
@@ -82,6 +99,14 @@ const QList<QVariant>& ServiceInvokeRequest::getArgs()const
    return m_args;
 }
 
+const QVariant ServiceInvokeRequest::getArg(const QString &name)
+{
+   if(m_args.contains(name)){
+      return m_args.value(name);
+   }
+   return QVariant();
+}
+
 const QByteArray& ServiceInvokeRequest::getExtraData()const
 {
    return m_extraData;
@@ -90,6 +115,7 @@ const QByteArray& ServiceInvokeRequest::getExtraData()const
 QDataStream &operator<<(QDataStream &outStream, const ServiceInvokeRequest &request)
 {
    outStream << request.getName();
+   outStream << request.isWebSocket();
    outStream << request.getMethod();
    outStream << (quint32)request.getSerial();
    bool hasArgs = false;
@@ -117,10 +143,14 @@ QDataStream &operator>>(QDataStream &inStream, ServiceInvokeRequest &request)
 {
    QString name;
    QString method;
+   bool isWebSocket;
    quint32 serial;
-   inStream >> name >> method;
+   inStream >> name;
+   inStream >> isWebSocket;
+   inStream >> method;
    inStream >> serial;
    request.setName(name);
+   request.setIsWebSocket(isWebSocket);
    request.setMethod(method);
    request.setSerial(serial);
    bool hasArgs;
