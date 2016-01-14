@@ -6,88 +6,88 @@ namespace sn{
 namespace corelib{
 namespace network{
 
-ApiInvokeRequest::ApiInvokeRequest()
+ServiceInvokeRequest::ServiceInvokeRequest()
 {}
 
-ApiInvokeRequest::ApiInvokeRequest(const QString &name, const QString &method, const QList<QVariant> &args)
+ServiceInvokeRequest::ServiceInvokeRequest(const QString &name, const QString &method, const QList<QVariant> &args)
    : m_name(name),
      m_method(method),
      m_args(args)
 {}
 
-ApiInvokeRequest& ApiInvokeRequest::setName(const QString &name)
+ServiceInvokeRequest& ServiceInvokeRequest::setName(const QString &name)
 {
    m_name = name;
    return *this;
 }
 
-ApiInvokeRequest& ApiInvokeRequest::setSerial(int serial)
+ServiceInvokeRequest& ServiceInvokeRequest::setSerial(int serial)
 {
    m_serial = serial;
    return *this;
 }
 
-ApiInvokeRequest& ApiInvokeRequest::setSocketNum(int num)
+ServiceInvokeRequest& ServiceInvokeRequest::setSocketNum(int num)
 {
    m_socketNum = num;
    return *this;
 }
 
-ApiInvokeRequest& ApiInvokeRequest::setMethod(const QString &method)
+ServiceInvokeRequest& ServiceInvokeRequest::setMethod(const QString &method)
 {
    m_method = method;
    return *this;
 }
 
-ApiInvokeRequest& ApiInvokeRequest::setArgs(const QList<QVariant> &args)
+ServiceInvokeRequest& ServiceInvokeRequest::setArgs(const QList<QVariant> &args)
 {
    m_args = args;
    return *this;
 }
 
-ApiInvokeRequest& ApiInvokeRequest::appendArg(const QVariant &arg)
+ServiceInvokeRequest& ServiceInvokeRequest::appendArg(const QVariant &arg)
 {
    m_args.append(arg);
    return *this;
 }
 
-ApiInvokeRequest& ApiInvokeRequest::setExtraData(const QByteArray &extraData)
+ServiceInvokeRequest& ServiceInvokeRequest::setExtraData(const QByteArray &extraData)
 {
    m_extraData = extraData;
    return *this;
 }
 
-const QString& ApiInvokeRequest::getName()const
+const QString& ServiceInvokeRequest::getName()const
 {
    return m_name;
 }
 
-int ApiInvokeRequest::getSerial()const
+int ServiceInvokeRequest::getSerial()const
 {
    return m_serial;
 }
 
-int ApiInvokeRequest::getSocketNum()const
+int ServiceInvokeRequest::getSocketNum()const
 {
    return m_socketNum;
 }
 
-const QString& ApiInvokeRequest::getMethod()const
+const QString& ServiceInvokeRequest::getMethod()const
 {
    return m_method;
 }
 
-const QList<QVariant>& ApiInvokeRequest::getArgs()const
+const QList<QVariant>& ServiceInvokeRequest::getArgs()const
 {
    return m_args;
 }
 
-const QByteArray& ApiInvokeRequest::getExtraData()const
+const QByteArray& ServiceInvokeRequest::getExtraData()const
 {
    return m_extraData;
 }
 
-QDataStream &operator<<(QDataStream &outStream, const ApiInvokeRequest &request)
+QDataStream &operator<<(QDataStream &outStream, const ServiceInvokeRequest &request)
 {
    outStream << request.getName();
    outStream << request.getMethod();
@@ -113,7 +113,7 @@ QDataStream &operator<<(QDataStream &outStream, const ApiInvokeRequest &request)
    return outStream;
 }
 
-QDataStream &operator>>(QDataStream &inStream, ApiInvokeRequest &request)
+QDataStream &operator>>(QDataStream &inStream, ServiceInvokeRequest &request)
 {
    QString name;
    QString method;
@@ -140,94 +140,94 @@ QDataStream &operator>>(QDataStream &inStream, ApiInvokeRequest &request)
    return inStream;
 }
 
-ApiInvokeResponse::ApiInvokeResponse()
+ServiceInvokeResponse::ServiceInvokeResponse()
 {}
 
-ApiInvokeResponse::ApiInvokeResponse(const QString &signature, bool status)
+ServiceInvokeResponse::ServiceInvokeResponse(const QString &signature, bool status)
    : m_signature(signature),
      m_status(status)
 {}
 
-ApiInvokeResponse& ApiInvokeResponse::setSignature(const QString &signature)
+ServiceInvokeResponse& ServiceInvokeResponse::setSignature(const QString &signature)
 {
    m_signature = signature;
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::setIsFinal(bool flag)
+ServiceInvokeResponse& ServiceInvokeResponse::setIsFinal(bool flag)
 {
    m_isFinal = flag;
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::setSerial(int serial)
+ServiceInvokeResponse& ServiceInvokeResponse::setSerial(int serial)
 {
    m_serial = serial;
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::setStatus(bool status)
+ServiceInvokeResponse& ServiceInvokeResponse::setStatus(bool status)
 {
    m_status = status;
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::setData(const QMap<QString, QVariant> &data)
+ServiceInvokeResponse& ServiceInvokeResponse::setData(const QMap<QString, QVariant> &data)
 {
    m_data = data;
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::setDataItem(const QString &key, const QVariant &value)
+ServiceInvokeResponse& ServiceInvokeResponse::setDataItem(const QString &key, const QVariant &value)
 {
    m_data.insert(key, value);
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::removeDataItem(const QString &key)
+ServiceInvokeResponse& ServiceInvokeResponse::removeDataItem(const QString &key)
 {
    m_data.remove(key);
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::setExtraData(const QByteArray &extraData)
+ServiceInvokeResponse& ServiceInvokeResponse::setExtraData(const QByteArray &extraData)
 {
    m_extraData = extraData;
    return *this;
 }
 
-ApiInvokeResponse& ApiInvokeResponse::setError(const QPair<int, QString> &error)
+ServiceInvokeResponse& ServiceInvokeResponse::setError(const QPair<int, QString> &error)
 {
    m_error = error;
    return *this;
 }
 
-const QString& ApiInvokeResponse::getSignature()const
+const QString& ServiceInvokeResponse::getSignature()const
 {
    return m_signature;
 }
 
-int ApiInvokeResponse::getSerial() const
+int ServiceInvokeResponse::getSerial() const
 {
    return m_serial;
 }
 
-bool ApiInvokeResponse::isFinal()const
+bool ServiceInvokeResponse::isFinal()const
 {
    return m_isFinal;
 }
 
-bool ApiInvokeResponse::getStatus()const
+bool ServiceInvokeResponse::getStatus()const
 {
    return m_status;
 }
 
-const QMap<QString, QVariant>& ApiInvokeResponse::getData()const
+const QMap<QString, QVariant>& ServiceInvokeResponse::getData()const
 {
    return m_data;
 }
 
-const QVariant ApiInvokeResponse::getDataItem(const QString &key)const
+const QVariant ServiceInvokeResponse::getDataItem(const QString &key)const
 {
    if(m_data.contains(key)){
       return m_data.value(key);
@@ -235,17 +235,17 @@ const QVariant ApiInvokeResponse::getDataItem(const QString &key)const
    return QVariant();
 }
 
-const QByteArray& ApiInvokeResponse::getExtraData()const
+const QByteArray& ServiceInvokeResponse::getExtraData()const
 {
    return m_extraData;
 }
 
-const QPair<int, QString>& ApiInvokeResponse::getError()const
+const QPair<int, QString>& ServiceInvokeResponse::getError()const
 {
    return m_error;
 }
 
-QDataStream &operator<<(QDataStream &outStream, const ApiInvokeResponse &response)
+QDataStream &operator<<(QDataStream &outStream, const ServiceInvokeResponse &response)
 {
    outStream << response.getSignature();
    outStream << (quint32)response.getSerial();
@@ -278,7 +278,7 @@ QDataStream &operator<<(QDataStream &outStream, const ApiInvokeResponse &respons
    return outStream;
 }
 
-QDataStream &operator>>(QDataStream &inStream, ApiInvokeResponse &response)
+QDataStream &operator>>(QDataStream &inStream, ServiceInvokeResponse &response)
 {
    QString signature;
    quint32 serial;

@@ -1,5 +1,5 @@
-#ifndef SN_CORELIB_NETWORK_RPC_API_INVOKER_H
-#define SN_CORELIB_NETWORK_RPC_API_INVOKER_H
+#ifndef SN_CORELIB_NETWORK_RPC_SERVICE_INVOKER_H
+#define SN_CORELIB_NETWORK_RPC_SERVICE_INVOKER_H
 
 #include <QObject>
 #include <QSharedPointer>
@@ -22,7 +22,7 @@ namespace sn{
 namespace corelib{
 namespace network{
 
-class SN_CORELIB_EXPORT ApiInvoker : public QObject
+class SN_CORELIB_EXPORT ServiceInvoker : public QObject
 {
    Q_OBJECT
    friend class TcpSocketDataDispatchWorker;
@@ -33,22 +33,22 @@ public:
       ConnectError
    };
 public:
-   using RequestCallbackType = void (*)(const ApiInvokeResponse&, void*);
+   using RequestCallbackType = void (*)(const ServiceInvokeResponse&, void*);
    using CallbackUnitType = QPair<RequestCallbackType, void*>;
 public:
-   ApiInvoker(const QString &host, quint16 port);
-   ~ApiInvoker();
-   bool request(ApiInvokeRequest& request, RequestCallbackType callback = nullptr, void* callbackArgs = nullptr);
-   ApiInvokeResponse requestSync(const ApiInvokeRequest& request);
+   ServiceInvoker(const QString &host, quint16 port);
+   ~ServiceInvoker();
+   bool request(ServiceInvokeRequest& request, RequestCallbackType callback = nullptr, void* callbackArgs = nullptr);
+   ServiceInvokeResponse requestSync(const ServiceInvokeRequest& request);
    void connectToServer();
    void disconnectFromServer();
    bool getStatus();
    ErrorType getError();
    QString& getErrorString();
 protected:
-   void writeRequestToSocket(const ApiInvokeRequest &request);
-   void unboxResponse(const QByteArray &boxedRequest, ApiInvokeResponse &response);
-   void processResponse(const ApiInvokeResponse &response);
+   void writeRequestToSocket(const ServiceInvokeRequest &request);
+   void unboxResponse(const QByteArray &boxedRequest, ServiceInvokeResponse &response);
+   void processResponse(const ServiceInvokeResponse &response);
    void resetStatus();
 signals:
    void beginListenTcpSocketSignal();
@@ -56,7 +56,7 @@ signals:
    void serverOfflineSignal();
    void requestSendBufferReady();
    void connectErrorSignal(ErrorType error, const QString &errorString);
-   void responseArrived(const ApiInvokeResponse &response);
+   void responseArrived(const ServiceInvokeResponse &response);
 public slots:
    void responseDataReceivedHandler();
    void serverOfflineHandler();
@@ -81,4 +81,4 @@ protected:
 }//corelib
 }//sn
 
-#endif // SN_CORELIB_NETWORK_RPC_API_INVOKER_H
+#endif // SN_CORELIB_NETWORK_RPC_SERVICE_INVOKER_H

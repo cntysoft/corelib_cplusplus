@@ -17,18 +17,18 @@ namespace sn{
 namespace corelib{
 namespace network{
 
-class SN_CORELIB_EXPORT ApiInvokeRequest
+class SN_CORELIB_EXPORT ServiceInvokeRequest
 {
 public:
-   ApiInvokeRequest();
-   ApiInvokeRequest(const QString &name, const QString &method, const QList<QVariant> &args = QList<QVariant>());
-   ApiInvokeRequest& setName(const QString &name);
-   ApiInvokeRequest& setSerial(int serial);
-   ApiInvokeRequest& setMethod(const QString &method);
-   ApiInvokeRequest& setArgs(const QList<QVariant> &args);
-   ApiInvokeRequest& appendArg(const QVariant &arg);
-   ApiInvokeRequest& setExtraData(const QByteArray& extraData);
-   ApiInvokeRequest& setSocketNum(int num);
+   ServiceInvokeRequest();
+   ServiceInvokeRequest(const QString &name, const QString &method, const QList<QVariant> &args = QList<QVariant>());
+   ServiceInvokeRequest& setName(const QString &name);
+   ServiceInvokeRequest& setSerial(int serial);
+   ServiceInvokeRequest& setMethod(const QString &method);
+   ServiceInvokeRequest& setArgs(const QList<QVariant> &args);
+   ServiceInvokeRequest& appendArg(const QVariant &arg);
+   ServiceInvokeRequest& setExtraData(const QByteArray& extraData);
+   ServiceInvokeRequest& setSocketNum(int num);
    
    const QString& getName() const;
    const QString& getMethod()const;
@@ -45,23 +45,23 @@ protected:
    int m_socketNum;
 };
 
-SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ApiInvokeRequest &request);
-SN_CORELIB_EXPORT QDataStream &operator>>(QDataStream &inS, ApiInvokeRequest &request);
+SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ServiceInvokeRequest &request);
+SN_CORELIB_EXPORT QDataStream &operator>>(QDataStream &inS, ServiceInvokeRequest &request);
 
-class SN_CORELIB_EXPORT ApiInvokeResponse
+class SN_CORELIB_EXPORT ServiceInvokeResponse
 {
 public:
-   ApiInvokeResponse();
-   ApiInvokeResponse(const QString &signature, bool status);
-   ApiInvokeResponse& setSignature(const QString &signature);
-   ApiInvokeResponse& setSerial(int serial);
-   ApiInvokeResponse& setStatus(bool status);
-   ApiInvokeResponse& setIsFinal(bool flag);
-   ApiInvokeResponse& setData(const QMap<QString, QVariant> &data);
-   ApiInvokeResponse& setDataItem(const QString &key, const QVariant &value);
-   ApiInvokeResponse& removeDataItem(const QString &key);
-   ApiInvokeResponse& setExtraData(const QByteArray &extraData);
-   ApiInvokeResponse& setError(const QPair<int, QString>& error);
+   ServiceInvokeResponse();
+   ServiceInvokeResponse(const QString &signature, bool status);
+   ServiceInvokeResponse& setSignature(const QString &signature);
+   ServiceInvokeResponse& setSerial(int serial);
+   ServiceInvokeResponse& setStatus(bool status);
+   ServiceInvokeResponse& setIsFinal(bool flag);
+   ServiceInvokeResponse& setData(const QMap<QString, QVariant> &data);
+   ServiceInvokeResponse& setDataItem(const QString &key, const QVariant &value);
+   ServiceInvokeResponse& removeDataItem(const QString &key);
+   ServiceInvokeResponse& setExtraData(const QByteArray &extraData);
+   ServiceInvokeResponse& setError(const QPair<int, QString>& error);
    const QString& getSignature()const;
    int getSerial()const;
    bool getStatus()const;
@@ -81,14 +81,14 @@ protected:
    int m_isFinal = true;
 };
 
-SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ApiInvokeResponse &request);
-SN_CORELIB_EXPORT QDataStream &operator>>(QDataStream &inS, ApiInvokeResponse &request);
+SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ServiceInvokeResponse &request);
+SN_CORELIB_EXPORT QDataStream &operator>>(QDataStream &inS, ServiceInvokeResponse &request);
 
 }//network
 }//corelib
 }//sn
 
-Q_DECLARE_METATYPE(sn::corelib::network::ApiInvokeRequest)
-Q_DECLARE_METATYPE(sn::corelib::network::ApiInvokeResponse)
+Q_DECLARE_METATYPE(sn::corelib::network::ServiceInvokeRequest)
+Q_DECLARE_METATYPE(sn::corelib::network::ServiceInvokeResponse)
 
 #endif // SN_CORELIB_NETWORK_RPC_INVOKE_META_H

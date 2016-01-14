@@ -8,13 +8,13 @@ namespace sn{
 namespace corelib{
 namespace network{
 
-class ApiInvoker;
+class ServiceInvoker;
 
 class TcpSocketDataDispatchWorker : public QObject
 {
    Q_OBJECT
 public:
-   TcpSocketDataDispatchWorker(const QString &host, quint16 port, ApiInvoker *apiInvoker);
+   TcpSocketDataDispatchWorker(const QString &host, quint16 port, ServiceInvoker *serviceInvoker);
    ~TcpSocketDataDispatchWorker();
 signals:
    void connected();
@@ -30,7 +30,7 @@ protected:
    QSharedPointer<QTcpSocket> m_socket;
    QString m_host;
    quint16 m_port;
-   ApiInvoker *m_apiInvoker;
+   ServiceInvoker *m_serviceInvoker;
 };
 
 }//network
