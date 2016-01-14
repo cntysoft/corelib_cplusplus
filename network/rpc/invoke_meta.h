@@ -22,7 +22,7 @@ class SN_CORELIB_EXPORT ServiceInvokeRequest
 {
 public:
    ServiceInvokeRequest();
-   ServiceInvokeRequest(const QString &name, const QString &method, const QList<QVariant> &args = QList<QVariant>());
+   ServiceInvokeRequest(const QString &name, const QString &method, const QMap<QString, QVariant> &args = QMap<QString, QVariant>());
    ServiceInvokeRequest& setName(const QString &name);
    ServiceInvokeRequest& setSerial(int serial);
    ServiceInvokeRequest& setMethod(const QString &method);
@@ -36,10 +36,10 @@ public:
    const QString& getMethod()const;
    int getSerial()const;
    int getSocketNum()const;
-   const QList<QVariant>& getArgs()const;
-   const QVariant getArg(const QString &name);
+   const QMap<QString, QVariant>& getArgs()const;
+   const QVariant getArg(const QString &name)const;
    const QByteArray& getExtraData()const;
-   bool isWebSocket();
+   bool isWebSocket()const;
 protected:
    QString m_name;
    QString m_method;

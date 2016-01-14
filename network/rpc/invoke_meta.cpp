@@ -9,10 +9,11 @@ namespace network{
 ServiceInvokeRequest::ServiceInvokeRequest()
 {}
 
-ServiceInvokeRequest::ServiceInvokeRequest(const QString &name, const QString &method, const QList<QVariant> &args)
+ServiceInvokeRequest::ServiceInvokeRequest(const QString &name, const QString &method, const QMap<QString, QVariant> &args)
    : m_name(name),
      m_method(method),
-     m_args(args)
+     m_args(args),
+     m_socketNum(-1)
 {}
 
 ServiceInvokeRequest& ServiceInvokeRequest::setName(const QString &name)
@@ -45,7 +46,7 @@ ServiceInvokeRequest& ServiceInvokeRequest::setMethod(const QString &method)
    return *this;
 }
 
-ServiceInvokeRequest& ServiceInvokeRequest::setArgs(const QList<QVariant> &args)
+ServiceInvokeRequest& ServiceInvokeRequest::setArgs(const QMap<QString, QVariant> &args)
 {
    m_args = args;
    return *this;
@@ -54,12 +55,6 @@ ServiceInvokeRequest& ServiceInvokeRequest::setArgs(const QList<QVariant> &args)
 ServiceInvokeRequest& ServiceInvokeRequest::setArg(const QString &name, const QVariant &value)
 {
    m_args.insert(name, value);
-   return *this;
-}
-
-ServiceInvokeRequest& ServiceInvokeRequest::appendArg(const QVariant &arg)
-{
-   m_args.append(arg);
    return *this;
 }
 
@@ -94,12 +89,12 @@ const QString& ServiceInvokeRequest::getMethod()const
    return m_method;
 }
 
-const QList<QVariant>& ServiceInvokeRequest::getArgs()const
+const QMap<QString, QVariant>& ServiceInvokeRequest::getArgs()const
 {
    return m_args;
 }
 
-const QVariant ServiceInvokeRequest::getArg(const QString &name)
+const QVariant ServiceInvokeRequest::getArg(const QString &name)const
 {
    if(m_args.contains(name)){
       return m_args.value(name);
@@ -119,7 +114,7 @@ QDataStream &operator<<(QDataStream &outStream, const ServiceInvokeRequest &requ
    outStream << request.getMethod();
    outStream << (quint32)request.getSerial();
    bool hasArgs = false;
-   const QList<QVariant>& args = request.getArgs();
+   const QMap<QString, QVariant>& args = request.getArgs();
    if(!args.empty()){
       hasArgs = true;
    }
@@ -156,7 +151,7 @@ QDataStream &operator>>(QDataStream &inStream, ServiceInvokeRequest &request)
    bool hasArgs;
    inStream >> hasArgs;
    if(hasArgs){
-      QList<QVariant> args;
+      QMap<QString, QVariant> args;
       inStream >> args;
       request.setArgs(args);
    }
