@@ -17,7 +17,7 @@ public:
    AbstractService(ServiceProvider &provider);
    virtual ~AbstractService();
 protected:
-   void writeInterResponse(int socketNum, ServiceInvokeResponse &response);
+   void writeInterResponse(const ServiceInvokeRequest &request, ServiceInvokeResponse &response);
 protected:
    virtual void notifySocketDisconnect(int socketDescriptor);
 protected:

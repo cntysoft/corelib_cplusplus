@@ -15,10 +15,10 @@ void AbstractService::notifySocketDisconnect(int)
 {
 }
 
-void AbstractService::writeInterResponse(int socketNum, ServiceInvokeResponse &response)
+void AbstractService::writeInterResponse(const ServiceInvokeRequest &request, ServiceInvokeResponse &response)
 {
    response.setIsFinal(false);
-   m_serviceProvider.writeResponseToSocket(socketNum, response);
+   m_serviceProvider.writeResponseToSocket(request, response);
 }
 
 AbstractService::~AbstractService()

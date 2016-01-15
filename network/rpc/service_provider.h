@@ -2,11 +2,15 @@
 #define SN_CORELIB_NETWORK_RPC_ABSTRACT_SERVICE_PROVIDER_H
 
 #include <QSharedPointer>
-#include <QTcpSocket>
 #include <QMap>
 #include <QObject>
 
 #include "global/global.h"
+
+QT_BEGIN_INCLUDE_NAMESPACE
+class QTcpSocket;
+class QWebSocket;
+QT_END_INCLUDE_NAMESPACE
 
 namespace sn{
 namespace corelib{
@@ -29,13 +33,14 @@ public:
    void callService(const ServiceInvokeRequest &request);
    ServiceProvider& addServiceToPool(const QString &key, ServiceInitializerType initializerFn);
    ServiceProvider& setUnderlineSocket(int index, QTcpSocket *socket);
+   ServiceProvider& setUnderlineSocket(int index, QWebSocket *socket);
    void disconnectUnderlineSockets();
 public:
    static ServiceProvider& instance();
     ~ServiceProvider();
 protected:
    ServiceProvider();
-   void writeResponseToSocket(int socketIndex, const ServiceInvokeResponse &response);
+   void writeResponseToSocket(const ServiceInvokeRequest &request, const ServiceInvokeResponse &response);
    void initResponseByRequest(const ServiceInvokeRequest &request, ServiceInvokeResponse &response);
 protected slots:
    void socketDisconnectHandler();
@@ -44,7 +49,7 @@ protected:
    ServiceInitializerPoolType m_serviceIntializerPool;
    ServicePoolType m_servicePool;
    QMap<int, QTcpSocket*> m_socketPool;
-   QTcpSocket *m_socket;
+   QMap<int, QWebSocket*> m_websocketPool;
    bool m_batchDisconnectMode = false;
 };
 

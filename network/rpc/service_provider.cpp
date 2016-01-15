@@ -1,7 +1,10 @@
+#include <QTcpSocket>
+#include <QWebSocket>
 #include <QDataStream>
 #include <QMetaObject>
 #include <QMetaMethod>
 #include <QList>
+#include <QString>
 #include <QDebug>
 
 #include "service_provider.h"
@@ -28,12 +31,22 @@ ServiceProvider& ServiceProvider::instance()
    return *ServiceProvider::sm_self;
 }
 
-ServiceProvider& ServiceProvider::setUnderlineSocket(int index, QTcpSocket* socket)
+ServiceProvider& ServiceProvider::setUnderlineSocket(int index, QTcpSocket *socket)
 {
    if(!m_socketPool.contains(index)){
       m_socketPool.insert(index, socket);
       //绑定处理函数
       QObject::connect(socket, &QTcpSocket::disconnected, this, &ServiceProvider::socketDisconnectHandler);
+   }
+   return *this;
+}
+
+ServiceProvider& ServiceProvider::setUnderlineSocket(int index, QWebSocket *socket)
+{
+   if(!m_websocketPool.contains(index)){
+      m_websocketPool.insert(index, socket);
+      //绑定处理函数
+      QObject::connect(socket, &QWebSocket::disconnected, this, &ServiceProvider::socketDisconnectHandler);
    }
    return *this;
 }
@@ -71,7 +84,7 @@ void ServiceProvider::callService(const ServiceInvokeRequest &request)
       ServiceInvokeResponse response("system/error", false);
       response.setError({SERVICE_CLS_NOT_EXIST, "指定的SERVICE类不存在"});
       response.setSerial(request.getSerial());
-      writeResponseToSocket(request.getSocketNum(), response);
+      writeResponseToSocket(request, response);
       return;
    }else if(!m_servicePool.contains(key)){
       //初始化service对象
@@ -88,7 +101,7 @@ void ServiceProvider::callService(const ServiceInvokeRequest &request)
       ServiceInvokeResponse response("system/error", false);
       response.setError({SERVICE_METHOD_NOT_EXIST, QString("SERVICE %1 中没有函数 %2 ").arg(request.getName(), method)});
       response.setSerial(request.getSerial());
-      writeResponseToSocket(request.getSocketNum(), response);
+      writeResponseToSocket(request, response);
       return;
    }
    ServiceInvokeResponse response;
@@ -98,44 +111,77 @@ void ServiceProvider::callService(const ServiceInvokeRequest &request)
       response.setSerial(request.getSerial());
    }
    response.setIsFinal(true);
-   writeResponseToSocket(request.getSocketNum(), response);
+   writeResponseToSocket(request, response);
 }
 
-void ServiceProvider::writeResponseToSocket(int socketIndex, const ServiceInvokeResponse &response)
+void ServiceProvider::writeResponseToSocket(const ServiceInvokeRequest &request, const ServiceInvokeResponse &response)
 {
-   if(!m_socketPool.contains(socketIndex)){
-      //这里是否写入出错提示
-      return;
+   int index = request.getSocketNum();
+   if(request.isWebSocket()){
+      if(!m_websocketPool.contains(index)){
+         //这里是否写入出错提示
+         return;
+      }
+      QWebSocket *socket = m_websocketPool[index];
+      if(!socket->isValid()){
+         return;
+      }
+      QString package;
+      response.toJson(package);
+      socket->sendTextMessage(package);
+      socket->flush();
+   }else{
+      if(!m_socketPool.contains(index)){
+         //这里是否写入出错提示
+         return;
+      }
+      QTcpSocket *socket = m_socketPool[index];
+      if(!socket->isOpen()){
+         return;
+      }
+      QDataStream out(socket);
+      out.setVersion(QDataStream::Qt_5_5);
+      out << response;
+      socket->write("\r\n\t");
+      socket->flush();
    }
-   QTcpSocket *socket = m_socketPool[socketIndex];
-   if(!socket->isOpen()){
-      return;
-   }
-   QDataStream out(socket);
-   out.setVersion(QDataStream::Qt_5_5);
-   out << response;
-   socket->write("\r\n\t");
-   socket->flush();
 }
 
 void ServiceProvider::disconnectUnderlineSockets()
 {
-   if(m_socketPool.empty()){
+   if(m_socketPool.empty() && m_websocketPool.empty()){
       return;
    }
    m_batchDisconnectMode = true;
-   QList<int> keys = m_socketPool.keys();
-   QList<int>::const_iterator it = keys.begin();
-   while(it != keys.end()){
-      QTcpSocket* socket = m_socketPool.take(*it);
-      if(nullptr == socket){
-         continue;
+   if(!m_socketPool.isEmpty()){
+      QList<int> keys = m_socketPool.keys();
+      QList<int>::const_iterator it = keys.begin();
+      while(it != keys.end()){
+         QTcpSocket *socket = m_socketPool.take(*it);
+         if(nullptr == socket){
+            continue;
+         }
+         if(socket->isOpen()){
+            socket->close();
+         }
+         m_socketPool.remove(*it);
+         it++;
       }
-      if(socket->isOpen()){
-         socket->close();
+   }
+   if(!m_websocketPool.isEmpty()){
+      QList<int> keys = m_websocketPool.keys();
+      QList<int>::const_iterator it = keys.begin();
+      while(it != keys.end()){
+         QWebSocket *socket = m_websocketPool.take(*it);
+         if(nullptr == socket){
+            continue;
+         }
+         if(socket->state() != QAbstractSocket::UnconnectedState && socket->state() != QAbstractSocket::ClosingState){
+            socket->close();
+         }
+         m_websocketPool.remove(*it);
+         it++;
       }
-      m_socketPool.remove(*it);
-      it++;
    }
    m_batchDisconnectMode = false;
 }

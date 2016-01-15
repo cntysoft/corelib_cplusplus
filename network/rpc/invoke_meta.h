@@ -75,7 +75,7 @@ public:
    bool isFinal()const;
    const QByteArray& getExtraData()const;
    const QPair<int, QString>& getError()const;
-   
+   void toJson(QString &json)const;
 protected:
    QString m_signature;
    bool m_status = true;
@@ -83,7 +83,7 @@ protected:
    QPair<int, QString> m_error;
    QByteArray m_extraData;
    int m_serial = 0;
-   int m_isFinal = true;
+   bool m_isFinal = true;
 };
 
 SN_CORELIB_EXPORT QDataStream &operator<<(QDataStream &outS, const ServiceInvokeResponse &request);

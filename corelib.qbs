@@ -6,7 +6,7 @@ Product
    targetName : "sncore"
    Depends { 
       name: "Qt"; 
-      submodules: ["core","network"]
+      submodules: ["core","network","websockets"]
    }
    Depends { name:"cpp"}
    destinationDirectory: "lib"

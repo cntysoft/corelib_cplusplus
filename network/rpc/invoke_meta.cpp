@@ -1,4 +1,9 @@
 #include <QDataStream>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QDebug>
 
 #include "invoke_meta.h"
 
@@ -268,6 +273,35 @@ const QByteArray& ServiceInvokeResponse::getExtraData()const
 const QPair<int, QString>& ServiceInvokeResponse::getError()const
 {
    return m_error;
+}
+
+void ServiceInvokeResponse::toJson(QString &json) const
+{
+   QJsonDocument jsonDoc;
+   QJsonObject rootObject;
+   rootObject.insert("signature", m_signature);
+   rootObject.insert("status", m_status);
+   rootObject.insert("serial", m_serial);
+   rootObject.insert("final", m_isFinal);
+   if(m_status){
+      if(!m_data.isEmpty()){
+         QJsonObject data;
+         QMap<QString, QVariant>::const_iterator it = m_data.cbegin();
+         while(it != m_data.cend()){
+            data.insert(it.key(), QJsonValue::fromVariant(it.value()));
+            it++;
+         }
+         rootObject.insert("data", data);
+      }
+   }else{
+      rootObject.insert("errorCode", m_error.first);
+      rootObject.insert("errorString", m_error.second);
+   }
+   if(!m_extraData.isEmpty()){
+      rootObject.insert("extraData", QJsonValue(QString(m_extraData.toBase64())));
+   }
+   jsonDoc.setObject(rootObject);
+   json.append(jsonDoc.toJson());
 }
 
 QDataStream &operator<<(QDataStream &outStream, const ServiceInvokeResponse &response)
