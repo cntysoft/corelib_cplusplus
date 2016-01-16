@@ -5,6 +5,9 @@ QtApplication {
    property string testName
    name: "corelibtest_" + testName
    Depends { name: "Qt.test" }
+   Depends {
+      name: "corelib"
+   }
    cpp.includePaths: "../"
    cpp.cxxLanguageVersion: "c++14"
    destinationDirectory: "bin"

@@ -12,10 +12,8 @@ QT_BEGIN_NAMESPACE
 class QStringList;
 QT_END_NAMESPACE
 
-namespace sn 
-{
-namespace corelib 
-{
+namespace sn{
+namespace corelib{
 
 class SN_CORELIB_EXPORT RouteStack
 {

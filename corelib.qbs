@@ -6,7 +6,7 @@ Product
    targetName : "sncore"
    Depends { 
       name: "Qt"; 
-      submodules: ["core","network","websockets"]
+      submodules: ["core","network","websockets","sql"]
    }
    Depends { name:"cpp"}
    destinationDirectory: "lib"
@@ -45,19 +45,19 @@ Product
       name: "kernel"
       prefix: name+"/"
       files :[
-           "settings.cpp",
-           "settings.h",
-           "application.cpp",
-           "application.h",
-           "erroritem.cpp",
-           "erroritem.h",
-           "errorinfo.h",
-           "errorinfo.cpp",
-           "code_location.h",
-           "code_location.cpp",
-           "stddir.cpp",
-           "stddir.h",
-       ]
+         "settings.cpp",
+         "settings.h",
+         "application.cpp",
+         "application.h",
+         "erroritem.cpp",
+         "erroritem.h",
+         "errorinfo.h",
+         "errorinfo.cpp",
+         "code_location.h",
+         "code_location.cpp",
+         "stddir.cpp",
+         "stddir.h",
+      ]
    }
    
    Group {
@@ -66,14 +66,12 @@ Product
       files : [
          "global.h",
          "global.cpp",
-           "common_funcs.cpp",
-           "common_funcs.h",
-           
-       ]
+         "common_funcs.cpp",
+         "common_funcs.h",
+         
+      ]
    }
    
-   
-
    Group {
       name : "io"
       prefix : name + '/'
@@ -89,23 +87,23 @@ Product
       name: "command"
       prefix: name+"/"
       files: [
-           "abstract_command.cpp",
-           "abstract_command.h",
-           "abstract_command_runner.cpp",
-           "abstract_command_runner.h",
-           "command_meta.cpp",
-           "command_meta.h",
-           "history.cpp",
-           "history.h",
-           "route_item.cpp",
-           "route_item.h",
-           "route_match_result.cpp",
-           "route_match_result.h",
-           "route_matcher.cpp",
-           "route_matcher.h",
-           "route_stack.cpp",
-           "route_stack.h",
-       ]
+         "abstract_command.cpp",
+         "abstract_command.h",
+         "abstract_command_runner.cpp",
+         "abstract_command_runner.h",
+         "command_meta.cpp",
+         "command_meta.h",
+         "history.cpp",
+         "history.h",
+         "route_item.cpp",
+         "route_item.h",
+         "route_match_result.cpp",
+         "route_match_result.h",
+         "route_matcher.cpp",
+         "route_matcher.h",
+         "route_stack.cpp",
+         "route_stack.h",
+      ]
    }
    
    Group {
@@ -120,19 +118,32 @@ Product
       name: "network"
       prefix: name+"/"
       files:[
-           "abstract_multi_thread_server.cpp",
-           "abstract_multi_thread_server.h",
-           "rpc/abstract_service.cpp",
-           "rpc/abstract_service.h",
-           "rpc/invoke_meta.cpp",
-           "rpc/invoke_meta.h",
-           "rpc/service_error_code.h",
-           "rpc/service_invoker.cpp",
-           "rpc/service_invoker.h",
-           "rpc/service_provider.cpp",
-           "rpc/service_provider.h",
-           "rpc/tcpsocket_data_dispatch_worker.cpp",
-           "rpc/tcpsocket_data_dispatch_worker.h",
-       ]
+         "abstract_multi_thread_server.cpp",
+         "abstract_multi_thread_server.h",
+         "rpc/abstract_service.cpp",
+         "rpc/abstract_service.h",
+         "rpc/invoke_meta.cpp",
+         "rpc/invoke_meta.h",
+         "rpc/service_error_code.h",
+         "rpc/service_invoker.cpp",
+         "rpc/service_invoker.h",
+         "rpc/service_provider.cpp",
+         "rpc/service_provider.h",
+         "rpc/tcpsocket_data_dispatch_worker.cpp",
+         "rpc/tcpsocket_data_dispatch_worker.h",
+      ]
+   }
+   
+   Group {
+      name: "db"
+      prefix: name+"/"
+      files: [
+         "adapter/driver/connection_interface.h",
+         "adapter/driver/driver_interface.h",
+         "adapter/driver/result_interface.h",
+         "adapter/parameter_container.h",
+         "adapter/parameter_container.cpp",
+         "adapter/statement_container_interface.h",
+      ]
    }
 }
