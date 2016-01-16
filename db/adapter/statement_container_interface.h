@@ -9,7 +9,16 @@ namespace sn{
 namespace corelib{
 namespace db{
 
+class ParameterContainer;
 
+class SN_CORELIB_EXPORT StatementContainerInterface
+{
+public:
+   virtual void setSql() = 0;
+   virtual void getSql() = 0;
+   virtual void setParameterContainer(const ParameterContainer &container);
+   virtual void getParameterContainer();
+};
 
 }//db
 }//corelib
