@@ -141,6 +141,8 @@ Product
            "metadata/metadata.h",
            "rowgateway/row_gateway.h",
            "sql/sql.h",
+           "sql/table_identifier.cpp",
+           "sql/table_identifier.h",
            "tablegateway/table_gateway.h",
        ]
    }
