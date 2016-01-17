@@ -138,8 +138,16 @@ Product
       name: "db"
       prefix: name+"/"
       files: [
+           "engine/connection.h",
+           "engine/engine.cpp",
+           "engine/engine.h",
+           "engine/parameter_conatiner.cpp",
+           "engine/parameter_container.h",
+           "engine/statement.h",
+           "interface.h",
            "metadata/metadata.h",
            "rowgateway/row_gateway.h",
+           "sql/platform/abstract_platform.h",
            "sql/sql.h",
            "sql/table_identifier.cpp",
            "sql/table_identifier.h",
