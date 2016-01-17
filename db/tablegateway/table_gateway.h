@@ -1,0 +1,4 @@
+#ifndef TABLE_GATEWAY_H
+#define TABLE_GATEWAY_H
+
+#endif // TABLE_GATEWAY_H

@@ -138,7 +138,10 @@ Product
       name: "db"
       prefix: name+"/"
       files: [
-          
+           "metadata/metadata.h",
+           "rowgateway/row_gateway.h",
+           "sql/sql.h",
+           "tablegateway/table_gateway.h",
        ]
    }
 }
