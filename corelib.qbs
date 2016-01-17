@@ -143,6 +143,7 @@ Product
            "adapter/driver/driver_interface.cpp",
            "adapter/driver/driver_interface.h",
            "adapter/driver/result_interface.h",
+           "adapter/driver/statement_interface.h",
            "adapter/parameter_container.h",
            "adapter/parameter_container.cpp",
            "adapter/platform/platform_interface.h",
