@@ -138,12 +138,14 @@ Product
       name: "db"
       prefix: name+"/"
       files: [
-         "adapter/driver/connection_interface.h",
-         "adapter/driver/driver_interface.h",
-         "adapter/driver/result_interface.h",
-         "adapter/parameter_container.h",
-         "adapter/parameter_container.cpp",
-         "adapter/statement_container_interface.h",
-      ]
+           "adapter/adapter_interface.h",
+           "adapter/driver/connection_interface.h",
+           "adapter/driver/driver_interface.h",
+           "adapter/driver/result_interface.h",
+           "adapter/parameter_container.h",
+           "adapter/parameter_container.cpp",
+           "adapter/platform/platform_interface.h",
+           "adapter/statement_container_interface.h",
+       ]
    }
 }
