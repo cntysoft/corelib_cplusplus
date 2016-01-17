@@ -139,14 +139,18 @@ Product
       prefix: name+"/"
       files: [
            "adapter/adapter_interface.h",
+           "adapter/driver/abstract_connection.h",
            "adapter/driver/connection_interface.h",
            "adapter/driver/driver_interface.cpp",
            "adapter/driver/driver_interface.h",
+           "adapter/driver/mysql/connection.h",
            "adapter/driver/result_interface.h",
            "adapter/driver/statement_interface.h",
            "adapter/parameter_container.h",
            "adapter/parameter_container.cpp",
            "adapter/platform/platform_interface.h",
+           "adapter/profiler/profiler_aware_interface.h",
+           "adapter/profiler/profiler_interface.h",
            "adapter/statement_container_interface.h",
        ]
    }
