@@ -1,7 +1,13 @@
 #ifndef SN_CORELIB_DB_ENGINE_ENGINE_H
 #define SN_CORELIB_DB_ENGINE_ENGINE_H
 
+#include <QSqlDatabase>
+#include <QSqlField>
 #include <QString>
+#include <QLatin1String>
+#include <QMap>
+#include <QSqlDriver>
+
 #include "global/global.h"
 
 namespace sn{
@@ -12,10 +18,39 @@ namespace engine{
 class SN_CORELIB_EXPORT Engine
 {
 public:
-   const static QString QUERY_MODE_EXECUTE;
-   const static QString QUERY_MODE_PREPARE;
-   const static QString PREPARE_TYPE_POSITIONAL;
-   const static QString PREPARE_TYPE_NAMED;
+   enum class PlatformType
+   {
+      Mysql,
+      Mssql,
+      Oracle,
+      IbmDb2
+   };   
+   enum class QueryMode{
+      Execute,
+      Prepare
+   };
+   enum class PrepareType{
+      Positional,
+      Named
+   };
+   using IdentifierType = QSqlDriver::IdentifierType;
+   const static QLatin1String PREPARE_TYPE_POSITIONAL;
+   const static QLatin1String PREPARE_TYPE_NAMED;
+   
+   const static QString QMYSQL;
+   static int DB_CONN_NAME_SEED;
+public:
+   Engine(const QString &driverType, QMap<QString, QString> connectionParams);
+   QSqlDatabase& getDbConnection();
+   QString& getCurrentSchema();
+   void query(const QString& sql, QueryMode queryMode = QueryMode::Prepare);
+   QString quoteValue(const QSqlField &field) const;
+   QString quoteIdentifier(const QString &identifier, IdentifierType type)const;
+   QString quoteTableName(const QString &tableName);
+   QString quoteFieldName(const QString &fieldName);
+protected:
+   QSqlDatabase m_database;
+   QString m_dbname;
 };
 
 }//engine
