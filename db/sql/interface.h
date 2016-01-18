@@ -3,13 +3,17 @@
 
 #include "global/global.h"
 #include "db/engine/engine.h"
+#include "db/engine/interface.h"
 
 namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
-
+namespace platform{
+class Platform;
+}//platform
 using sn::corelib::db::engine::Engine;
+using sn::corelib::db::engine::StatementContainerInterface;
 
 class SN_CORELIB_EXPORT SqlInterface
 {
@@ -20,13 +24,14 @@ public:
 class SN_CORELIB_EXPORT PreparableSqlInterface
 {
 public:
-   virtual void prepareStatement(const Engine &engine, );
+   virtual void prepareStatement(const Engine &engine, const StatementContainerInterface &statementContainer) = 0;
 };
 
 class SN_CORELIB_EXPORT PlatformDecoratorInterface
 {
 public:
-   virtual void setSubject() = 0;
+   virtual platform::Platform& setSubject(const PreparableSqlInterface& subject) = 0;
+   virtual platform::Platform& setSubject(const SqlInterface &subject) = 0;
 };
 
 

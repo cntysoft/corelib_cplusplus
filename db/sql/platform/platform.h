@@ -1,6 +1,9 @@
 #ifndef SN_CORELIB_DB_SQL_PLATFORM_PLATFORM_H 
 #define SN_CORELIB_DB_SQL_PLATFORM_PLATFORM_H
 
+#include <QMap>
+#include <QString>
+
 #include "db/sql/interface.h"
 #include "global/global.h"
 
@@ -16,7 +19,17 @@ using sn::corelib::db::sql::PreparableSqlInterface;
 
 class SN_CORELIB_EXPORT Platform : public PlatformDecoratorInterface, public PreparableSqlInterface, public SqlInterface
 {
-   
+//public:
+//   virtual Platform& setSubject(const PreparableSqlInterface &subject);
+//   virtual Platform& setSubject(const SqlInterface &subject);
+//   Platform& setTypeDecorator(const QString& type, PlatformDecoratorInterface* decorator);
+//   PlatformDecoratorInterface* getTypeDecorator(const PreparableSqlInterface &subject);
+//   PlatformDecoratorInterface* getTypeDecorator(const SqlInterface &subject);
+//   QMap<QString, PlatformDecoratorInterface*>& getDecorators();
+//protected:
+//   SqlInterface m_normalSubject;
+//   PreparableSqlInterface m_prepareSubject;
+//   QMap<QString, PlatformDecoratorInterface*> m_decorators;
 };
 
 }//platform
