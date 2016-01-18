@@ -149,7 +149,7 @@ Product
            "metadata/metadata.h",
            "rowgateway/row_gateway.h",
            "sql/interface.h",
-           "sql/platform/abstract_platform.h",
+           "sql/platform/platform.h",
            "sql/sql.h",
            "sql/table_identifier.cpp",
            "sql/table_identifier.h",

@@ -25,7 +25,8 @@ public:
 
 class SN_CORELIB_EXPORT PlatformDecoratorInterface
 {
-   
+public:
+   virtual void setSubject() = 0;
 };
 
 
