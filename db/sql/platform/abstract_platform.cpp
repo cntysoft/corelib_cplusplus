@@ -1,4 +1,4 @@
-#include "platform.h"
+#include "abstract_platform.h"
 
 namespace sn{
 namespace corelib{
