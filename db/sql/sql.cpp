@@ -62,9 +62,8 @@ QSharedPointer<Delete> Sql::getDeleteSql(const QString &table)
    return QSharedPointer<Delete>(new Delete(m_table));
 }
 
-QString Sql::buildSqlString(QSharedPointer<SqlInterface> sqlObject)
+QString Sql::buildSqlString(QSharedPointer<AbstractSql> sqlObject)
 {
-   
    return m_platfrom.setSubject(sqlObject).getSqlString(m_engine);
 }
 

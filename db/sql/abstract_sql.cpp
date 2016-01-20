@@ -44,6 +44,11 @@ QString AbstractSql::createSqlFromSpecificationAndParameters(const QString &spec
    return QString();
 }
 
+QString AbstractSql::getSqlString(const Engine &engine)
+{
+   return QString();
+}
+
 }//sql
 }//db
 }//corelib

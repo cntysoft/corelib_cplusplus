@@ -24,7 +24,7 @@ public:
       Mssql,
       Oracle,
       IbmDb2
-   };   
+   };
    enum class QueryMode{
       Execute,
       Prepare
@@ -39,6 +39,7 @@ public:
    
    const static QString QMYSQL;
    static int DB_CONN_NAME_SEED;
+   const static QMap<QString, PlatformType> sm_driverToPlatformMap;
 public:
    Engine(const QString &driverType, QMap<QString, QString> connectionParams);
    QSqlDatabase& getDbConnection();
@@ -48,9 +49,11 @@ public:
    QString quoteIdentifier(const QString &identifier, IdentifierType type)const;
    QString quoteTableName(const QString &tableName);
    QString quoteFieldName(const QString &fieldName);
+   PlatformType getPlatformType();
 protected:
    QSqlDatabase m_database;
    QString m_dbname;
+   PlatformType m_platformType;
 };
 
 }//engine

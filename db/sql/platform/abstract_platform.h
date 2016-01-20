@@ -8,6 +8,8 @@
 #include "db/sql/interface.h"
 #include "global/global.h"
 #include "db/engine/engine.h"
+#include "db/sql/abstract_sql.h"
+#include "db/sql/abstract_preparable_sql.h"
 
 namespace sn{
 namespace corelib{
@@ -15,25 +17,23 @@ namespace db{
 namespace sql{
 namespace platform{
 
-using sn::corelib::db::sql::PlatformDecoratorInterface;
-using sn::corelib::db::sql::SqlInterface;
-using sn::corelib::db::sql::PreparableSqlInterface;
+using sn::corelib::db::sql::AbstractSql;
+using sn::corelib::db::sql::AbstractPreparableSql;
 using sn::corelib::db::engine::Engine;
 
-class SN_CORELIB_EXPORT AbstractPlatform : public PlatformDecoratorInterface/*, public PreparableSqlInterface, public SqlInterface*/
+class SN_CORELIB_EXPORT AbstractPlatform
 {
 public:
-   virtual AbstractPlatform& setSubject(QSharedPointer<PreparableSqlInterface> subject);
-   virtual AbstractPlatform& setSubject(QSharedPointer<SqlInterface> subject);
-   AbstractPlatform& setTypeDecorator(const QString& type, PlatformDecoratorInterface* decorator);
-   QSharedPointer<PlatformDecoratorInterface> getTypeDecorator(QSharedPointer<PreparableSqlInterface> &subject);
-   QSharedPointer<PlatformDecoratorInterface> getTypeDecorator(QSharedPointer<SqlInterface> &subject);
-   QMap<QString, PlatformDecoratorInterface*>& getDecorators();
-   QString getSqlString(Engine &engine);
+   using DecoratorPoolType = QMap<QString, QSharedPointer<AbstractSql>>;
+public:
+   virtual AbstractPlatform& setSubject(QSharedPointer<AbstractSql> subject);
+   AbstractPlatform& setTypeDecorator(const QString& type, QSharedPointer<AbstractSql> decorator);
+   QSharedPointer<AbstractSql> getTypeDecorator(QSharedPointer<AbstractSql> subject);
+   QMap<QString, QSharedPointer<AbstractSql>>& getDecorators();
+   virtual QString getSqlString(Engine &engine);
 protected:
-   QSharedPointer<SqlInterface> m_normalSubject;
-   QSharedPointer<PreparableSqlInterface> m_prepareSubject;
-   QMap<QString, PlatformDecoratorInterface*> m_decorators;
+   QSharedPointer<AbstractSql> m_subject;
+   DecoratorPoolType m_decorators;
 };
 
 }//platform

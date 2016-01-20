@@ -18,6 +18,10 @@ const QString Engine::QMYSQL("QMYSQL");
 
 int Engine::DB_CONN_NAME_SEED = 0;
 
+const QMap<QString, Engine::PlatformType> Engine::sm_driverToPlatformMap{
+   {Engine::QMYSQL, Engine::PlatformType::Mysql}
+};
+
 Engine::Engine(const QString &driverType, QMap<QString, QString> connectionParams)
 {
    if(!QSqlDatabase::isDriverAvailable(driverType)){
@@ -41,6 +45,7 @@ Engine::Engine(const QString &driverType, QMap<QString, QString> connectionParam
       m_database.setDatabaseName(connectionParams.value("dbname"));
       m_dbname = connectionParams.value("dbname");
    }
+   m_platformType = sm_driverToPlatformMap.value(driverType);
 }
 
 QSqlDatabase& Engine::getDbConnection()
@@ -80,6 +85,11 @@ QString Engine::quoteFieldName(const QString &fieldName)
 void Engine::query(const QString &sql, QueryMode queryMode)
 {
    
+}
+
+Engine::PlatformType Engine::getPlatformType()
+{
+   return m_platformType;
 }
 
 }//engine

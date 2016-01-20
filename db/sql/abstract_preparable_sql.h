@@ -13,7 +13,7 @@ namespace sql{
 
 using sn::corelib::db::engine::StatementContainerInterface;
 
-class SN_CORELIB_EXPORT AbstractPreparableSql : public AbstractSql, public PreparableSqlInterface
+class SN_CORELIB_EXPORT AbstractPreparableSql : public AbstractSql
 {
    Q_OBJECT
 public:

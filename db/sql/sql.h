@@ -8,16 +8,16 @@
 #include "db/engine/engine.h"
 #include "db/sql/platform/platform.h"
 #include "db/sql/delete.h"
+#include "db/sql/abstract_sql.h"
 
 namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
 
-class SqlInterface;
-
-using platform::Platform;
+using sn::corelib::db::sql::platform::Platform;
 using sn::corelib::db::engine::Engine;
+using sn::corelib::db::sql::AbstractSql;
 
 class SN_CORELIB_EXPORT Sql
 {
@@ -30,7 +30,7 @@ public:
    const TableIdentifier& getTable();
    Sql& setTable(const TableIdentifier &table);
    Sql& setTable(const QString &table);
-   QString buildSqlString(QSharedPointer<SqlInterface> sqlObject);
+   QString buildSqlString(QSharedPointer<AbstractSql> sqlObject);
 public:
    QSharedPointer<Delete> getDeleteSql(const QString &table = QString());
 protected:

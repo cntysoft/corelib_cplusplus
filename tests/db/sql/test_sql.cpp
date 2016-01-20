@@ -41,11 +41,10 @@ void TestSql::testSqlTableName()
 void TestSql::testDeleteSql()
 {
    Sql sql(m_engine, "userinfo");
-   QSharedPointer<AbstractSql> deleteSql = sql.getDeleteSql();
-   qDebug() << deleteSql.data()->metaObject()->className();
-//   TableIdentifier& table = deleteSql->getTable();
-//   QCOMPARE(table.getTable(), QString("userinfo"));
-//   sql.buildSqlString(deleteSql);
+   QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+   TableIdentifier& table = deleteSql->getTable();
+   QCOMPARE(table.getTable(), QString("userinfo"));
+   sql.buildSqlString(deleteSql);
 }
 
 }//db

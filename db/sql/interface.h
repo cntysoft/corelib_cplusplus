@@ -15,24 +15,13 @@ namespace sql{
 using sn::corelib::db::engine::Engine;
 using sn::corelib::db::engine::StatementContainerInterface;
 
-class SN_CORELIB_EXPORT SqlInterface
-{
-public:
-//   virtual QString getSqlString() = 0;
-};
 
-class SN_CORELIB_EXPORT PreparableSqlInterface
-{
-public:
-   virtual StatementContainerInterface& prepareStatement(const Engine &engine, const StatementContainerInterface &statementContainer) = 0;
-};
-
-class SN_CORELIB_EXPORT PlatformDecoratorInterface
-{
-public:
-   virtual PlatformDecoratorInterface& setSubject(QSharedPointer<PreparableSqlInterface> subject) = 0;
-   virtual PlatformDecoratorInterface& setSubject(QSharedPointer<SqlInterface> subject) = 0;
-};
+//class SN_CORELIB_EXPORT PlatformDecoratorInterface
+//{
+//public:
+//   virtual PlatformDecoratorInterface& setSubject(QSharedPointer<PreparableSqlInterface> subject) = 0;
+//   virtual PlatformDecoratorInterface& setSubject(QSharedPointer<SqlInterface> subject) = 0;
+//};
 
 
 class SN_CORELIB_EXPORT ExpressionInterface

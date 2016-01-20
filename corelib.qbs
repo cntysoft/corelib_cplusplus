@@ -162,6 +162,7 @@ Product
            "sql/interface.h",
            "sql/platform/abstract_platform.cpp",
            "sql/platform/abstract_platform.h",
+           "sql/platform/mysql/mysql.cpp",
            "sql/platform/mysql/mysql.h",
            "sql/platform/platform.cpp",
            "sql/platform/platform.h",

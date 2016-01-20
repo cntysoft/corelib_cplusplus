@@ -13,7 +13,7 @@ namespace predicate{
 
 using sn::corelib::db::sql::AbstractExpression;
 
-class SN_CORELIB_EXPORT Between : public AbstractExpression, public PreparableSqlInterface
+class SN_CORELIB_EXPORT Between : public AbstractExpression
 {
 public:
    Between(const QString &identifier = QString(), const QString &minValue = QString(), const QString &maxValue = QString());
