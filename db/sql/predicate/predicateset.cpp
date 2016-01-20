@@ -11,7 +11,7 @@ const QString PredicateSet::OP_AND = "AND";
 const QString PredicateSet::COMBINED_BY_OR = "OR";
 const QString PredicateSet::OP_OR = "OR";
 
-const static QStringList PredicateSet::sm_supportedCombinations{
+const QStringList PredicateSet::sm_supportedCombinations{
    PredicateSet::OP_AND, PredicateSet::OP_OR
 };
 
@@ -27,7 +27,7 @@ PredicateSet::PredicateSet(const QList<PredicatePointerType> &predicates, const 
    }   
 }
 
-PredicateSet& PredicateSet::addPredicate(PredicatePointerType predicate, const QString &combination)
+PredicateSet& PredicateSet::addPredicate(PredicatePointerType predicate, QString combination)
 {
    if(combination.isNull() || !PredicateSet::sm_supportedCombinations.contains(combination)){
       combination = m_defaultCombination;
@@ -61,6 +61,9 @@ int PredicateSet::count()
 {
    return m_predicates.size();
 }
+
+PredicateSet::~PredicateSet()
+{}
 
 }//predicate
 }//sql

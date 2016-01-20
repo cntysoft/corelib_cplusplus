@@ -36,7 +36,7 @@ Product
    
    Export {
       Depends { name: "cpp" }
-      Depends { name: "Qt"; submodules: ["core"] }
+      Depends { name: "Qt"; submodules: ["core","network","websockets","sql"] }
       cpp.rpaths: ["$ORIGIN/../lib"]
       cpp.includePaths: [product.sourceDirectory]
    }
@@ -163,11 +163,14 @@ Product
            "sql/platform/abstract_platform.cpp",
            "sql/platform/abstract_platform.h",
            "sql/platform/mysql/mysql.h",
+           "sql/platform/platform.cpp",
+           "sql/platform/platform.h",
            "sql/predicate/interface.h",
            "sql/predicate/predicateset.cpp",
            "sql/predicate/predicateset.h",
            "sql/predicate/simple_predicate.cpp",
            "sql/predicate/simple_predicate.h",
+           "sql/sql.cpp",
            "sql/sql.h",
            "sql/table_identifier.cpp",
            "sql/table_identifier.h",

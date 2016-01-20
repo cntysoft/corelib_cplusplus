@@ -15,7 +15,7 @@ namespace db{
 namespace sql{
 namespace predicate{
 
-class SN_CORELIB_EXPORT PredicateSet : public PredicateInterface
+class SN_CORELIB_EXPORT PredicateSet/* : public PredicateInterface*/
 {
 public:
    const static QString COMBINED_BY_AND;
@@ -27,7 +27,7 @@ public:
    using PredicateListType = QList<PredicateItemType>;
 public:
    PredicateSet(const QList<PredicatePointerType> &predicates, const QString &defaultCombination = PredicateSet::COMBINED_BY_AND);
-   PredicateSet& addPredicate(PredicatePointerType predicate, const QString &combination = QString());
+   PredicateSet& addPredicate(PredicatePointerType predicate, QString combination = QString());
    PredicateSet& orPredicate(PredicatePointerType predicate);
    PredicateSet& andPredicate(PredicatePointerType predicate);
    const PredicateListType& getPredicates();

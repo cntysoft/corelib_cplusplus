@@ -14,6 +14,7 @@ namespace sql{
 class SN_CORELIB_EXPORT TableIdentifier
 {
 public:
+   TableIdentifier() = default;
    TableIdentifier(const QString &table, const QString &schema  = QString());
    TableIdentifier& setTable(const QString &table);
    const QString& getTable();

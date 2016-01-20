@@ -2,6 +2,7 @@
 
 #include "engine.h"
 #include "kernel/errorinfo.h"
+#include <QDebug>
 
 namespace sn{
 namespace corelib{

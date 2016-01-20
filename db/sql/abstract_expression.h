@@ -13,8 +13,10 @@ namespace sql{
 
 class SN_CORELIB_EXPORT AbstractExpression : public ExpressionInterface
 {
-protected:
-   buildNormalizedArgument();
+public:
+   AbstractExpression();
+//protected:
+//   buildNormalizedArgument();
 protected:
    QStringList m_allowTypes;
 };

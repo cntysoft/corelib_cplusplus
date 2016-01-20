@@ -3,11 +3,11 @@ CoreLibAutoTest
 {
    testName: "db"
    Group {
-      name: "adapter"
+      name: "sql"
       prefix: name+"/"
       files: [
-         "test_adapter.cpp",
-         "test_adapter.h",
+         "test_sql.h",
+         "test_sql.cpp"
       ]
    }
 }
