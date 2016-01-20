@@ -1,10 +1,13 @@
 #ifndef SN_CORELIB_DB_SQL_SQL_H
 #define SN_CORELIB_DB_SQL_SQL_H
 
+#include <QSharedPointer>
+
 #include "table_identifier.h"
 #include "global/global.h"
 #include "db/engine/engine.h"
 #include "db/sql/platform/platform.h"
+#include "db/sql/delete.h"
 
 namespace sn{
 namespace corelib{
@@ -27,7 +30,9 @@ public:
    const TableIdentifier& getTable();
    Sql& setTable(const TableIdentifier &table);
    Sql& setTable(const QString &table);
-   QString buildSqlString(const SqlInterface &sqlObject);
+   QString buildSqlString(QSharedPointer<SqlInterface> sqlObject);
+public:
+   QSharedPointer<Delete> getDeleteSql(const QString &table = QString());
 protected:
    Engine& m_engine;
    TableIdentifier m_table;

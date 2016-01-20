@@ -1,7 +1,9 @@
 #include <QString>
+#include <QSharedPointer>
 
 #include "sql.h"
 #include "interface.h"
+#include <typeinfo>
 
 namespace sn{
 namespace corelib{
@@ -49,6 +51,21 @@ Sql& Sql::setTable(const TableIdentifier &table)
 {
    m_table = table;
    return *this;
+}
+
+QSharedPointer<Delete> Sql::getDeleteSql(const QString &table)
+{
+   if(!table.isEmpty()){
+      TableIdentifier targetTable(table);
+      return QSharedPointer<Delete>(new Delete(targetTable));
+   }
+   return QSharedPointer<Delete>(new Delete(m_table));
+}
+
+QString Sql::buildSqlString(QSharedPointer<SqlInterface> sqlObject)
+{
+   
+   return m_platfrom.setSubject(sqlObject).getSqlString(m_engine);
 }
 
 }//sql

@@ -18,6 +18,7 @@ public:
 private slots:
    void initTestCase();
    void testSqlTableName();
+   void testDeleteSql();
 protected:
    Engine m_engine;
 };

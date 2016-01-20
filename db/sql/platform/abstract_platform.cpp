@@ -6,31 +6,36 @@ namespace db{
 namespace sql{
 namespace platform{
 
-//Platform& Platform::setSubject(const PreparableSqlInterface &subject)
-//{
-//   m_prepareSubject = subject;
-//   return *this;
-//}
+AbstractPlatform& AbstractPlatform::setSubject(QSharedPointer<PreparableSqlInterface> subject)
+{
+   m_prepareSubject = subject;
+   return *this;
+}
 
-//Platform& Platform::setSubject(const SqlInterface &subject)
-//{
-//   m_normalSubject = subject;
-//   return *this;
-//}
+AbstractPlatform& AbstractPlatform::setSubject(QSharedPointer<SqlInterface> subject)
+{
+   m_normalSubject = subject;
+   return *this;
+}
 
-//Platform& Platform::setTypeDecorator(const QString &type, PlatformDecoratorInterface *decorator)
-//{
-////   if(m_decorators.contains(type)){
-////      delete m_decorators.take(type);
-////   }
-////   m_decorators[type] = decorator;
-//   return *this;
-//}
+AbstractPlatform& AbstractPlatform::setTypeDecorator(const QString &type, PlatformDecoratorInterface *decorator)
+{
+   if(m_decorators.contains(type)){
+      delete m_decorators.take(type);
+   }
+   m_decorators[type] = decorator;
+   return *this;
+}
 
-//QMap<QString, PlatformDecoratorInterface*>& Platform::getDecorators()
-//{
-//   return m_decorators;
-//}
+QMap<QString, PlatformDecoratorInterface*>& AbstractPlatform::getDecorators()
+{
+   return m_decorators;
+}
+
+QString AbstractPlatform::getSqlString(Engine &engine)
+{
+   return QString();
+}
 
 }//platform
 }//sql

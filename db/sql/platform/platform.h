@@ -11,7 +11,7 @@ namespace db{
 namespace sql{
 namespace platform{
 
-class SN_CORELIB_EXPORT Platform
+class SN_CORELIB_EXPORT Platform : public AbstractPlatform
 {
 public:
    Platform(Engine &engine);

@@ -5,6 +5,7 @@
 #include <QVariant>
 #include <QStringList>
 #include <QString>
+#include <QObject>
 
 #include "global/global.h"
 #include "interface.h"
@@ -19,8 +20,9 @@ namespace sql{
 using sn::corelib::db::engine::Engine;
 using sn::corelib::db::engine::ParameterContainer;
 
-class SN_CORELIB_EXPORT AbstractSql : public SqlInterface
+class SN_CORELIB_EXPORT AbstractSql : public QObject, public SqlInterface
 {
+   Q_OBJECT
 public:
    enum class ProcessResultType
    {
@@ -43,7 +45,7 @@ public:
    };
    using SpecificationFuncPtr = ProcessResult (*)(const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResult> &parameters);
 public:
-   QString getSqlString();
+   QString getSqlString(const Engine &engine);
 protected:
    QString buildSqlString(const Engine &engine, const ParameterContainer &parameterContainer);
    QString createSqlFromSpecificationAndParameters(const QString &specification, QMap<QString, ProcessResult>& parameters);

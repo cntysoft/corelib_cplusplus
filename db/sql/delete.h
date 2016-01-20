@@ -14,15 +14,18 @@ namespace sql{
 
 class SN_CORELIB_EXPORT Delete : public AbstractPreparableSql
 {
+   Q_OBJECT
 public:
    const static QString SPECIFICATION_DELETE;
    const static QString SPECIFICATION_WHERE;
 public:
-   
+   Delete(const TableIdentifier &table);
+   Delete(const QString &table);
+   TableIdentifier& getTable();
+   ~Delete();
 protected:
    TableIdentifier m_table;
    bool m_emptyWhereProtection = true;
-   
 };
 
 }//sql

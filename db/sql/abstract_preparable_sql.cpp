@@ -10,6 +10,9 @@ StatementContainerInterface& AbstractPreparableSql::prepareStatement(const Engin
    
 }
 
+AbstractPreparableSql::~AbstractPreparableSql()
+{}
+
 }//sql
 }//db
 }//corelib
