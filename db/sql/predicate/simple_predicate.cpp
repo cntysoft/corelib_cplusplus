@@ -67,6 +67,10 @@ const QString& Between::getSpecification()
 Where::Where()
 {}
 
+Literal::Literal(const QString &literal)
+   : BaseLiteral(literal)
+{}
+
 }//predicate
 }//sql
 }//db

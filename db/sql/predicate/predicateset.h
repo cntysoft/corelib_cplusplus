@@ -30,7 +30,8 @@ public:
 public:
    PredicateSet(const QList<PredicatePointerType> &predicates = QList<PredicatePointerType>(), 
                 const QString &defaultCombination = PredicateSet::COMBINED_BY_AND);
-   PredicateSet& addPredicate(PredicatePointerType predicate, QString combination = QString());
+   PredicateSet& addPredicate(PredicatePointerType predicate, QString combination = PredicateSet::OP_AND);
+   PredicateSet& addPredicate(const QString &predicate, QString combination = PredicateSet::OP_AND);
    PredicateSet& orPredicate(PredicatePointerType predicate);
    PredicateSet& andPredicate(PredicatePointerType predicate);
    const PredicateListType& getPredicates();

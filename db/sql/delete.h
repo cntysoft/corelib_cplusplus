@@ -37,6 +37,7 @@ public:
    TableIdentifier& getTable();
    RawState getRawState();
    Delete& where(const QSharedPointer<Where> &where);
+   Delete& where(const QString &where);
    ~Delete();
 protected:
    TableIdentifier m_table;

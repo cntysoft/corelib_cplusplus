@@ -1,4 +1,6 @@
 #include "predicateset.h"
+#include "db/sql/expression.h"
+#include "simple_predicate.h"
 
 #include <QDebug>
 
@@ -7,6 +9,8 @@ namespace corelib{
 namespace db{
 namespace sql{
 namespace predicate{
+
+using sn::corelib::db::sql::Expression;
 
 const QString PredicateSet::COMBINED_BY_AND = "AND";
 const QString PredicateSet::OP_AND = "AND";
@@ -51,6 +55,16 @@ PredicateSet& PredicateSet::addPredicate(PredicatePointerType predicate, QString
    }
    andPredicate(predicate);
    return *this;
+}
+
+PredicateSet& addPredicate(const QString &predicate, QString combination)
+{
+   PredicateSet::PredicatePointerType predicateObj;
+   if(predicate.indexOf(Expression::PLACEHOLDER) != -1){
+      predicateObj.reset(new Expression(predicate));
+   }else{
+      predicateObj.reset(new Literal(predicate));
+   }
 }
 
 PredicateSet& PredicateSet::andPredicate(PredicatePointerType predicate)

@@ -4,6 +4,7 @@
 #include "global/global.h"
 #include "db/sql/abstract_expression.h"
 #include "db/sql/predicate/predicateset.h"
+#include "db/sql/literal.h"
 
 namespace sn{
 namespace corelib{
@@ -11,6 +12,7 @@ namespace db{
 namespace sql{
 namespace predicate{
 
+using BaseLiteral = sn::corelib::db::sql::Literal;
 using sn::corelib::db::sql::AbstractExpression;
 
 class SN_CORELIB_EXPORT Between : public AbstractExpression
@@ -37,6 +39,12 @@ class SN_CORELIB_EXPORT Where : public PredicateSet
 {
 public:
    Where();
+};
+
+class SN_CORELIB_EXPORT Literal : public BaseLiteral
+{
+public:
+   Literal(const QString &literal);
 };
 
 }//predicate

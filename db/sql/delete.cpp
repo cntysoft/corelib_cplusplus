@@ -79,10 +79,16 @@ Delete& Delete::where(const QSharedPointer<Where> &where)
    return *this;
 }
 
+Delete& Delete::where(const QString &where)
+{
+//   m_where->addPredicate();
+   return *this;
+}
+
 Delete::~Delete()
 {}
 
-}//sql
+}//sql1
 }//db
 }//corelib
 }//sn

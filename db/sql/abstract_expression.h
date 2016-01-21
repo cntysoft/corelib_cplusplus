@@ -4,7 +4,7 @@
 #include <QStringList>
 #include <QSharedPointer>
 #include <QObject>
-#include <QList>
+#include <QVector>
 #include <QVariant>
 #include <QString>
 
@@ -26,7 +26,7 @@ public:
       QStringList values;
       QStringList types;
    };
-   using ExpressionDataType = QList<QMap<QString, QVariant>>;
+   using ExpressionDataType = QVector<QVariant>;
 public:
    const static QString TYPE_IDENTIFIER;
    const static QString TYPE_VALUE;
@@ -35,11 +35,11 @@ public:
 public:
    AbstractExpression();
    virtual ExpressionDataType getExpressionData()const;
-   //protected:
-   //   buildNormalizedArgument();
    virtual ~AbstractExpression();
 protected:
-   QStringList m_allowTypes;
+   QPair<QString, QString> normalizeArgument(const QString &argument, const QString &defaultType = AbstractExpression::TYPE_VALUE)const;
+protected:
+   const static QStringList sm_allowTypes;
 };
 
 }//sql

@@ -158,6 +158,8 @@ Product
            "sql/delete.h",
            "sql/expression.cpp",
            "sql/expression.h",
+           "sql/literal.cpp",
+           "sql/literal.h",
            "sql/platform/abstract_platform.cpp",
            "sql/platform/abstract_platform.h",
            "sql/platform/mysql/mysql.cpp",

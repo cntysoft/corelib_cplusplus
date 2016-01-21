@@ -17,11 +17,17 @@ class SN_CORELIB_EXPORT Expression : public AbstractExpression
 public:
    const static QChar PLACEHOLDER;
 public:
-   
+   Expression(const QString &expression, const QStringList &parameters = QStringList());
+   Expression& setExpression();
+   const QString& getExpression()const;
+   Expression& setExpression(const QString &expression);
+   Expression& setParameters(const QStringList &parameters);
+   const QStringList& getParameters()const;
+public:
+   virtual AbstractExpression::ExpressionDataType getExpressionData()const;
 protected:
    QString m_expression;
    QStringList m_parameters;
-   QStringList m_types;
 };
 
 }//sql
