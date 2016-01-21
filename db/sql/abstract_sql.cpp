@@ -54,7 +54,7 @@ QString AbstractSql::getSqlString(const Engine &engine)
    return buildSqlString(engine);
 }
 
-QString AbstractSql::processExpression(const AbstractExpression &expression, const engine::Engine &engine, 
+QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> expression, const engine::Engine &engine, 
                                        const engine::ParameterContainer &parameterContainer, QString namedParameterPrefix)
 {
    if(namedParameterPrefix.isNull()){
@@ -67,7 +67,7 @@ QString AbstractSql::processExpression(const AbstractExpression &expression, con
       namedParameterPrefix.replace(QRegularExpression("\\s"), "__");
    }
    QString sql;
-   AbstractExpression::ExpressionDataType expressionData = expression.getExpressionData();
+   AbstractExpression::ExpressionDataType expressionData = expression->getExpressionData();
    if(!m_instanceParameterIndex.contains(namedParameterPrefix)){
       m_instanceParameterIndex.insert(namedParameterPrefix, 1);
    }

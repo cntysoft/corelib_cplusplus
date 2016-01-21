@@ -34,7 +34,7 @@ AbstractSql::ProcessResultPointerType process_where(AbstractSql *self, const Eng
       throw ErrorInfo(QString("delete friend function process_where self pointer cast fail"));
    }
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
-   if(deleteSql->m_where.count() == 0){
+   if(deleteSql->m_where->count() == 0){
       result->isNull = true;
       return result;
    }
@@ -50,7 +50,8 @@ Delete::Delete(const QString &table)
 }
 
 Delete::Delete(const TableIdentifier &table)
-   :m_table(table)
+   : m_table(table),
+     m_where(new Where)
 {
    m_specifications.insert(Delete::SPECIFICATION_DELETE, "DELETE FROM %1");
    m_specifications.insert(Delete::SPECIFICATION_WHERE, "WHERE %1");
@@ -62,14 +63,20 @@ Delete::RawState Delete::getRawState()
 {
    return {
       m_emptyWhereProtection,
-      m_table,
-      m_where
+            m_table,
+            m_where
    };
 }
 
 TableIdentifier& Delete::getTable()
 {
    return m_table;
+}
+
+Delete& Delete::where(const QSharedPointer<Where> &where)
+{
+   m_where = where;
+   return *this;
 }
 
 Delete::~Delete()

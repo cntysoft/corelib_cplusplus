@@ -2,6 +2,7 @@
 #define SN_CORELIB_DB_SQL_DELETE_H
 
 #include <QString>
+#include <QSharedPointer>
 
 #include "global/global.h"
 #include "abstract_preparable_sql.h"
@@ -25,7 +26,7 @@ public:
    struct RawState{
       bool emptyWhereProtection;
       TableIdentifier table;
-      Where& where;
+      QSharedPointer<Where> where;
    };
 public:
    const static QString SPECIFICATION_DELETE;
@@ -35,11 +36,12 @@ public:
    Delete(const QString &table = QString());
    TableIdentifier& getTable();
    RawState getRawState();
+   Delete& where(const QSharedPointer<Where> &where);
    ~Delete();
 protected:
    TableIdentifier m_table;
    bool m_emptyWhereProtection = true;
-   Where m_where;
+   QSharedPointer<Where> m_where;
 };
 
 }//sql
