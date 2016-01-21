@@ -17,7 +17,7 @@ AbstractSql& AbstractSql::setSpecificationFn(const QString &name, SpecificationF
 QString AbstractSql::buildSqlString(const Engine &engine, const ParameterContainer &parameterContainer)
 {
    QMap<QString, QString> sqls;
-   QMap<QString, ProcessResult> parameters;
+   QMap<QString, ProcessResultPointerType> parameters;
    QMap<QString, QVariant>::const_iterator cit = m_specifications.cbegin();
    while(cit != m_specifications.cend()){
       SpecificationFuncPtr fn = nullptr;
@@ -28,19 +28,19 @@ QString AbstractSql::buildSqlString(const Engine &engine, const ParameterContain
       }
       Q_ASSERT_X(fn != nullptr, "AbstractSql::buildSqlString", "specification function can not be nullptr");
       parameters[key] = fn(this, engine, parameterContainer, sqls, parameters);
-      if(!specification.isNull() && parameters.value(key).type == ProcessResultType::Array){
-         sqls[key] = createSqlFromSpecificationAndParameters(specification, parameters[key].getArrayValue());
+      if(!specification.isNull() && parameters.value(key)->type == ProcessResultType::Array){
+         sqls[key] = createSqlFromSpecificationAndParameters(specification, parameters[key]->getValue().toMap());
          continue;
       }
-      if(ProcessResultType::String == parameters.value(key).type){
-         sqls.insert(key, parameters.value(key).stringValue);
+      if(ProcessResultType::String == parameters.value(key)->type){
+         sqls.insert(key, parameters.value(key)->getValue().toString());
       }
       cit++;
    }
    return sqls.values().join(' ');
 }
 
-QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, QMap<QString, QString> &parameters)
+QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, const QMap<QString, QVariant> &parameters)
 {
    return QString();
 }

@@ -1,3 +1,6 @@
+#include <QVariant>
+#include <QSharedPointer>
+
 #include "delete.h"
 #include "kernel/errorinfo.h"
 
@@ -9,17 +12,20 @@ namespace sql{
 const QString Delete::SPECIFICATION_WHERE = "where";
 const QString Delete::SPECIFICATION_DELETE = "delete";
 
-AbstractSql::ProcessResult process_delete(AbstractSql *self, const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResult>&)
+AbstractSql::ProcessResultPointerType process_delete(AbstractSql *self, const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Delete* deleteSql = qobject_cast<Delete*>(self);
    Q_ASSERT_X(deleteSql != 0, "delete friend function process_delete", "self pointer cast fail");
    if(0 == deleteSql){
       throw ErrorInfo(QString("delete friend function process_delete self pointer cast fail"));
    }
-   qDebug() << deleteSql->resolveTable(deleteSql->m_table, engine, parameterContainer);
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   result->type = AbstractSql::ProcessResultType::String;
+   result->value = QVariant(QString(deleteSql->m_specifications.value(Delete::SPECIFICATION_DELETE).toString()).arg(deleteSql->resolveTable(deleteSql->m_table, engine, parameterContainer)));
+   return result;
 }
 
-AbstractSql::ProcessResult process_where(AbstractSql *self, const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResult>&)
+AbstractSql::ProcessResultPointerType process_where(AbstractSql *self, const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    
 }

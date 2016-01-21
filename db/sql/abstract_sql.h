@@ -34,23 +34,19 @@ public:
    struct ProcessResult
    {
       ProcessResultType type;
-      QString stringValue;
-      QMap<QString, QString> arrayValue;
-      QMap<QString, QString>& getArrayValue()
+      QVariant value;
+      QVariant& getValue()
       {
-         return arrayValue;
-      }
-      QString& getStringValue()
-      {
-         return stringValue;
+         return value;
       }
    };
-   using SpecificationFuncPtr = ProcessResult (*)(AbstractSql *self, const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResult> &parameters);
+   using ProcessResultPointerType = QSharedPointer<ProcessResult>;
+   using SpecificationFuncPtr = ProcessResultPointerType (*)(AbstractSql *self, const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResultPointerType> &parameters);
 public:
    virtual QString getSqlString(const Engine &engine);
 protected:
    QString buildSqlString(const Engine &engine, const ParameterContainer &parameterContainer = ParameterContainer());
-   QString createSqlFromSpecificationAndParameters(const QVariant &specification, QMap<QString, QString>& parameters);
+   QString createSqlFromSpecificationAndParameters(const QVariant &specification, const QMap<QString, QVariant> &parameters);
    //QString createSqlFromSpecificationAndParameters(const QString &specification, QMap<QString, ProcessResult>& parameters);
    AbstractSql& setSpecificationFn(const QString &name, SpecificationFuncPtr fn);
    QString resolveTable(const TableIdentifier &table, const Engine &engine, const ParameterContainer &parameterContainer = ParameterContainer());
