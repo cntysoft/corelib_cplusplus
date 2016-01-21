@@ -29,5 +29,4 @@ protected:
 }//corelib
 }//sn
 
-
 #endif // SN_CORELIB_DB_SQL_EXPRESSION_H

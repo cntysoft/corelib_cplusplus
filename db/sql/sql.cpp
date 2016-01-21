@@ -2,7 +2,6 @@
 #include <QSharedPointer>
 
 #include "sql.h"
-#include "interface.h"
 #include <typeinfo>
 
 namespace sn{

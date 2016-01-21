@@ -63,6 +63,10 @@ const QString& Between::getSpecification()
 {
    return m_specification;
 }
+
+Where::Where()
+{}
+
 }//predicate
 }//sql
 }//db

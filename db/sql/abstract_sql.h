@@ -6,9 +6,9 @@
 #include <QStringList>
 #include <QString>
 #include <QObject>
+#include <QSharedPointer>
 
 #include "global/global.h"
-#include "interface.h"
 #include "db/engine/parameter_container.h"
 #include "db/engine/engine.h"
 
@@ -21,6 +21,7 @@ using sn::corelib::db::engine::Engine;
 using sn::corelib::db::engine::ParameterContainer;
 
 class TableIdentifier;
+class AbstractExpression;
 
 class SN_CORELIB_EXPORT AbstractSql : public QObject
 {
@@ -33,6 +34,7 @@ public:
    };
    struct ProcessResult
    {
+      bool isNull;
       ProcessResultType type;
       QVariant value;
       QVariant& getValue()
@@ -47,9 +49,12 @@ public:
 protected:
    QString buildSqlString(const Engine &engine, const ParameterContainer &parameterContainer = ParameterContainer());
    QString createSqlFromSpecificationAndParameters(const QVariant &specification, const QMap<QString, QVariant> &parameters);
-   //QString createSqlFromSpecificationAndParameters(const QString &specification, QMap<QString, ProcessResult>& parameters);
    AbstractSql& setSpecificationFn(const QString &name, SpecificationFuncPtr fn);
    QString resolveTable(const TableIdentifier &table, const Engine &engine, const ParameterContainer &parameterContainer = ParameterContainer());
+   QString processExpression(const AbstractExpression &expression, const Engine &engine, 
+                             const ParameterContainer &parameterContainer = ParameterContainer(), 
+                             QString namedParameterPrefix = QString());
+
 protected:
    QMap<QString, QVariant> m_specifications;
    QMap<QString, QVariant> m_processInfo;

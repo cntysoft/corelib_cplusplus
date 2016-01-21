@@ -44,7 +44,7 @@ void TestSql::testDeleteSql()
    QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
    TableIdentifier& table = deleteSql->getTable();
    QCOMPARE(table.getTable(), QString("userinfo"));
-   sql.buildSqlString(deleteSql);
+   qDebug() << sql.buildSqlString(deleteSql);
 }
 
 }//db

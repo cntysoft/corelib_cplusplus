@@ -25,7 +25,7 @@ public:
    struct RawState{
       bool emptyWhereProtection;
       TableIdentifier table;
-      Where where;
+      Where& where;
    };
 public:
    const static QString SPECIFICATION_DELETE;

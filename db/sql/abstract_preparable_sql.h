@@ -3,7 +3,6 @@
 
 #include "global/global.h"
 #include "abstract_sql.h"
-#include "interface.h"
 #include "db/engine/interface.h"
 
 namespace sn{

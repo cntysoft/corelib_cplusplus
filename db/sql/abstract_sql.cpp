@@ -1,5 +1,8 @@
+#include <QRegularExpression>
+
 #include "abstract_sql.h"
 #include "table_identifier.h"
+#include "abstract_expression.h"
 
 namespace sn{
 namespace corelib{
@@ -28,12 +31,13 @@ QString AbstractSql::buildSqlString(const Engine &engine, const ParameterContain
       }
       Q_ASSERT_X(fn != nullptr, "AbstractSql::buildSqlString", "specification function can not be nullptr");
       parameters[key] = fn(this, engine, parameterContainer, sqls, parameters);
-      if(!specification.isNull() && parameters.value(key)->type == ProcessResultType::Array){
-         sqls[key] = createSqlFromSpecificationAndParameters(specification, parameters[key]->getValue().toMap());
+      ProcessResultPointerType resultItem = parameters[key];
+      if(!specification.isNull() && !resultItem->isNull && resultItem->type == ProcessResultType::Array){
+         sqls[key] = createSqlFromSpecificationAndParameters(specification, resultItem->getValue().toMap());
          continue;
       }
-      if(ProcessResultType::String == parameters.value(key)->type){
-         sqls.insert(key, parameters.value(key)->getValue().toString());
+      if(!resultItem->isNull && ProcessResultType::String == resultItem->type){
+         sqls.insert(key, resultItem->getValue().toString());
       }
       cit++;
    }
@@ -48,6 +52,27 @@ QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &spe
 QString AbstractSql::getSqlString(const Engine &engine)
 {
    return buildSqlString(engine);
+}
+
+QString AbstractSql::processExpression(const AbstractExpression &expression, const engine::Engine &engine, 
+                                       const engine::ParameterContainer &parameterContainer, QString namedParameterPrefix)
+{
+   if(namedParameterPrefix.isNull()){
+      namedParameterPrefix = m_processInfo.value("paramPrefix").toString() + namedParameterPrefix;
+   }
+   static int runtimeExpressionPrefix = 0;
+   if(parameterContainer.count() > 0 && namedParameterPrefix.isEmpty()){
+      namedParameterPrefix = QString("expr%1Param").arg(++runtimeExpressionPrefix);
+   }else{
+      namedParameterPrefix.replace(QRegularExpression("\\s"), "__");
+   }
+   QString sql;
+   AbstractExpression::ExpressionDataType expressionData = expression.getExpressionData();
+   if(!m_instanceParameterIndex.contains(namedParameterPrefix)){
+      m_instanceParameterIndex.insert(namedParameterPrefix, 1);
+   }
+   QVariant &expressionParamIndex = m_instanceParameterIndex[namedParameterPrefix];
+   return sql;
 }
 
 QString AbstractSql::resolveTable(const TableIdentifier &table, const Engine &engine, const ParameterContainer&)

@@ -4,8 +4,6 @@
 #include <QMap>
 #include <QString>
 #include <QSharedPointer>
-
-#include "db/sql/interface.h"
 #include "global/global.h"
 #include "db/engine/engine.h"
 #include "db/sql/abstract_sql.h"

@@ -2,7 +2,6 @@
 #define SN_CORELIB_DB_SQL_PREDICATE_BETWEEN_H
 
 #include "global/global.h"
-#include "db/sql/interface.h"
 #include "db/sql/abstract_expression.h"
 #include "db/sql/predicate/predicateset.h"
 
@@ -35,7 +34,10 @@ protected:
 
 
 class SN_CORELIB_EXPORT Where : public PredicateSet
-{};
+{
+public:
+   Where();
+};
 
 }//predicate
 }//sql

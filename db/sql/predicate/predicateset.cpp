@@ -1,5 +1,7 @@
 #include "predicateset.h"
 
+#include <QDebug>
+
 namespace sn{
 namespace corelib{
 namespace db{
@@ -25,6 +27,17 @@ PredicateSet::PredicateSet(const QList<PredicatePointerType> &predicates, const 
          it++;
       }
    }   
+}
+
+AbstractExpression::ExpressionDataType PredicateSet::getExpressionData()const
+{
+   ExpressionDataType parts;
+   int count = m_predicates.size();
+   for(int i = 0; i < count; i++){
+      PredicatePointerType predicate = m_predicates[i].second;
+      qDebug() << predicate->metaObject()->className();
+   }
+   return parts;
 }
 
 PredicateSet& PredicateSet::addPredicate(PredicatePointerType predicate, QString combination)
