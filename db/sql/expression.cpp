@@ -1,5 +1,7 @@
-#include "kernel/errorinfo.h"
+#include <QString>
+#include <QStringList>
 
+#include "kernel/errorinfo.h"
 #include "expression.h"
 
 namespace sn{
@@ -66,7 +68,18 @@ AbstractExpression::ExpressionDataType Expression::getExpressionData()const
       it++;
       serial++;
    }
-   
+   QStringList values;
+   QStringList types;
+   for(int i = 0; i < parametersCount; i++){
+      QPair<QString, QString> normalizedArgument = normalizeArgument(m_parameters.at(i), AbstractExpression::TYPE_VALUE);
+      values << normalizedArgument.first;
+      types << normalizedArgument.second;
+   }
+   return {
+      QVariant(targetExpr),
+      QVariant(values),
+      QVariant(types)
+   };
 }
 
 }//sql
