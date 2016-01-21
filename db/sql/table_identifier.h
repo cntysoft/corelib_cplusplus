@@ -17,11 +17,11 @@ public:
    TableIdentifier() = default;
    TableIdentifier(const QString &table, const QString &schema  = QString());
    TableIdentifier& setTable(const QString &table);
-   const QString& getTable();
+   const QString& getTable()const;
    bool hasSchema();
    TableIdentifier& setSchema(const QString &schema);
-   const QString& getSchema();
-   QPair<QString, QString> getTableAndSchema();
+   const QString& getSchema()const;
+   QPair<QString, QString> getTableAndSchema()const;
 protected:
    QString m_table;
    QString m_schema;

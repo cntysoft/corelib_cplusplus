@@ -7,6 +7,7 @@
 #include <QLatin1String>
 #include <QMap>
 #include <QSqlDriver>
+#include <QChar>
 
 #include "global/global.h"
 
@@ -47,8 +48,9 @@ public:
    void query(const QString& sql, QueryMode queryMode = QueryMode::Prepare);
    QString quoteValue(const QSqlField &field) const;
    QString quoteIdentifier(const QString &identifier, IdentifierType type)const;
-   QString quoteTableName(const QString &tableName);
-   QString quoteFieldName(const QString &fieldName);
+   QString quoteTableName(const QString &tableName)const;
+   QString quoteFieldName(const QString &fieldName)const;
+   QChar getIdentifierSeparator()const;
    PlatformType getPlatformType();
 protected:
    QSqlDatabase m_database;

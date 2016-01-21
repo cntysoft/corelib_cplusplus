@@ -13,7 +13,7 @@ TableIdentifier::TableIdentifier(const QString &table, const QString &schema)
    }
 }
 
-const QString& TableIdentifier::getTable()
+const QString& TableIdentifier::getTable()const
 {
    return m_table;
 }
@@ -35,12 +35,12 @@ TableIdentifier& TableIdentifier::setSchema(const QString &schema)
    return *this;
 }
 
-const QString& TableIdentifier::getSchema()
+const QString& TableIdentifier::getSchema()const
 {
    return m_schema;
 }
 
-QPair<QString, QString> TableIdentifier::getTableAndSchema()
+QPair<QString, QString> TableIdentifier::getTableAndSchema()const
 {
    return QPair<QString, QString>{
       m_schema, m_table

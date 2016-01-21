@@ -70,16 +70,21 @@ QString Engine::quoteIdentifier(const QString &identifier, IdentifierType type) 
    return driver->escapeIdentifier(identifier, type);
 }
 
-QString Engine::quoteTableName(const QString &tableName)
+QString Engine::quoteTableName(const QString &tableName)const
 {
    QSqlDriver *driver = m_database.driver();
    return driver->escapeIdentifier(tableName, IdentifierType::TableName);
 }
 
-QString Engine::quoteFieldName(const QString &fieldName)
+QString Engine::quoteFieldName(const QString &fieldName) const
 {
    QSqlDriver *driver = m_database.driver();
    return driver->escapeIdentifier(fieldName, IdentifierType::FieldName);
+}
+
+QChar Engine::getIdentifierSeparator()const
+{
+   return '.';
 }
 
 void Engine::query(const QString &sql, QueryMode queryMode)

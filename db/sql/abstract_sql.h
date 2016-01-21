@@ -20,6 +20,8 @@ namespace sql{
 using sn::corelib::db::engine::Engine;
 using sn::corelib::db::engine::ParameterContainer;
 
+class TableIdentifier;
+
 class SN_CORELIB_EXPORT AbstractSql : public QObject
 {
    Q_OBJECT
@@ -43,16 +45,17 @@ public:
          return stringValue;
       }
    };
-   using SpecificationFuncPtr = ProcessResult (*)(const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResult> &parameters);
+   using SpecificationFuncPtr = ProcessResult (*)(AbstractSql *self, const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResult> &parameters);
 public:
    virtual QString getSqlString(const Engine &engine);
 protected:
-   QString buildSqlString(const Engine &engine, const ParameterContainer &parameterContainer);
-   QString createSqlFromSpecificationAndParameters(const QString &specification, QMap<QString, ProcessResult>& parameters);
+   QString buildSqlString(const Engine &engine, const ParameterContainer &parameterContainer = ParameterContainer());
+   QString createSqlFromSpecificationAndParameters(const QVariant &specification, QMap<QString, QString>& parameters);
    //QString createSqlFromSpecificationAndParameters(const QString &specification, QMap<QString, ProcessResult>& parameters);
    AbstractSql& setSpecificationFn(const QString &name, SpecificationFuncPtr fn);
+   QString resolveTable(const TableIdentifier &table, const Engine &engine, const ParameterContainer &parameterContainer = ParameterContainer());
 protected:
-   QMap<QString, QString> m_specifications;
+   QMap<QString, QVariant> m_specifications;
    QMap<QString, QVariant> m_processInfo;
    QMap<QString, QVariant> m_instanceParameterIndex;
    QMap<QString, SpecificationFuncPtr> m_specificationFnPtrs;

@@ -4,6 +4,7 @@
 #include "global/global.h"
 #include "db/sql/interface.h"
 #include "db/sql/abstract_expression.h"
+#include "db/sql/predicate/predicateset.h"
 
 namespace sn{
 namespace corelib{
@@ -31,6 +32,10 @@ protected:
    QString m_minValue;
    QString m_maxValue;
 };
+
+
+class SN_CORELIB_EXPORT Where : public PredicateSet
+{};
 
 }//predicate
 }//sql

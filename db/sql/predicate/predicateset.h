@@ -26,7 +26,7 @@ public:
    using PredicateItemType = QPair<QString, PredicatePointerType>;
    using PredicateListType = QList<PredicateItemType>;
 public:
-   PredicateSet(const QList<PredicatePointerType> &predicates, const QString &defaultCombination = PredicateSet::COMBINED_BY_AND);
+   PredicateSet(const QList<PredicatePointerType> &predicates = QList<PredicatePointerType>(), const QString &defaultCombination = PredicateSet::COMBINED_BY_AND);
    PredicateSet& addPredicate(PredicatePointerType predicate, QString combination = QString());
    PredicateSet& orPredicate(PredicatePointerType predicate);
    PredicateSet& andPredicate(PredicatePointerType predicate);

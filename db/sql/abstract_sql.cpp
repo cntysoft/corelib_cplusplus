@@ -1,4 +1,5 @@
 #include "abstract_sql.h"
+#include "table_identifier.h"
 
 namespace sn{
 namespace corelib{
@@ -17,18 +18,18 @@ QString AbstractSql::buildSqlString(const Engine &engine, const ParameterContain
 {
    QMap<QString, QString> sqls;
    QMap<QString, ProcessResult> parameters;
-   QMap<QString, QString>::const_iterator cit = m_specifications.cbegin();
+   QMap<QString, QVariant>::const_iterator cit = m_specifications.cbegin();
    while(cit != m_specifications.cend()){
       SpecificationFuncPtr fn = nullptr;
       QString key(cit.key());
-      QString specification(cit.value());
+      QVariant specification = cit.value();
       if(m_specificationFnPtrs.contains(key)){
          fn = m_specificationFnPtrs.value(key);
       }
       Q_ASSERT_X(fn != nullptr, "AbstractSql::buildSqlString", "specification function can not be nullptr");
-      parameters[key] = fn(engine, parameterContainer, sqls, parameters);
-      if(!specification.isEmpty() && parameters.value(key).type == ProcessResultType::Array){
-         sqls[key] = createSqlFromSpecificationAndParameters(specification, parameters);
+      parameters[key] = fn(this, engine, parameterContainer, sqls, parameters);
+      if(!specification.isNull() && parameters.value(key).type == ProcessResultType::Array){
+         sqls[key] = createSqlFromSpecificationAndParameters(specification, parameters[key].getArrayValue());
          continue;
       }
       if(ProcessResultType::String == parameters.value(key).type){
@@ -39,14 +40,28 @@ QString AbstractSql::buildSqlString(const Engine &engine, const ParameterContain
    return sqls.values().join(' ');
 }
 
-QString AbstractSql::createSqlFromSpecificationAndParameters(const QString &specification, QMap<QString, ProcessResult> &parameters)
+QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, QMap<QString, QString> &parameters)
 {
    return QString();
 }
 
 QString AbstractSql::getSqlString(const Engine &engine)
 {
-   return QString();
+   return buildSqlString(engine);
+}
+
+QString AbstractSql::resolveTable(const TableIdentifier &table, const Engine &engine, const ParameterContainer&)
+{
+   //暂时不支持子查询
+   QString schema(table.getSchema());
+   QString tableName(table.getTable());
+   if(!tableName.isNull()){
+      tableName = engine.quoteIdentifier(tableName, Engine::IdentifierType::TableName);
+   }
+   if(!schema.isNull() && !tableName.isNull()){
+      tableName = engine.quoteTableName(schema)+engine.getIdentifierSeparator()+engine.quoteTableName(tableName);
+   }
+   return tableName;
 }
 
 }//sql
