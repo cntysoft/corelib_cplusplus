@@ -1,10 +1,12 @@
-#ifndef SN_CORELIB_DB_SQL_PREDICATEPREDICATESET_H
-#define SN_CORELIB_DB_SQL_PREDICATEPREDICATESET_H
+#ifndef SN_CORELIB_DB_SQL_PREDICATE_PREDICATESET_H
+#define SN_CORELIB_DB_SQL_PREDICATE_PREDICATESET_H
 
 #include <QString>
 #include <QSharedPointer>
 #include <QList>
 #include <QPair>
+#include <QVariant>
+#include <QMap>
 
 #include "db/sql/abstract_expression.h"
 #include "global/global.h"
@@ -32,6 +34,10 @@ public:
                 const QString &defaultCombination = PredicateSet::COMBINED_BY_AND);
    PredicateSet& addPredicate(PredicatePointerType predicate, QString combination = PredicateSet::OP_AND);
    PredicateSet& addPredicate(const QString &predicate, QString combination = PredicateSet::OP_AND);
+   PredicateSet& addPredicates(const QList<PredicatePointerType> &predicates, QString combination = PredicateSet::OP_AND);
+   PredicateSet& addPredicates(const QList<QString> &predicates, QString combination = PredicateSet::OP_AND);
+   PredicateSet& addPredicates(const QMap<QString, QString> &predicates, QString combination = PredicateSet::OP_AND);
+   
    PredicateSet& orPredicate(PredicatePointerType predicate);
    PredicateSet& andPredicate(PredicatePointerType predicate);
    const PredicateListType& getPredicates();
@@ -52,5 +58,5 @@ protected:
 }//corelib
 }//sn
 
-#endif // SN_CORELIB_DB_SQL_PREDICATEPREDICATESET_H
+#endif // SN_CORELIB_DB_SQL_PREDICATE_PREDICATESET_H
 

@@ -71,6 +71,47 @@ Literal::Literal(const QString &literal)
    : BaseLiteral(literal)
 {}
 
+Expression::Expression(const QString &expression, const QStringList &parameters)
+   : BaseExpression(expression, parameters)
+{}
+
+IsNull::IsNull(const QString &identifier)
+   : m_identifier(identifier)
+{
+}
+
+IsNull& IsNull::setIdentifier(const QString &identifier)
+{
+   m_identifier = identifier;
+   return *this;
+}
+
+const QString IsNull::getIdentifier()const
+{
+   return m_identifier;
+}
+
+IsNull& IsNull::setSpecification(const QString &specification)
+{
+   m_specification = specification;
+   return *this;
+}
+
+const QString& IsNull::getSpecification() const
+{
+   return m_specification;
+}
+
+AbstractExpression::ExpressionDataType IsNull::getExpressionData()const
+{
+   QPair<QString, QString> identifier = normalizeArgument(m_identifier, AbstractExpression::TYPE_IDENTIFIER);
+   return {
+      QVariant(getSpecification()),
+      QVariant(identifier.first),
+      QVariant(identifier.second)
+   };
+}
+
 }//predicate
 }//sql
 }//db

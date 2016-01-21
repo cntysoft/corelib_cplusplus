@@ -166,6 +166,8 @@ Product
            "sql/platform/mysql/mysql.h",
            "sql/platform/platform.cpp",
            "sql/platform/platform.h",
+           "sql/predicate/predicate.cpp",
+           "sql/predicate/predicate.h",
            "sql/predicate/predicateset.cpp",
            "sql/predicate/predicateset.h",
            "sql/predicate/simple_predicate.cpp",
