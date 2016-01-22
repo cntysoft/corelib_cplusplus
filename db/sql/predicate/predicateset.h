@@ -37,10 +37,10 @@ public:
    PredicateSet& addPredicates(const QList<PredicatePointerType> &predicates, QString combination = PredicateSet::OP_AND);
    PredicateSet& addPredicates(const QList<QString> &predicates, QString combination = PredicateSet::OP_AND);
    PredicateSet& addPredicates(const QMap<QString, QVariant> &predicates, QString combination = PredicateSet::OP_AND);
-   
    PredicateSet& orPredicate(PredicatePointerType predicate);
    PredicateSet& andPredicate(PredicatePointerType predicate);
    const PredicateListType& getPredicates();
+   PredicateSet& clearPredicates();
    int count();
 public:
    virtual ExpressionDataType getExpressionData()const;

@@ -19,6 +19,7 @@ private slots:
    void initTestCase();
    void testSqlTableName();
    void testDeleteSql();
+   void testWherePredicate();
 protected:
    Engine m_engine;
 };

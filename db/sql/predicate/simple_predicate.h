@@ -8,6 +8,7 @@
 #include "kernel/errorinfo.h"
 #include "db/sql/abstract_expression.h"
 #include "db/sql/predicate/predicateset.h"
+#include "db/sql/predicate/predicate.h"
 #include "db/sql/literal.h"
 #include "db/sql/expression.h"
 
@@ -64,7 +65,7 @@ protected:
    QVariant m_valueSet;
 };
 
-class SN_CORELIB_EXPORT Where : public PredicateSet
+class SN_CORELIB_EXPORT Where : public Predicate
 {
    Q_OBJECT
 public:

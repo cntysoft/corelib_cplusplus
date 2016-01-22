@@ -43,22 +43,22 @@ public:
       }
    };
    using ProcessResultPointerType = QSharedPointer<ProcessResult>;
-   using SpecificationFuncPtr = ProcessResultPointerType (*)(AbstractSql *self, const Engine &engine, const ParameterContainer &parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResultPointerType> &parameters);
+   using SpecificationFuncPtr = ProcessResultPointerType (*)(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResultPointerType> &parameters);
 public:
    virtual QString getSqlString(const Engine &engine);
 protected:
-   QString buildSqlString(const Engine &engine, const ParameterContainer &parameterContainer = ParameterContainer());
+   QString buildSqlString(const Engine &engine, ParameterContainer *parameterContainer = nullptr);
    QString createSqlFromSpecificationAndParameters(const QVariant &specification, const QMap<QString, QVariant> &parameters);
    AbstractSql& setSpecificationFn(const QString &name, SpecificationFuncPtr fn);
-   QString resolveTable(const TableIdentifier &table, const Engine &engine, const ParameterContainer &parameterContainer = ParameterContainer());
+   QString resolveTable(const TableIdentifier &table, const Engine &engine, ParameterContainer *parameterContainer = nullptr);
    QString processExpression(const QSharedPointer<AbstractExpression> expression, const Engine &engine, 
-                             const ParameterContainer &parameterContainer = ParameterContainer(), 
+                             ParameterContainer *parameterContainer = nullptr, 
                              QString namedParameterPrefix = QString());
 
 protected:
    QMap<QString, QVariant> m_specifications;
    QMap<QString, QVariant> m_processInfo;
-   QMap<QString, QVariant> m_instanceParameterIndex;
+   QMap<QString, int> m_instanceParameterIndex;
    QMap<QString, SpecificationFuncPtr> m_specificationFnPtrs;
 };
 

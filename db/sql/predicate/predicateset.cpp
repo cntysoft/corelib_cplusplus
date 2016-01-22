@@ -153,6 +153,12 @@ const PredicateSet::PredicateListType& PredicateSet::getPredicates()
    return m_predicates;
 }
 
+PredicateSet& PredicateSet::clearPredicates()
+{
+   m_predicates.clear();
+   return *this;
+}
+
 int PredicateSet::count()
 {
    return m_predicates.size();

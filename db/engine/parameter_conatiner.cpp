@@ -196,6 +196,11 @@ int ParameterContainer::count()const
    return m_data.size();
 }
 
+int ParameterContainer::isEmpty()const
+{
+   return m_data.isEmpty();
+}
+
 ParameterContainer& ParameterContainer::merge(const ParameterContainer &params)
 {
    if(0 == params.count()){

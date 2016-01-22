@@ -57,6 +57,7 @@ public:
    const QMap<QString, QVariant>& getNamedDataMap();
    QList<QVariant> getPositionalDataList();
    int count()const;
+   int isEmpty()const;
    ParameterContainer& merge(const ParameterContainer &params);
    
 protected:

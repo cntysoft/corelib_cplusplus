@@ -22,7 +22,7 @@ AbstractSql& AbstractSql::setSpecificationFn(const QString &name, SpecificationF
    return *this;
 }
 
-QString AbstractSql::buildSqlString(const Engine &engine, const ParameterContainer &parameterContainer)
+QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *parameterContainer)
 {
    QMap<QString, QString> sqls;
    QMap<QString, ProcessResultPointerType> parameters;
@@ -60,13 +60,13 @@ QString AbstractSql::getSqlString(const Engine &engine)
 }
 
 QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> expression, const engine::Engine &engine, 
-                                       const engine::ParameterContainer &parameterContainer, QString namedParameterPrefix)
+                                       ParameterContainer *parameterContainer, QString namedParameterPrefix)
 {
    if(namedParameterPrefix.isNull()){
       namedParameterPrefix = m_processInfo.value("paramPrefix").toString() + namedParameterPrefix;
    }
    static int runtimeExpressionPrefix = 0;
-   if(parameterContainer.count() > 0 && namedParameterPrefix.isEmpty()){
+   if(parameterContainer != nullptr && !parameterContainer->isEmpty() && namedParameterPrefix.isEmpty()){
       namedParameterPrefix = QString("expr%1Param").arg(++runtimeExpressionPrefix);
    }else{
       namedParameterPrefix.replace(QRegularExpression("\\s"), "__");
@@ -76,7 +76,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
    if(!m_instanceParameterIndex.contains(namedParameterPrefix)){
       m_instanceParameterIndex.insert(namedParameterPrefix, 1);
    }
-   QVariant &expressionParamIndex = m_instanceParameterIndex[namedParameterPrefix];
+   int &expressionParamIndex = m_instanceParameterIndex[namedParameterPrefix];
    int partCount = expressionData.size();
    for(int i = 0; i < partCount; i++){
       QVariant &part = expressionData[i];
@@ -112,9 +112,17 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
          }
          QString type = types.at(vIndex).toString();
          if(type == AbstractExpression::TYPE_IDENTIFIER){
-            
+            strValues.insert(vIndex, engine.quoteFieldName(value.toString()));
          }else if(type == AbstractExpression::TYPE_VALUE){
-            
+            // if prepareType is
+            // passed back to the statement in a way it can be used as a placeholder value
+            if(nullptr != parameterContainer && !parameterContainer->isEmpty()){
+               QString name(namedParameterPrefix+QString("%1").arg(expressionParamIndex++));
+               parameterContainer->offsetSet(name, value);
+               strValues.insert(vIndex, "?");
+               continue;
+            }
+            strValues.insert(vIndex, engine.quoteValue(value));
          }else if(type == AbstractExpression::TYPE_LITERAL){
             strValues[vIndex] = value.toString();
          }
@@ -125,57 +133,57 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
       switch (valueCount) {
       case 1:
       {
-         tpl = tpl.arg(values.at(0).toString());
+         tpl = tpl.arg(strValues.at(0));
          break;
       }
       case 2:
       {
-         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString());
+         tpl = tpl.arg(strValues.at(0), strValues.at(1));
          break;
       }
       case 3:
       {
-         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
-                       values.at(2).toString());
+         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
+                       strValues.at(2));
       }
       case 4:
       {
-         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
-                       values.at(2).toString(), values.at(3).toString());
+         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
+                       strValues.at(2), strValues.at(3));
       }
       case 5:
       {
-         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
-                       values.at(2).toString(), values.at(3).toString(),
-                       values.at(4).toString());
+         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
+                       strValues.at(2), strValues.at(3),
+                       strValues.at(4));
       }
       case 6:
       {
-         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
-                       values.at(2).toString(), values.at(3).toString(),
-                       values.at(4).toString(), values.at(5).toString());
+         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
+                       strValues.at(2), strValues.at(3),
+                       strValues.at(4), strValues.at(5));
       }
       case 7:
       {
-         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
-                       values.at(2).toString(), values.at(3).toString(),
-                       values.at(4).toString(), values.at(5).toString(),
-                       values.at(6).toString());
+         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
+                       strValues.at(2), strValues.at(3),
+                       strValues.at(4), strValues.at(5),
+                       strValues.at(6));
       }
       case 8:
       {
-         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
-                       values.at(2).toString(), values.at(3).toString(),
-                       values.at(4).toString(), values.at(5).toString(),
-                       values.at(6).toString(), values.at(7).toString());
+         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
+                       strValues.at(2), strValues.at(3),
+                       strValues.at(4), strValues.at(5),
+                       strValues.at(6), strValues.at(7));
       }
       case 9:
       {
-         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
-                       values.at(2).toString(), values.at(3).toString(),
-                       values.at(4).toString(), values.at(5).toString(),
-                       values.at(6).toString(), values.at(7).toString(),
-                       values.at(8).toString());
+         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
+                       strValues.at(2), strValues.at(3),
+                       strValues.at(4), strValues.at(5),
+                       strValues.at(6), strValues.at(7),
+                       strValues.at(8));
       }
       }
       sql += tpl;
@@ -183,7 +191,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
    return sql;
 }
 
-QString AbstractSql::resolveTable(const TableIdentifier &table, const Engine &engine, const ParameterContainer&)
+QString AbstractSql::resolveTable(const TableIdentifier &table, const Engine &engine, ParameterContainer *)
 {
    //暂时不支持子查询
    QString schema(table.getSchema());

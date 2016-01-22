@@ -2,7 +2,6 @@
 #define SN_CORELIB_DB_ENGINE_ENGINE_H
 
 #include <QSqlDatabase>
-#include <QSqlField>
 #include <QString>
 #include <QLatin1String>
 #include <QMap>
@@ -46,7 +45,7 @@ public:
    QSqlDatabase& getDbConnection();
    QString& getCurrentSchema();
    void query(const QString& sql, QueryMode queryMode = QueryMode::Prepare);
-   QString quoteValue(const QSqlField &field) const;
+   QString quoteValue(const QVariant &value) const;
    QString quoteIdentifier(const QString &identifier, IdentifierType type)const;
    QString quoteTableName(const QString &tableName)const;
    QString quoteFieldName(const QString &fieldName)const;

@@ -2,6 +2,7 @@
 
 #include "engine.h"
 #include "kernel/errorinfo.h"
+#include <QSqlField>
 #include <QDebug>
 
 namespace sn{
@@ -58,9 +59,12 @@ QString& Engine::getCurrentSchema()
    return m_dbname;
 }
 
-QString Engine::quoteValue(const QSqlField &field) const
+QString Engine::quoteValue(const QVariant &value) const
 {
    QSqlDriver *driver = m_database.driver();
+   QSqlField field;
+   field.setType(value.type());
+   field.setValue(value);
    return driver->formatValue(field, true);
 }
 
