@@ -14,6 +14,7 @@ namespace sql{
 
 class SN_CORELIB_EXPORT Expression : public AbstractExpression
 {
+   Q_OBJECT
 public:
    const static QChar PLACEHOLDER;
 public:

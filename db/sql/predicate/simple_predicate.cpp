@@ -9,7 +9,7 @@ namespace sql{
 namespace predicate{
 
 Between::Between(const QString &identifier, const QString &minValue, const QString &maxValue)
-   :m_specification("%1$s BETWEEN %2$s AND %3$s")
+   :m_specification("%1 BETWEEN %2 AND %3")
 {
    if(!identifier.isNull()){
       setIdentifier(identifier);
@@ -61,9 +61,63 @@ Between& Between::setSpecification(const QString &specification)
    return *this;
 }
 
-const QString& Between::getSpecification()
+const QString& Between::getSpecification() const
 {
    return m_specification;
+}
+
+
+AbstractExpression::ExpressionDataType Between::getExpressionData()const
+{
+   QPair<QVariant, QString> identifier = normalizeArgument(m_identifier, AbstractExpression::TYPE_IDENTIFIER);
+   QPair<QVariant, QString> minValue = normalizeArgument(m_minValue, AbstractExpression::TYPE_VALUE);
+   QPair<QVariant, QString> maxValue = normalizeArgument(m_maxValue, AbstractExpression::TYPE_VALUE);
+   QList<QVariant>  values;
+   QList<QVariant>  types;
+   values << identifier.first << minValue.first << maxValue.first;
+   types << QVariant(identifier.second) << QVariant(minValue.second) << QVariant(maxValue.second);
+   return {
+      QVariant(getSpecification()),
+            QVariant(values),
+            QVariant(types)
+   };
+}
+
+In::In(const QString &identifier, const QVariant &valueSet)
+   : m_identifier(identifier),
+     m_valueSet(valueSet)
+{
+   
+}
+
+In& In::setIdentifier(const QString &identifier)
+{
+   m_identifier = identifier;
+   return *this;
+}
+
+const QString& In::getIdentifier() const
+{
+   return m_identifier;
+}
+
+In& In::setValueSet(const QStringList &valueSet)
+{
+   if(!m_valueSet.isNull()){
+      m_valueSet.clear();
+   }
+   m_valueSet.setValue(valueSet);
+   return *this;
+}
+
+const QVariant& In::getValueSet() const
+{
+   return m_valueSet;
+}
+
+AbstractExpression::ExpressionDataType In::getExpressionData()const
+{
+   
 }
 
 Where::Where()
@@ -138,9 +192,9 @@ const  QLatin1String Operator::OP_GTE(">=");
 Operator::Operator(const QVariant &left, const QLatin1String &operatorType, const QVariant &right, const QString &leftType, const QString &rightType)
    : m_left(left),
      m_right(right),
-     m_operatorType(Operator::OPERATOR_EQUAL_TO),
      m_leftType(AbstractExpression::TYPE_IDENTIFIER),
-     m_rightType(AbstractExpression::TYPE_VALUE)
+     m_rightType(AbstractExpression::TYPE_VALUE),
+     m_operatorType(Operator::OPERATOR_EQUAL_TO)
 {
    if(!leftType.isNull()){
       setLeftType(leftType);
@@ -154,6 +208,7 @@ Operator::Operator(const QVariant &left, const QLatin1String &operatorType, cons
    if(leftType != AbstractExpression::TYPE_IDENTIFIER){
       setLeftType(leftType);
    }
+   m_allowTypes.clear();
    m_allowTypes.append(AbstractExpression::TYPE_IDENTIFIER);
    m_allowTypes.append(AbstractExpression::TYPE_VALUE);
 }

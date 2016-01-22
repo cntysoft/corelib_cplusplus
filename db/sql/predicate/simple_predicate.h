@@ -24,6 +24,7 @@ using sn::corelib::ErrorInfo;
 
 class SN_CORELIB_EXPORT Between : public AbstractExpression
 {
+   Q_OBJECT
 public:
    Between(const QString &identifier = QString(), const QString &minValue = QString(), const QString &maxValue = QString());
    Between& setIdentifier(const QString &identifier);
@@ -33,7 +34,9 @@ public:
    Between& setMaxValue(const QString &maxValue);
    const QString& getMaxValue();
    Between& setSpecification(const QString &specification);
-   const QString& getSpecification();
+   const QString& getSpecification()const;
+public:
+   virtual ExpressionDataType getExpressionData()const;
 protected:
    QString m_specification;
    QString m_identifier;
@@ -42,26 +45,49 @@ protected:
 };
 
 
+
+class SN_CORELIB_EXPORT In : public AbstractExpression
+{
+   Q_OBJECT
+public:
+   In(const QString &identifier = QString(), const QVariant &valueSet = QVariant());
+   In& setIdentifier(const QString &identifier);
+   const QString& getIdentifier()const;
+   In& setValueSet(const QStringList &valueSet);
+   const QVariant& getValueSet()const;
+public:
+   virtual ExpressionDataType getExpressionData()const;
+protected:
+   QString m_specification;
+   QString m_valueSpecSpecification;
+   QString m_identifier;
+   QVariant m_valueSet;
+};
+
 class SN_CORELIB_EXPORT Where : public PredicateSet
 {
+   Q_OBJECT
 public:
    Where();
 };
 
 class SN_CORELIB_EXPORT Literal : public BaseLiteral
 {
+   Q_OBJECT
 public:
    Literal(const QString &literal);
 };
 
 class SN_CORELIB_EXPORT Expression : public BaseExpression
 {
+   Q_OBJECT
 public:
    Expression(const QString &expression, const QStringList &parameters = QStringList());
 };
 
 class SN_CORELIB_EXPORT IsNull : public AbstractExpression
 {
+   Q_OBJECT
 public:
    IsNull(const QString &identifier = QString());
    IsNull& setIdentifier(const QString &identifier);
@@ -77,6 +103,7 @@ protected:
 
 class SN_CORELIB_EXPORT Operator : public AbstractExpression
 {
+   Q_OBJECT
 public:
    const static QLatin1String OPERATOR_EQUAL_TO;
    const static QLatin1String OP_EQ;
@@ -112,7 +139,6 @@ protected:
    QString m_leftType;
    QString m_rightType;
    QLatin1String m_operatorType;
-   
 };
 
 }//predicate

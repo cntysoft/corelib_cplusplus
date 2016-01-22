@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QSharedPointer>
-#include <QList>
+#include <QVector>
 #include <QPair>
 #include <QVariant>
 #include <QMap>
@@ -28,7 +28,7 @@ public:
    const static QString OP_OR;
    using PredicatePointerType = QSharedPointer<AbstractExpression>;
    using PredicateItemType = QPair<QString, PredicatePointerType>;
-   using PredicateListType = QList<PredicateItemType>;
+   using PredicateListType = QVector<PredicateItemType>;
 public:
    PredicateSet(const QList<PredicatePointerType> &predicates = QList<PredicatePointerType>(), 
                 const QString &defaultCombination = PredicateSet::COMBINED_BY_AND);

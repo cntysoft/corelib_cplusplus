@@ -1,5 +1,4 @@
-
-
+#include "global/common_funcs.h"
 #include "predicateset.h"
 #include "simple_predicate.h"
 
@@ -10,6 +9,8 @@ namespace corelib{
 namespace db{
 namespace sql{
 namespace predicate{
+
+using sn::corelib::instanceof;
 
 const QString PredicateSet::COMBINED_BY_AND = "AND";
 const QString PredicateSet::OP_AND = "AND";
@@ -38,7 +39,17 @@ AbstractExpression::ExpressionDataType PredicateSet::getExpressionData()const
    int count = m_predicates.size();
    for(int i = 0; i < count; i++){
       PredicatePointerType predicate = m_predicates[i].second;
-      qDebug() << predicate->metaObject()->className();
+      if(instanceof<PredicateSet>(predicate.data())){
+         parts << QVariant("(");
+      }
+      parts << QVariant(predicate->getExpressionData());
+      if(instanceof<PredicateSet>(predicate.data())){
+         parts << QVariant(")");
+      }
+      int next = i + 1;
+      if(next < count){
+         parts << QVariant(QString(" %1 ").arg(m_predicates[next].first));
+      }
    }
    return parts;
 }
@@ -108,9 +119,21 @@ PredicateSet& PredicateSet::addPredicates(const QMap<QString, QVariant> &predica
          predicate.reset(new Expression(key, value.toStringList()));
       }else if(value.isNull()){
          // map PHP null to SQL IS NULL expression
+         predicate.reset(new IsNull(key));
+      }else if(value.canConvert(QMetaType::QStringList)){
+         predicate.reset(new In(key, value));
+      }else if(value.canConvert(QMetaType::QString)){
+         QString strValue = value.toString();
+         if(strValue.indexOf(Expression::PLACEHOLDER) != -1){
+            predicate.reset(new Expression(strValue));
+         }else{
+            predicate.reset(new Literal(strValue));
+         }
       }
+      addPredicate(predicate, combination);
       it++;
    }
+   return *this;
 }
 
 PredicateSet& PredicateSet::andPredicate(PredicatePointerType predicate)

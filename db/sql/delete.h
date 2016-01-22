@@ -15,6 +15,7 @@ namespace db{
 namespace sql{
 
 using sn::corelib::db::sql::predicate::Where;
+using sn::corelib::db::sql::predicate::PredicateSet;
 
 class SN_CORELIB_EXPORT Delete : public AbstractPreparableSql
 {
@@ -33,11 +34,11 @@ public:
    const static QString SPECIFICATION_WHERE;
 public:
    Delete(const TableIdentifier &table = TableIdentifier());
-   Delete(const QString &table = QString());
+   Delete(const QString &table);
    TableIdentifier& getTable();
    RawState getRawState();
    Delete& where(const QSharedPointer<Where> &where);
-   Delete& where(const QString &where);
+   Delete& where(const QString &where, const QString &combination = PredicateSet::OP_AND);
    ~Delete();
 protected:
    TableIdentifier m_table;

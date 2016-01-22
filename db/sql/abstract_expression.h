@@ -4,7 +4,7 @@
 #include <QStringList>
 #include <QSharedPointer>
 #include <QObject>
-#include <QVector>
+#include <QList>
 #include <QVariant>
 #include <QString>
 
@@ -26,7 +26,7 @@ public:
       QStringList values;
       QStringList types;
    };
-   using ExpressionDataType = QVector<QVariant>;
+   using ExpressionDataType = QList<QVariant>;
 public:
    const static QString TYPE_IDENTIFIER;
    const static QString TYPE_VALUE;

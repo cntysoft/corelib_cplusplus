@@ -79,9 +79,9 @@ Delete& Delete::where(const QSharedPointer<Where> &where)
    return *this;
 }
 
-Delete& Delete::where(const QString &where)
+Delete& Delete::where(const QString &where, const QString &combination)
 {
-//   m_where->addPredicate();
+   m_where->addPredicate(where, combination);
    return *this;
 }
 

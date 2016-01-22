@@ -1,13 +1,18 @@
 #include <QRegularExpression>
+#include <QMetaType>
 
 #include "abstract_sql.h"
 #include "table_identifier.h"
 #include "abstract_expression.h"
+#include "expression.h"
+#include "global/common_funcs.h"
 
 namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
+
+using sn::corelib::instanceof;
 
 AbstractSql& AbstractSql::setSpecificationFn(const QString &name, SpecificationFuncPtr fn)
 {
@@ -72,6 +77,109 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
       m_instanceParameterIndex.insert(namedParameterPrefix, 1);
    }
    QVariant &expressionParamIndex = m_instanceParameterIndex[namedParameterPrefix];
+   int partCount = expressionData.size();
+   for(int i = 0; i < partCount; i++){
+      QVariant &part = expressionData[i];
+      if(part.type() == QVariant::String && instanceof<Expression>(expression)){
+         Expression* exprPointer = qobject_cast<Expression*>(expression.data());
+         if(0 != exprPointer){
+            sql += exprPointer->getExpression();
+         }else{
+            Q_ASSERT_X(0 != exprPointer, "AbstractSql::processExpression", 
+                       "Expression* exprPointer = qobject_cast<Expression*>(expression.data()); fail");
+         }
+         continue;
+      }
+      if(part.type() == QVariant::String){
+         sql += part.toString();
+         continue;
+      }
+      // Process values and types (the middle and last position of the
+      // expression data)
+      AbstractExpression::ExpressionDataType subParts = part.toList();
+      QList<QVariant> types;
+      QList<QVariant> values = subParts[1].toList();
+      QStringList strValues;
+      if(subParts.size() > 2){
+         types = subParts[2].toList();
+      }
+      int valueCount = values.size();
+      int typeCount = types.size();
+      for(int vIndex = 0; vIndex < valueCount; vIndex++){
+         const QVariant &value = values.at(vIndex);
+         if(vIndex == typeCount || types.at(vIndex).isNull()){
+            continue;
+         }
+         QString type = types.at(vIndex).toString();
+         if(type == AbstractExpression::TYPE_IDENTIFIER){
+            
+         }else if(type == AbstractExpression::TYPE_VALUE){
+            
+         }else if(type == AbstractExpression::TYPE_LITERAL){
+            strValues[vIndex] = value.toString();
+         }
+      }
+      // After looping the values, interpolate them into the sql string
+      // (they might be placeholder names, or values)
+      QString tpl = subParts[0].toString();
+      switch (valueCount) {
+      case 1:
+      {
+         tpl = tpl.arg(values.at(0).toString());
+         break;
+      }
+      case 2:
+      {
+         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString());
+         break;
+      }
+      case 3:
+      {
+         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
+                       values.at(2).toString());
+      }
+      case 4:
+      {
+         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
+                       values.at(2).toString(), values.at(3).toString());
+      }
+      case 5:
+      {
+         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
+                       values.at(2).toString(), values.at(3).toString(),
+                       values.at(4).toString());
+      }
+      case 6:
+      {
+         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
+                       values.at(2).toString(), values.at(3).toString(),
+                       values.at(4).toString(), values.at(5).toString());
+      }
+      case 7:
+      {
+         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
+                       values.at(2).toString(), values.at(3).toString(),
+                       values.at(4).toString(), values.at(5).toString(),
+                       values.at(6).toString());
+      }
+      case 8:
+      {
+         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
+                       values.at(2).toString(), values.at(3).toString(),
+                       values.at(4).toString(), values.at(5).toString(),
+                       values.at(6).toString(), values.at(7).toString());
+      }
+      case 9:
+      {
+         tpl = tpl.arg(values.at(0).toString(), values.at(1).toString(), 
+                       values.at(2).toString(), values.at(3).toString(),
+                       values.at(4).toString(), values.at(5).toString(),
+                       values.at(6).toString(), values.at(7).toString(),
+                       values.at(8).toString());
+      }
+      }
+      sql += tpl;
+   }
    return sql;
 }
 

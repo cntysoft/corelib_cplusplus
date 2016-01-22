@@ -7,6 +7,7 @@
 
 #include <QSharedPointer>
 #include <QDebug>
+#include "global/common_funcs.h"
 
 namespace corelibtest{
 namespace db{
@@ -15,6 +16,8 @@ using sn::corelib::db::sql::Sql;
 using sn::corelib::db::sql::Delete;
 using sn::corelib::db::sql::TableIdentifier;
 using sn::corelib::db::sql::AbstractSql;
+using sn::corelib::db::sql::AbstractPreparableSql;
+using sn::corelib::instanceof;
 
 TestSql::TestSql()
    : m_engine(Engine::QMYSQL, {
@@ -44,6 +47,7 @@ void TestSql::testDeleteSql()
    QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
    TableIdentifier& table = deleteSql->getTable();
    QCOMPARE(table.getTable(), QString("userinfo"));
+   deleteSql->where("`name` = `adasdasd`");
    qDebug() << sql.buildSqlString(deleteSql);
 }
 
