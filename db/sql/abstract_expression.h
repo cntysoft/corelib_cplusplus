@@ -37,9 +37,9 @@ public:
    virtual ExpressionDataType getExpressionData()const;
    virtual ~AbstractExpression();
 protected:
-   QPair<QString, QString> normalizeArgument(const QString &argument, const QString &defaultType = AbstractExpression::TYPE_VALUE)const;
+   QPair<QVariant, QString> normalizeArgument(const QVariant &argument, const QString &defaultType = AbstractExpression::TYPE_VALUE)const;
 protected:
-   const static QStringList sm_allowTypes;
+   QStringList m_allowTypes;
 };
 
 }//sql

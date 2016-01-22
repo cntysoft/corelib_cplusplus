@@ -2,8 +2,10 @@
 #define SN_CORELIB_DB_SQL_PREDICATE_SIMPLE_PREDICATE_H
 
 #include <QString>
+#include <QLatin1String>
 
 #include "global/global.h"
+#include "kernel/errorinfo.h"
 #include "db/sql/abstract_expression.h"
 #include "db/sql/predicate/predicateset.h"
 #include "db/sql/literal.h"
@@ -18,6 +20,7 @@ namespace predicate{
 using BaseLiteral = sn::corelib::db::sql::Literal;
 using sn::corelib::db::sql::AbstractExpression;
 using BaseExpression = sn::corelib::db::sql::Expression;
+using sn::corelib::ErrorInfo;
 
 class SN_CORELIB_EXPORT Between : public AbstractExpression
 {
@@ -70,6 +73,46 @@ public:
 protected:
    QString m_specification;
    QString m_identifier;
+};
+
+class SN_CORELIB_EXPORT Operator : public AbstractExpression
+{
+public:
+   const static QLatin1String OPERATOR_EQUAL_TO;
+   const static QLatin1String OP_EQ;
+   const static QLatin1String OPERATOR_NOT_EQUAL_TO;
+   const static QLatin1String OP_NE;
+   const static QLatin1String OPERATOR_LESS_THAN;
+   const static QLatin1String OP_LT;
+   const static QLatin1String OPERATOR_LESS_THAN_OR_EQUAL_TO;
+   const static QLatin1String OP_LTE;
+   const static QLatin1String OPERATOR_GREATER_THAN;
+   const static QLatin1String OP_GT;
+   const static QLatin1String OPERATOR_GREATER_THAN_OR_EQUAL_TO;
+   const static QLatin1String OP_GTE;
+public:
+   Operator(const QVariant &left = QVariant(), const QLatin1String &operatorType = Operator::OPERATOR_EQUAL_TO,
+            const QVariant &right = QVariant(), const QString &leftType = AbstractExpression::TYPE_IDENTIFIER,
+            const QString &rightType = AbstractExpression::TYPE_VALUE);
+   Operator& setLeft(const QVariant &left);
+   const QVariant& getLeft()const;
+   Operator& setLeftType(const QString &type)throw(ErrorInfo);
+   const QString& getLeftType()const;
+   Operator& setOperator(const QLatin1String &operatorType);
+   const QLatin1String& getOperator()const;
+   Operator& setRight(const QVariant &right);
+   const QVariant& getRight()const;
+   Operator& setRightType(const QString &type)throw(ErrorInfo);
+   const QString& getRightType()const;
+public:
+   virtual ExpressionDataType getExpressionData()const;
+protected:
+   QVariant m_left;
+   QVariant m_right;
+   QString m_leftType;
+   QString m_rightType;
+   QLatin1String m_operatorType;
+   
 };
 
 }//predicate

@@ -13,15 +13,12 @@ const QString AbstractExpression::TYPE_VALUE = "value";
 const QString AbstractExpression::TYPE_LITERAL = "literal";
 const QString AbstractExpression::TYPE_SELECT = "select";
 
-const QStringList AbstractExpression::sm_allowTypes{
-   AbstractExpression::TYPE_IDENTIFIER,
-         AbstractExpression::TYPE_LITERAL,
-         AbstractExpression::TYPE_SELECT,
-         AbstractExpression::TYPE_VALUE
-};
-
 AbstractExpression::AbstractExpression()
 {
+   m_allowTypes.append(AbstractExpression::TYPE_IDENTIFIER);
+   m_allowTypes.append(AbstractExpression::TYPE_LITERAL);
+   m_allowTypes.append(AbstractExpression::TYPE_SELECT);
+   m_allowTypes.append(AbstractExpression::TYPE_VALUE);
 }
 
 AbstractExpression::ExpressionDataType AbstractExpression::getExpressionData()const
@@ -29,10 +26,10 @@ AbstractExpression::ExpressionDataType AbstractExpression::getExpressionData()co
    return {};
 }
 
-QPair<QString, QString> AbstractExpression::normalizeArgument(const QString &argument, const QString &argumentType)const
+QPair<QVariant, QString> AbstractExpression::normalizeArgument(const QVariant &argument, const QString &argumentType)const
 {
-   if(!AbstractExpression::sm_allowTypes.contains(argumentType)){
-      throw ErrorInfo(QString("Argument type should be in array(%1)").arg(AbstractExpression::sm_allowTypes.join(',')));
+   if(!m_allowTypes.contains(argumentType)){
+      throw ErrorInfo(QString("Argument type should be in array(%1)").arg(m_allowTypes.join(',')));
    }
    return {argument, argumentType};
 }

@@ -68,10 +68,10 @@ AbstractExpression::ExpressionDataType Expression::getExpressionData()const
       it++;
       serial++;
    }
-   QStringList values;
-   QStringList types;
+   QList<QVariant> values;
+   QList<QString> types;
    for(int i = 0; i < parametersCount; i++){
-      QPair<QString, QString> normalizedArgument = normalizeArgument(m_parameters.at(i), AbstractExpression::TYPE_VALUE);
+      QPair<QVariant, QString> normalizedArgument = normalizeArgument(m_parameters.at(i), AbstractExpression::TYPE_VALUE);
       values << normalizedArgument.first;
       types << normalizedArgument.second;
    }

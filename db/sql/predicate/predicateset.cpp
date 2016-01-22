@@ -82,6 +82,7 @@ PredicateSet& PredicateSet::addPredicates(const QList<QString> &predicates, QStr
 {
    QList<QString>::const_iterator it = predicates.cbegin();
    while(it != predicates.cend()){
+      QString predicate(*it);
       PredicateSet::PredicatePointerType predicateObj;
       if(predicate.indexOf(Expression::PLACEHOLDER) != -1){
          predicateObj.reset(new Expression(predicate));
@@ -100,7 +101,7 @@ PredicateSet& PredicateSet::addPredicates(const QMap<QString, QVariant> &predica
    while(it != predicates.cend()){
       PredicateSet::PredicatePointerType predicate;
       QString key(it.key());
-      QVariant &value = it.value();
+      const QVariant &value = it.value();
       if(key.indexOf('?') != -1){
          // First, process strings that the abstraction replacement character ?
          // as an Expression predicate
