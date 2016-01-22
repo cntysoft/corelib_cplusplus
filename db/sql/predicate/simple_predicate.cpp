@@ -134,7 +134,8 @@ Expression::Expression(const QString &expression, const QStringList &parameters)
 //IsNull
 
 IsNull::IsNull(const QString &identifier)
-   : m_identifier(identifier)
+   : m_identifier(identifier),
+     m_specification("%1 IS NULL")
 {
 }
 
