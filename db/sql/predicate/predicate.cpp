@@ -64,6 +64,17 @@ Predicate& Predicate::isNull(const QString &identifier)
    return *this;
 }
 
+Predicate& Predicate::isNotNull(const QString &identifier)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new IsNotNull(identifier)), combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
 Predicate& Predicate::setOrCombination()
 {
    m_nextPredicateCombineOperator = PredicateSet::COMBINED_BY_OR;

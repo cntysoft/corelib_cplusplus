@@ -102,6 +102,12 @@ protected:
    QString m_identifier;
 };
 
+class SN_CORELIB_EXPORT IsNotNull : public IsNull
+{
+public:
+   IsNotNull(const QString &identifier = QString());
+};
+
 class SN_CORELIB_EXPORT Operator : public AbstractExpression
 {
    Q_OBJECT

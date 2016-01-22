@@ -175,6 +175,14 @@ AbstractExpression::ExpressionDataType IsNull::getExpressionData()const
    };
 }
 
+//IsNotNull
+
+IsNotNull::IsNotNull(const QString &identifier)
+   : IsNull(identifier)
+{
+   m_specification = "%1 IS NOT NULL";
+}
+
 //Operator
 
 const  QLatin1String Operator::OPERATOR_EQUAL_TO("=");

@@ -92,6 +92,13 @@ void TestSql::testWherePredicate()
          deleteSql->where(where);
          QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` IS NULL"));
       }
+      {
+         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+         QSharedPointer<Where> where(new Where);
+         where->isNotNull("name");
+         deleteSql->where(where);
+         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` IS NOT NULL"));
+      }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }
