@@ -166,6 +166,12 @@ protected:
    QString m_specification;
 };
 
+class SN_CORELIB_EXPORT NotLike : public Like
+{
+public:
+   NotLike(const QString &identifier = QString(), const QString &like = QString());
+};
+
 }//predicate
 }//sql
 }//db

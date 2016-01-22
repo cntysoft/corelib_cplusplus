@@ -106,6 +106,10 @@ void TestSql::testWherePredicate()
          deleteSql->where(where);
          //qDebug() << sql.buildSqlString(deleteSql);
          QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` LIKE 'mike' AND `address` LIKE 'bier'"));
+         where->clearPredicates();
+         where->notLike("name", "mike");
+         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` NOT LIKE 'mike'"));
+         //qDebug() << sql.buildSqlString(deleteSql);
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();

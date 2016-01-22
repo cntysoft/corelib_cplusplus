@@ -350,6 +350,14 @@ AbstractExpression::ExpressionDataType Like::getExpressionData()const
    };
 }
 
+//NotLike
+
+NotLike::NotLike(const QString &identifier, const QString &like)
+   : Like(identifier, like)
+{
+   m_specification = "%1 NOT LIKE %2";
+}
+
 }//predicate
 }//sql
 }//db
