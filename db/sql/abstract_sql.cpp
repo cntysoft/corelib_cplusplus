@@ -129,6 +129,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
       }
       // After looping the values, interpolate them into the sql string
       // (they might be placeholder names, or values)
+      
       QString tpl = subParts[0].toString();
       switch (valueCount) {
       case 1:
@@ -145,23 +146,27 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
       {
          tpl = tpl.arg(strValues.at(0), strValues.at(1), 
                        strValues.at(2));
+         break;
       }
       case 4:
       {
          tpl = tpl.arg(strValues.at(0), strValues.at(1), 
                        strValues.at(2), strValues.at(3));
+         break;
       }
       case 5:
       {
          tpl = tpl.arg(strValues.at(0), strValues.at(1), 
                        strValues.at(2), strValues.at(3),
                        strValues.at(4));
+         break;
       }
       case 6:
       {
          tpl = tpl.arg(strValues.at(0), strValues.at(1), 
                        strValues.at(2), strValues.at(3),
                        strValues.at(4), strValues.at(5));
+         break;
       }
       case 7:
       {
@@ -169,6 +174,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
                        strValues.at(2), strValues.at(3),
                        strValues.at(4), strValues.at(5),
                        strValues.at(6));
+         break;
       }
       case 8:
       {
@@ -176,6 +182,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
                        strValues.at(2), strValues.at(3),
                        strValues.at(4), strValues.at(5),
                        strValues.at(6), strValues.at(7));
+         break;
       }
       case 9:
       {
@@ -184,6 +191,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
                        strValues.at(4), strValues.at(5),
                        strValues.at(6), strValues.at(7),
                        strValues.at(8));
+         break;
       }
       }
       sql += tpl;

@@ -97,6 +97,28 @@ Predicate& Predicate::notLike(const QString &identifier, const QString &like)
    return *this;
 }
 
+Predicate& Predicate::predicate(QSharedPointer<Predicate> predicate)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(predicate, combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
+Predicate& Predicate::between(const QString &identifier, const QVariant &minValue, const QVariant &maxValue)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new Between(identifier, minValue, maxValue)));
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
 Predicate& Predicate::setOrCombination()
 {
    m_nextPredicateCombineOperator = PredicateSet::COMBINED_BY_OR;

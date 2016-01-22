@@ -27,13 +27,13 @@ class SN_CORELIB_EXPORT Between : public AbstractExpression
 {
    Q_OBJECT
 public:
-   Between(const QString &identifier = QString(), const QString &minValue = QString(), const QString &maxValue = QString());
+   Between(const QString &identifier = QString(), const QVariant &minValue = QVariant(), const QVariant &maxValue = QVariant());
    Between& setIdentifier(const QString &identifier);
    const QString& getIdentifier();
-   Between& setMinValue(const QString &minValue);
-   const QString& getMinValue();
-   Between& setMaxValue(const QString &maxValue);
-   const QString& getMaxValue();
+   Between& setMinValue(const QVariant &minValue);
+   const QVariant& getMinValue();
+   Between& setMaxValue(const QVariant &maxValue);
+   const QVariant& getMaxValue();
    Between& setSpecification(const QString &specification);
    const QString& getSpecification()const;
 public:
@@ -41,8 +41,8 @@ public:
 protected:
    QString m_specification;
    QString m_identifier;
-   QString m_minValue;
-   QString m_maxValue;
+   QVariant m_minValue;
+   QVariant m_maxValue;
 };
 
 

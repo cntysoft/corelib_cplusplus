@@ -30,6 +30,8 @@ public:
    Predicate& isNotNull(const QString &identifier);
    Predicate& like(const QString &identifier, const QString &like);
    Predicate& notLike(const QString &identifier, const QString &like);
+   Predicate& between(const QString &identifier, const QVariant &minValue, const QVariant &maxValue);
+   Predicate& predicate(QSharedPointer<Predicate> predicate);
    Predicate& setOrCombination();
    Predicate& setAndCombination();
 protected:

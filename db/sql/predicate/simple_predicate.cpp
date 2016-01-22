@@ -8,12 +8,10 @@ namespace db{
 namespace sql{
 namespace predicate{
 
-Between::Between(const QString &identifier, const QString &minValue, const QString &maxValue)
-   :m_specification("%1 BETWEEN %2 AND %3")
+Between::Between(const QString &identifier, const QVariant &minValue, const QVariant &maxValue)
+   : m_specification("%1 BETWEEN %2 AND %3"),
+     m_identifier(identifier)
 {
-   if(!identifier.isNull()){
-      setIdentifier(identifier);
-   }
    if(!minValue.isNull()){
       setMinValue(minValue);
    }
@@ -33,24 +31,24 @@ const QString& Between::getIdentifier()
    return m_identifier;
 }
 
-Between& Between::setMinValue(const QString &minValue)
+Between& Between::setMinValue(const QVariant &minValue)
 {
    m_minValue = minValue;
    return *this;
 }
 
-const QString& Between::getMinValue()
+const QVariant& Between::getMinValue()
 {
    return m_minValue;
 }
 
-Between& Between::setMaxValue(const QString &maxValue)
+Between& Between::setMaxValue(const QVariant &maxValue)
 {
    m_maxValue = maxValue;
    return *this;
 }
 
-const QString& Between::getMaxValue()
+const QVariant& Between::getMaxValue()
 {
    return m_maxValue;
 }
