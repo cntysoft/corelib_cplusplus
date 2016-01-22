@@ -74,7 +74,6 @@ void TestSql::testWherePredicate()
    try{
       Sql sql(m_engine, "userinfo");
       {
-         
          QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
          QSharedPointer<Where> where(new Where);
          deleteSql->where(where);
@@ -98,6 +97,15 @@ void TestSql::testWherePredicate()
          where->isNotNull("name");
          deleteSql->where(where);
          QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` IS NOT NULL"));
+      }
+      {
+         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+         QSharedPointer<Where> where(new Where);
+         where->like("name", "mike");
+         where->like("address", "bier");
+         deleteSql->where(where);
+         //qDebug() << sql.buildSqlString(deleteSql);
+         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` LIKE 'mike' AND `address` LIKE 'bier'"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();

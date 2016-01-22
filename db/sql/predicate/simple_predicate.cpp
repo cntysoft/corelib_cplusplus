@@ -288,8 +288,65 @@ AbstractExpression::ExpressionDataType Operator::getExpressionData()const
    types << QVariant(left.second) << QVariant(right.second);
    return {
       QVariant("%1 "+m_operatorType+" %2"),
-            values,
-            types
+            QVariant(values),
+            QVariant(types)
+   };
+}
+
+//Like
+
+Like::Like(const QString &identifier, const QString &like)
+   : m_identifier(identifier),
+     m_like(like),
+     m_specification("%1 LIKE %2")
+{
+}
+
+Like& Like::setLike(const QString &like)
+{
+   m_like = like;
+   return *this;
+}
+
+const QString& Like::getLike()const
+{
+   return m_like;
+}
+
+Like& Like::setIdentifier(const QString &identifier)
+{
+   m_identifier = identifier;
+   return *this;
+}
+
+const QString& Like::getIdentifier() const
+{
+   return m_identifier;
+}
+
+Like& Like::setSpecification(const QString &specification)
+{
+   m_specification = specification;
+   return *this;
+}
+
+const QString& Like::getSpecification() const
+{
+   return m_specification;
+}
+
+AbstractExpression::ExpressionDataType Like::getExpressionData()const
+{
+   QList<QVariant> values;
+   QList<QVariant> types;
+   QPair<QVariant, QString> identifier = normalizeArgument(m_identifier, AbstractExpression::TYPE_IDENTIFIER);
+   QPair<QVariant, QString> like = normalizeArgument(m_like, AbstractExpression::TYPE_VALUE);
+   values << identifier.first << like.first;
+   types << QVariant(identifier.second) << QVariant(like.second);
+   return {
+      QVariant(m_specification),
+            QVariant(values),
+            QVariant(types)
    };
 }
 

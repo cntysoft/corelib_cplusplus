@@ -28,6 +28,7 @@ public:
                       const QString &rightType = AbstractExpression::TYPE_VALUE);
    Predicate& isNull(const QString &identifier);
    Predicate& isNotNull(const QString &identifier);
+   Predicate& like(const QString &identifier, const QString &like);
    Predicate& setOrCombination();
    Predicate& setAndCombination();
 protected:

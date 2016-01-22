@@ -148,6 +148,24 @@ protected:
    QLatin1String m_operatorType;
 };
 
+class SN_CORELIB_EXPORT Like : public AbstractExpression
+{
+public:
+   Like(const QString &identifier = QString(), const QString &like = QString());
+   Like& setIdentifier(const QString &identifier);
+   const QString& getIdentifier()const;
+   Like& setLike(const QString &like);
+   const QString& getLike()const;
+   Like& setSpecification(const QString &specification);
+   const QString& getSpecification()const;
+public:
+   virtual ExpressionDataType getExpressionData()const;
+protected:
+   QString m_identifier;
+   QString m_like;
+   QString m_specification;
+};
+
 }//predicate
 }//sql
 }//db
