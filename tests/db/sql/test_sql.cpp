@@ -73,75 +73,83 @@ void TestSql::testWherePredicate()
 {
    try{
       Sql sql(m_engine, "userinfo");
-      //      {
-      //         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
-      //         QSharedPointer<Where> where(new Where);
-      //         deleteSql->where(where);
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo`"));
-      //         where->equalTo("name", "xiuxiu", AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_VALUE);
-      //         where->equalTo("age", 12, AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_VALUE);
-      //         where->setOrCombination();
-      //         where->equalTo("depth", 1, AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_VALUE);
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu' AND `age` = 12 OR `depth` = 1"));
-      //         where->clearPredicates();
-      //         where->notEqualTo("name", "xiuxiu", AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_VALUE);
-      //         //qDebug() << sql.buildSqlString(deleteSql);
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` != 'xiuxiu'"));
-      //      }
-      //      {
-      //         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
-      //         QSharedPointer<Where> where(new Where);
-      //         where->isNull("name");
-      //         deleteSql->where(where);
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` IS NULL"));
-      //      }
-      //      {
-      //         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
-      //         QSharedPointer<Where> where(new Where);
-      //         where->isNotNull("name");
-      //         deleteSql->where(where);
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` IS NOT NULL"));
-      //      }
-      //      {
-      //         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
-      //         QSharedPointer<Where> where(new Where);
-      //         where->like("name", "mike");
-      //         where->like("address", "bier");
-      //         deleteSql->where(where);
-      //         //qDebug() << sql.buildSqlString(deleteSql);
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` LIKE 'mike' AND `address` LIKE 'bier'"));
-      //         where->clearPredicates();
-      //         where->notLike("name", "mike");
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` NOT LIKE 'mike'"));
-      //         //qDebug() << sql.buildSqlString(deleteSql);
-      //      }
-      //      {
-      //         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
-      //         QSharedPointer<Where> where(new Where);
-      //         where->between("total", 12, 21);
-      //         deleteSql->where(where);
-      //         //qDebug() << sql.buildSqlString(deleteSql);
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `total` BETWEEN 12 AND 21"));
-      //         where->clearPredicates();
-      //         where->between("range", "a", "z");
-      //         //qDebug() << sql.buildSqlString(deleteSql);
-      //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `range` BETWEEN 'a' AND 'z'"));
-      //      }
-//      {
-//         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
-//         QSharedPointer<Where> where(new Where);
-//         where->expression("`name` = ? AND `age` = ?", {QVariant("xiuxiu"), QVariant(123)});
-//         deleteSql->where(where);
-//         //qDebug() << sql.buildSqlString(deleteSql);
-//         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu' AND `age` = 123"));
-//      }
+            {
+               QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+               QSharedPointer<Where> where(new Where);
+               deleteSql->where(where);
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo`"));
+               where->equalTo("name", "xiuxiu", AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_VALUE);
+               where->equalTo("age", 12, AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_VALUE);
+               where->setOrCombination();
+               where->equalTo("depth", 1, AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_VALUE);
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu' AND `age` = 12 OR `depth` = 1"));
+               where->clearPredicates();
+               where->notEqualTo("name", "xiuxiu", AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_VALUE);
+               //qDebug() << sql.buildSqlString(deleteSql);
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` != 'xiuxiu'"));
+            }
+            {
+               QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+               QSharedPointer<Where> where(new Where);
+               where->isNull("name");
+               deleteSql->where(where);
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` IS NULL"));
+            }
+            {
+               QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+               QSharedPointer<Where> where(new Where);
+               where->isNotNull("name");
+               deleteSql->where(where);
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` IS NOT NULL"));
+            }
+            {
+               QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+               QSharedPointer<Where> where(new Where);
+               where->like("name", "mike");
+               where->like("address", "bier");
+               deleteSql->where(where);
+               //qDebug() << sql.buildSqlString(deleteSql);
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` LIKE 'mike' AND `address` LIKE 'bier'"));
+               where->clearPredicates();
+               where->notLike("name", "mike");
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` NOT LIKE 'mike'"));
+               //qDebug() << sql.buildSqlString(deleteSql);
+            }
+            {
+               QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+               QSharedPointer<Where> where(new Where);
+               where->between("total", 12, 21);
+               deleteSql->where(where);
+               //qDebug() << sql.buildSqlString(deleteSql);
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `total` BETWEEN 12 AND 21"));
+               where->clearPredicates();
+               where->between("range", "a", "z");
+               //qDebug() << sql.buildSqlString(deleteSql);
+               QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `range` BETWEEN 'a' AND 'z'"));
+            }
+      {
+         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+         QSharedPointer<Where> where(new Where);
+         where->expression("`name` = ? AND `age` = ?", {QVariant("xiuxiu"), QVariant(123)});
+         deleteSql->where(where);
+         //qDebug() << sql.buildSqlString(deleteSql);
+         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu' AND `age` = 123"));
+      }
       {
          QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
          QSharedPointer<Where> where(new Where);
          where->literal("`name` = 'xiuxiu'");
          deleteSql->where(where);
-         qDebug() << sql.buildSqlString(deleteSql);
+         //qDebug() << sql.buildSqlString(deleteSql);
          //QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu'"));
+      }
+      {
+         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+         QSharedPointer<Where> where(new Where);
+         where->in("id", {1, 23, 221, "z"});
+         deleteSql->where(where);
+         //qDebug() << sql.buildSqlString(deleteSql);
+         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `id` IN (1, 23, 221, 'z')"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();

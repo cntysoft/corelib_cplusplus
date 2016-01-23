@@ -120,8 +120,8 @@ PredicateSet& PredicateSet::addPredicates(const QMap<QString, QVariant> &predica
       }else if(value.isNull()){
          // map PHP null to SQL IS NULL expression
          predicate.reset(new IsNull(key));
-      }else if(value.canConvert(QMetaType::QStringList)){
-         predicate.reset(new In(key, value));
+      }else if(value.type() == QVariant::List){
+         predicate.reset(new In(key, value.toList()));
       }else if(value.canConvert(QMetaType::QString)){
          QString strValue = value.toString();
          if(strValue.indexOf(Expression::PLACEHOLDER) != -1){

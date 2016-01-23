@@ -48,6 +48,8 @@ public:
    Predicate& between(const QString &identifier, const QVariant &minValue, const QVariant &maxValue);
    Predicate& expression(const QString &expression, const QList<QVariant> &parameters = QList<QVariant>());
    Predicate& literal(const QString &literal);
+   Predicate& in(const QString &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
+   //Predicate& in(const QString &identifier, const Select ?);//准备实现子查询
    Predicate& predicate(QSharedPointer<Predicate> predicate);
    Predicate& setOrCombination();
    Predicate& setAndCombination();

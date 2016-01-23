@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QLatin1String>
+#include <QVariant>
+#include <QStringList>
 
 #include "global/global.h"
 #include "kernel/errorinfo.h"
@@ -45,23 +47,24 @@ protected:
    QVariant m_maxValue;
 };
 
-
-
 class SN_CORELIB_EXPORT In : public AbstractExpression
 {
    Q_OBJECT
 public:
-   In(const QString &identifier = QString(), const QVariant &valueSet = QVariant());
+   In(const QString &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
+   In(const QStringList &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
    In& setIdentifier(const QString &identifier);
-   const QString& getIdentifier()const;
-   In& setValueSet(const QStringList &valueSet);
-   const QVariant& getValueSet()const;
+   In& setIdentifier(const QStringList &identifier);
+   const QVariant& getIdentifier()const;
+   In& setValueSet(const QList<QVariant> &valueSet);
+   const QList<QVariant> getValueSet()const;
 public:
    virtual ExpressionDataType getExpressionData()const;
 protected:
+   In(const QVariant &identifier, const QVariant &valueSet);
+protected:
    QString m_specification;
-   QString m_valueSpecSpecification;
-   QString m_identifier;
+   QVariant m_identifier;
    QVariant m_valueSet;
 };
 

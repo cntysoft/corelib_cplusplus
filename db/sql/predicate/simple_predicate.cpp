@@ -81,25 +81,46 @@ AbstractExpression::ExpressionDataType Between::getExpressionData()const
    };
 }
 
-In::In(const QString &identifier, const QVariant &valueSet)
-   : m_identifier(identifier),
-     m_valueSet(valueSet)
+In::In(const QString &identifier, const QList<QVariant> &valueSet)
+   : In(QVariant(identifier), QVariant(valueSet))
 {
-   
 }
+
+In::In(const QStringList &identifier, const QList<QVariant> &valueSet)
+   : In(QVariant(identifier), QVariant(valueSet))
+{
+}
+
+In::In(const QVariant &identifier, const QVariant &valueSet)
+   : m_identifier(identifier),
+     m_valueSet(valueSet),
+     m_specification("%1 IN %2")
+{}
 
 In& In::setIdentifier(const QString &identifier)
 {
-   m_identifier = identifier;
+   if(!m_identifier.isNull()){
+      m_identifier.clear();
+   }
+   m_identifier.setValue(identifier);
    return *this;
 }
 
-const QString& In::getIdentifier() const
+In& In::setIdentifier(const QStringList &identifier)
+{
+   if(!m_identifier.isNull()){
+      m_identifier.clear();
+   }
+   m_identifier.setValue(identifier);
+   return *this;
+}
+
+const QVariant& In::getIdentifier() const
 {
    return m_identifier;
 }
 
-In& In::setValueSet(const QStringList &valueSet)
+In& In::setValueSet(const QList<QVariant> &valueSet)
 {
    if(!m_valueSet.isNull()){
       m_valueSet.clear();
@@ -108,14 +129,65 @@ In& In::setValueSet(const QStringList &valueSet)
    return *this;
 }
 
-const QVariant& In::getValueSet() const
+const QList<QVariant> In::getValueSet() const
 {
-   return m_valueSet;
+   return m_valueSet.toList();
 }
 
 AbstractExpression::ExpressionDataType In::getExpressionData()const
 {
-   
+   QList<QVariant> values;
+   QStringList types;
+   QString identifierSpecFragment;
+   QString specification;
+   int serial = 1;
+   if(m_identifier.type() == QVariant::List){
+      QStringList identifiers = m_identifier.toStringList();
+      int identifierCount = identifiers.size();
+      QStringList parts;
+      for(int i = 0; i < identifierCount; i++){
+         parts << QString("%%1").arg(serial);
+         values << QVariant(identifiers.at(i));
+         types << AbstractExpression::TYPE_IDENTIFIER;
+         serial++;
+      }
+      identifierSpecFragment = QString("(%1)").arg(parts.join(", "));
+   }else{
+      identifierSpecFragment = "%1";
+      serial++;
+      values << m_identifier;
+      types << AbstractExpression::TYPE_IDENTIFIER;
+   }
+   //subselect
+   //   if ($values instanceof Select) {
+   //               $specification = vsprintf(
+   //                   $this->specification,
+   //                   array($identifierSpecFragment, '%s')
+   //               );
+   //               $replacements[] = $values;
+   //               $types[] = self::TYPE_VALUE;
+   //           } else {
+   if(m_valueSet.type() == QVariant::List){
+      QList<QVariant> valueSet = m_valueSet.toList();
+      int valueSetCount = valueSet.size();
+      QString valueTpl;
+      QStringList valueParts;
+      for(int i = 0; i < valueSetCount; i++){
+         QPair<QVariant, QString> item = normalizeArgument(valueSet.at(i), AbstractExpression::TYPE_VALUE);
+         values << item.first;
+         types << item.second;
+         valueParts << QString("%%1").arg(serial);
+         serial++;
+      }
+      valueTpl = "("+valueParts.join(", ")+")";
+      specification = m_specification.arg(identifierSpecFragment, valueTpl);
+   }
+   return {
+      specification,
+            QVariant(values),
+            QVariant(types)
+            
+   };
 }
 
 Where::Where()
@@ -163,9 +235,9 @@ AbstractExpression::ExpressionDataType IsNull::getExpressionData()const
 {
    QPair<QVariant, QString> identifier = normalizeArgument(m_identifier, AbstractExpression::TYPE_IDENTIFIER);
    QList<QVariant>  values;
-   QList<QVariant>  types;
+   QStringList  types;
    values.append(identifier.first);
-   types.append(QVariant(identifier.second));
+   types.append(identifier.second);
    return {
       QVariant(getSpecification()),
             QVariant(values),
@@ -279,11 +351,11 @@ const QString& Operator::getRightType() const
 AbstractExpression::ExpressionDataType Operator::getExpressionData()const
 {
    QList<QVariant> values;
-   QList<QVariant> types;
+   QStringList types;
    QPair<QVariant, QString> left = normalizeArgument(m_left, m_leftType);
    QPair<QVariant, QString> right = normalizeArgument(m_right, m_rightType);
    values << left.first << right.first;
-   types << QVariant(left.second) << QVariant(right.second);
+   types << left.second << right.second;
    return {
       QVariant("%1 "+m_operatorType+" %2"),
             QVariant(values),
@@ -336,11 +408,11 @@ const QString& Like::getSpecification() const
 AbstractExpression::ExpressionDataType Like::getExpressionData()const
 {
    QList<QVariant> values;
-   QList<QVariant> types;
+   QStringList types;
    QPair<QVariant, QString> identifier = normalizeArgument(m_identifier, AbstractExpression::TYPE_IDENTIFIER);
    QPair<QVariant, QString> like = normalizeArgument(m_like, AbstractExpression::TYPE_VALUE);
    values << identifier.first << like.first;
-   types << QVariant(identifier.second) << QVariant(like.second);
+   types << identifier.second << like.second;
    return {
       QVariant(m_specification),
             QVariant(values),
