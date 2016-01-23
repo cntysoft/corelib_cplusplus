@@ -190,6 +190,18 @@ AbstractExpression::ExpressionDataType In::getExpressionData()const
    };
 }
 
+NotIn::NotIn(const QString &identifier, const QList<QVariant> &valueSet)
+   : In(identifier, valueSet)
+{
+   m_specification = "%1 NOT IN %2";
+}
+
+NotIn::NotIn(const QStringList &identifier, const QList<QVariant> &valueSet)
+   : In(identifier, valueSet)
+{
+   m_specification = "%1 NOT IN %2";
+}
+
 Where::Where()
 {}
 

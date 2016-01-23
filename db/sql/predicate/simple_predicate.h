@@ -68,6 +68,14 @@ protected:
    QVariant m_valueSet;
 };
 
+class SN_CORELIB_EXPORT NotIn : public In
+{
+   Q_OBJECT
+public:
+   NotIn(const QString &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
+   NotIn(const QStringList &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
+};
+
 class SN_CORELIB_EXPORT Where : public Predicate
 {
    Q_OBJECT
