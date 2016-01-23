@@ -125,7 +125,7 @@ Literal::Literal(const QString &literal)
    : BaseLiteral(literal)
 {}
 
-Expression::Expression(const QString &expression, const QStringList &parameters)
+Expression::Expression(const QString &expression, const QList<QVariant> &parameters)
    : BaseExpression(expression, parameters)
 {}
 

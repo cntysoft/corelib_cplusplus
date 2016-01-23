@@ -53,6 +53,73 @@ Predicate& Predicate::equalTo(const QString &left, const QVariant &right,
    return *this;
 }
 
+Predicate& Predicate::notEqualTo(const QString &left, const QVariant &right, 
+                              const QString &leftType, const QString &rightType)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new Operator(QVariant(left), Operator::OPERATOR_NOT_EQUAL_TO, 
+                                                  right, leftType, rightType)), combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
+
+Predicate& Predicate::lessThan(const QString &left, const QVariant &right, 
+                              const QString &leftType, const QString &rightType)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new Operator(QVariant(left), Operator::OPERATOR_LESS_THAN, 
+                                                  right, leftType, rightType)), combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
+Predicate& Predicate::greaterThan(const QString &left, const QVariant &right, 
+                              const QString &leftType, const QString &rightType)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new Operator(QVariant(left), Operator::OPERATOR_GREATER_THAN, 
+                                                  right, leftType, rightType)), combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
+Predicate& Predicate::lessThanOrEqualTo(const QString &left, const QVariant &right, 
+                              const QString &leftType, const QString &rightType)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new Operator(QVariant(left), Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, 
+                                                  right, leftType, rightType)), combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
+Predicate& Predicate::greaterThanOrEqualTo(const QString &left, const QVariant &right, 
+                              const QString &leftType, const QString &rightType)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new Operator(QVariant(left), Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, 
+                                                  right, leftType, rightType)), combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
+
 Predicate& Predicate::isNull(const QString &identifier)
 {
    QString combineOperator = m_defaultCombination;
@@ -104,6 +171,18 @@ Predicate& Predicate::predicate(QSharedPointer<Predicate> predicate)
       combineOperator = m_nextPredicateCombineOperator;
    }
    addPredicate(predicate, combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
+
+Predicate& Predicate::expression(const QString &expression, const QList<QVariant> &parameters)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new Expression(expression, parameters)), combineOperator);
    m_nextPredicateCombineOperator.clear();
    return *this;
 }

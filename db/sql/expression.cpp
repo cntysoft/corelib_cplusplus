@@ -13,7 +13,7 @@ using sn::corelib::ErrorInfo;
 
 const QChar Expression::PLACEHOLDER = '?';
 
-Expression::Expression(const QString &expression, const QStringList &parameters)
+Expression::Expression(const QString &expression, const QList<QVariant> &parameters)
    : m_expression(expression),
      m_parameters(parameters)
 {   
@@ -30,13 +30,13 @@ const QString& Expression::getExpression()const
    return m_expression;
 }
 
-Expression& Expression::setParameters(const QStringList &parameters) 
+Expression& Expression::setParameters(const QList<QVariant> &parameters) 
 {
    m_parameters = parameters;
    return *this;
 }
 
-const QStringList& Expression::getParameters()const
+const QList<QVariant>& Expression::getParameters()const
 {
    return m_parameters;
 }
@@ -45,10 +45,13 @@ AbstractExpression::ExpressionDataType Expression::getExpressionData()const
 {
    int parametersCount = m_parameters.size();
    QString targetExpr(m_expression);
-   targetExpr.replace("%", "%%");
+   targetExpr.replace("%", "&");
    if(parametersCount == 0){
       return {
-         targetExpr.replace(Expression::PLACEHOLDER, "")
+         targetExpr.replace(Expression::PLACEHOLDER, ""),
+               QVariant(QList<QVariant>()),
+               QVariant(QStringList())
+               
       };
    }
    QList<int> placeHolders;
@@ -69,16 +72,17 @@ AbstractExpression::ExpressionDataType Expression::getExpressionData()const
       serial++;
    }
    QList<QVariant> values;
-   QList<QString> types;
+   QStringList types;
    for(int i = 0; i < parametersCount; i++){
       QPair<QVariant, QString> normalizedArgument = normalizeArgument(m_parameters.at(i), AbstractExpression::TYPE_VALUE);
       values << normalizedArgument.first;
       types << normalizedArgument.second;
    }
+   targetExpr.replace("&", "%");
    return {
       QVariant(targetExpr),
-      QVariant(values),
-      QVariant(types)
+            QVariant(values),
+            QVariant(types)
    };
 }
 

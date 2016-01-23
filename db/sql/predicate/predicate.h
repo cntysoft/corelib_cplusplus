@@ -26,11 +26,27 @@ public:
    Predicate& equalTo(const QString &left, const QVariant &right, 
                       const QString &leftType = AbstractExpression::TYPE_IDENTIFIER, 
                       const QString &rightType = AbstractExpression::TYPE_VALUE);
+   Predicate& notEqualTo(const QString &left, const QVariant &right, 
+                      const QString &leftType = AbstractExpression::TYPE_IDENTIFIER, 
+                      const QString &rightType = AbstractExpression::TYPE_VALUE);
+   Predicate& lessThan(const QString &left, const QVariant &right, 
+                      const QString &leftType = AbstractExpression::TYPE_IDENTIFIER, 
+                      const QString &rightType = AbstractExpression::TYPE_VALUE);
+   Predicate& greaterThan(const QString &left, const QVariant &right, 
+                      const QString &leftType = AbstractExpression::TYPE_IDENTIFIER, 
+                      const QString &rightType = AbstractExpression::TYPE_VALUE);
+   Predicate& lessThanOrEqualTo(const QString &left, const QVariant &right, 
+                      const QString &leftType = AbstractExpression::TYPE_IDENTIFIER, 
+                      const QString &rightType = AbstractExpression::TYPE_VALUE);
+   Predicate& greaterThanOrEqualTo(const QString &left, const QVariant &right, 
+                      const QString &leftType = AbstractExpression::TYPE_IDENTIFIER, 
+                      const QString &rightType = AbstractExpression::TYPE_VALUE);
    Predicate& isNull(const QString &identifier);
    Predicate& isNotNull(const QString &identifier);
    Predicate& like(const QString &identifier, const QString &like);
    Predicate& notLike(const QString &identifier, const QString &like);
    Predicate& between(const QString &identifier, const QVariant &minValue, const QVariant &maxValue);
+   Predicate& expression(const QString &expression, const QList<QVariant> &parameters = QList<QVariant>());
    Predicate& predicate(QSharedPointer<Predicate> predicate);
    Predicate& setOrCombination();
    Predicate& setAndCombination();

@@ -116,7 +116,7 @@ PredicateSet& PredicateSet::addPredicates(const QMap<QString, QVariant> &predica
       if(key.indexOf('?') != -1){
          // First, process strings that the abstraction replacement character ?
          // as an Expression predicate
-         predicate.reset(new Expression(key, value.toStringList()));
+         predicate.reset(new Expression(key, value.toList()));
       }else if(value.isNull()){
          // map PHP null to SQL IS NULL expression
          predicate.reset(new IsNull(key));

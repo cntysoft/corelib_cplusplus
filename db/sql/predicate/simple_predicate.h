@@ -83,7 +83,7 @@ class SN_CORELIB_EXPORT Expression : public BaseExpression
 {
    Q_OBJECT
 public:
-   Expression(const QString &expression, const QStringList &parameters = QStringList());
+   Expression(const QString &expression, const QList<QVariant> &parameters = QList<QVariant>());
 };
 
 class SN_CORELIB_EXPORT IsNull : public AbstractExpression
