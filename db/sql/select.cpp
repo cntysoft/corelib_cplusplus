@@ -1,4 +1,5 @@
 #include <QMap>
+#include <QList>
 
 #include "select.h"
 
@@ -34,15 +35,41 @@ const  QString Select::COMBINE_UNION = "union";
 const  QString Select::COMBINE_EXCEPT = "except";
 const  QString Select::COMBINE_INTERSECT = "intersect";
 
+
+AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Engine &engine, 
+                                               ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                               QMap<QString, AbstractSql::ProcessResultPointerType> &parameters)
+{
+   int expr = 1;
+   Select* selectSql = qobject_cast<Select*>(self);
+   QPair<QString, QString> tablePair = selectSql->resolveTable(selectSql->m_table, engine, parameterContainer);
+   QString tableName(tablePair.first);
+   QString fromTableName(tablePair.second);
+   // process table columns
+   QStringList columns;
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::Array;
+   QList<QVariant> values;
+   if(tableName.isEmpty()){
+      values << QVariant(columns);
+   }else{
+      values << QVariant(columns) << QVariant(tableName);
+   }
+   result->value = QVariant(values);
+   return result;
+}
+
 Select::Select(const QString &table, const QString &schema)
    : Select(TableIdentifier(table, schema))
 {
+   
 }
 
 Select::Select(const TableIdentifier &table)
    : m_table(table)
 {
-   m_specifications.insert("statementStart", "%1");
+//   m_specifications.insert("statementStart", "%1");
    //select
    QMap<QString, QVariant> selectSpecification;
    {
@@ -94,8 +121,8 @@ Select::Select(const TableIdentifier &table)
       };
       joinSpecification.insert("%1", QVariant(joinSpecificationItem));
    }
-   m_specifications.insert(Select::JOINS, QVariant(joinSpecification));
-   m_specifications.insert(Select::WHERE, QVariant("WHERE %1"));
+//   m_specifications.insert(Select::JOINS, QVariant(joinSpecification));
+//   m_specifications.insert(Select::WHERE, QVariant("WHERE %1"));
    //group
    QMap<QString, QVariant> groupSpecification;
    {
@@ -108,9 +135,9 @@ Select::Select(const TableIdentifier &table)
       };
       groupSpecification.insert("GROUP BY %1", QVariant(groupSpecificationItem));
    }
-   m_specifications.insert(Select::GROUP, QVariant(groupSpecification));
-   //having
-   m_specifications.insert(Select::HAVING, QVariant("HAVING %1"));
+//   m_specifications.insert(Select::GROUP, QVariant(groupSpecification));
+//   //having
+//   m_specifications.insert(Select::HAVING, QVariant("HAVING %1"));
    //order
    //group
    QMap<QString, QVariant> orderSpecification;
@@ -125,16 +152,17 @@ Select::Select(const TableIdentifier &table)
       };
       orderSpecification.insert("ORDER BY %1", QVariant(orderSpecificationItem));
    }
-   m_specifications.insert(Select::ORDER, orderSpecification);
-   m_specifications.insert(Select::LIMIT, QVariant("LIMIT %1"));
-   m_specifications.insert(Select::OFFSET, QVariant("OFFSET %1"));
-   m_specifications.insert("statementEnd", QVariant("%1"));
-   m_specifications.insert(Select::COMBINE, QVariant("%1 ( %2 )"));
+//   m_specifications.insert(Select::ORDER, orderSpecification);
+//   m_specifications.insert(Select::LIMIT, QVariant("LIMIT %1"));
+//   m_specifications.insert(Select::OFFSET, QVariant("OFFSET %1"));
+//   m_specifications.insert("statementEnd", QVariant("%1"));
+//   m_specifications.insert(Select::COMBINE, QVariant("%1 ( %2 )"));
    if(!m_table.isNull()){
       m_tableReadOnly = true;
    }
    m_where.reset(new Where());
    m_having.reset(new Having());
+   m_specificationFnPtrs.insert("select", process_select);
 }
 
 Select& Select::from(const QString &tableName, const QString &schema)throw(ErrorInfo)
@@ -168,6 +196,53 @@ Select& Select::quantifier(const QSharedPointer<AbstractExpression> &quantifier)
    }
    m_quantifier.setValue(quantifier);
    return *this;
+}
+
+QPair<QString, QString> Select::resolveTable(const QString &table, const Engine &engine, ParameterContainer *parameterContainer)
+{
+   return resolveTable(TableIdentifier(table), engine, parameterContainer);
+}
+
+QPair<QString, QString> Select::resolveTable(const TableIdentifier &table, const Engine &engine, ParameterContainer *parameterContainer)
+{
+   QString tableName = AbstractSql::resolveTable(table, engine, parameterContainer);
+   QString fromTableName = tableName;
+   if(m_prefixColumnsWithTable && !fromTableName.isEmpty()){
+      fromTableName += engine.getIdentifierSeparator();
+   }else{
+      fromTableName = "";
+   }
+   return {
+      tableName,
+      fromTableName
+   };
+}
+
+QPair<QString, QString> Select::resolveTable(const QString &table, const QString &alias, 
+                                             const Engine &engine, engine::ParameterContainer *parameterContainer)
+{
+   QString tableName = AbstractSql::resolveTable(table, engine, parameterContainer);
+   QString fromTableName = tableName;
+   if(!alias.isNull() && !alias.isEmpty()){
+      fromTableName = engine.quoteTableName(alias);
+   }else{
+      fromTableName = tableName;
+   }
+   if(m_prefixColumnsWithTable && !fromTableName.isEmpty()){
+      fromTableName += engine.getIdentifierSeparator();
+      tableName = renderTable(tableName, fromTableName);
+   }else{
+      fromTableName = "";
+   }
+   return {
+      tableName,
+      fromTableName
+   };
+}
+
+QString Select::renderTable(const QString &table, const QString &alias)
+{
+   return table + ((!alias.isNull() && !alias.isEmpty()) ? " AS " + alias : "");
 }
 
 }//sql

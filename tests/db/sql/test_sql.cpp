@@ -9,6 +9,7 @@
 #include "db/sql/simple_sql.h"
 #include "db/sql/expression.h"
 #include "kernel/errorinfo.h"
+#include "global/common_funcs.h"
 
 #include <QSharedPointer>
 #include <QDebug>
@@ -19,6 +20,7 @@ namespace db{
 
 using sn::corelib::db::sql::Sql;
 using sn::corelib::db::sql::Delete;
+using sn::corelib::db::sql::Select;
 using sn::corelib::db::sql::TableIdentifier;
 using sn::corelib::db::sql::AbstractSql;
 using sn::corelib::db::sql::AbstractPreparableSql;
@@ -160,8 +162,12 @@ void TestSql::testWherePredicate()
 void TestSql::testSelectSql()
 {
    try{
-      Sql sql(m_engine, "userinfo");
-      
+//      Sql sql(m_engine, "userinfo");
+//      QSharedPointer<Select> selectSql = sql.getSelectSql();
+//      qDebug() << sql.buildSqlString(selectSql);
+      //qDebug() << QString("%1_%2 %3%4%5%6%7%8%9%10%11%12").arg("asdasd", "asdas");
+      qDebug() << sn::corelib::format_str("%1 sdas %2_%3 sdas %4_%5 sdas %6_%7 sdas %8_%9 sdas %10_%11 sdas %12_%13 sdas %14_%15 sdas %16", 
+      {"1", "2","3","4", "5","6","7", "8","9","10", "11","12","13", "14","15","16","17"});
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

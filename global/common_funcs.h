@@ -3,6 +3,8 @@
 
 #include "global.h"
 #include <type_traits>
+#include <QVariant>
+#include <QString>
 
 QT_BEGIN_NAMESPACE
 class QString;
@@ -28,6 +30,8 @@ bool SN_CORELIB_EXPORT instanceof(const T2&)
 {
    return std::is_base_of<T1, T2>::value;
 }
+
+QString SN_CORELIB_EXPORT format_str(const QString &format, const QStringList &args = QStringList());
 
 }//corelib
 }//sn

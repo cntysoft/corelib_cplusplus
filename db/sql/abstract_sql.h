@@ -7,6 +7,8 @@
 #include <QString>
 #include <QObject>
 #include <QSharedPointer>
+#include <QVariant>
+#include <QList>
 
 #include "global/global.h"
 #include "db/engine/parameter_container.h"
@@ -48,13 +50,12 @@ public:
    virtual QString getSqlString(const Engine &engine);
 protected:
    QString buildSqlString(const Engine &engine, ParameterContainer *parameterContainer = nullptr);
-   QString createSqlFromSpecificationAndParameters(const QVariant &specification, const QMap<QString, QVariant> &parameters);
+   QString createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters);
    AbstractSql& setSpecificationFn(const QString &name, SpecificationFuncPtr fn);
    QString resolveTable(const TableIdentifier &table, const Engine &engine, ParameterContainer *parameterContainer = nullptr);
    QString processExpression(const QSharedPointer<AbstractExpression> expression, const Engine &engine, 
                              ParameterContainer *parameterContainer = nullptr, 
                              QString namedParameterPrefix = QString());
-
 protected:
    QMap<QString, QVariant> m_specifications;
    QMap<QString, QVariant> m_processInfo;

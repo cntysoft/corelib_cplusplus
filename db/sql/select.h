@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVariant>
 #include <QSharedPointer>
+#include <QPair>
 
 #include "global/global.h"
 #include "kernel/errorinfo.h"
@@ -17,6 +18,8 @@ namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
+
+using sn::corelib::db::sql::AbstractSql;
 
 class SN_CORELIB_EXPORT Select : public AbstractPreparableSql
 {
@@ -49,12 +52,24 @@ public:
    const static QString COMBINE_EXCEPT;
    const static QString COMBINE_INTERSECT;
 public:
+   friend ProcessResultPointerType process_select(AbstractSql *self,const Engine &engine, 
+                                                  ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                  QMap<QString, ProcessResultPointerType> &parameters);
+public:
    Select(const TableIdentifier &table = TableIdentifier());
    Select(const QString &table, const QString &schema = QString());
    Select& from(const QString &tableName, const QString &schema = QString())throw(ErrorInfo);
    Select& from(const TableIdentifier &table)throw(ErrorInfo);
    Select& quantifier(const QString &quantifier);
    Select& quantifier(const QSharedPointer<AbstractExpression> &quantifier);
+protected:
+   QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
+                                        ParameterContainer *parameterContainer = nullptr);
+   QPair<QString, QString> resolveTable(const QString &table, const Engine &engine, 
+                                        ParameterContainer *parameterContainer = nullptr);
+   QPair<QString, QString> resolveTable(const QString &table, const QString &alias, const 
+                                        Engine &engine, ParameterContainer *parameterContainer = nullptr);
+   QString renderTable(const QString &table, const QString &alias = QString());
 protected:
    TableIdentifier m_table;
    bool m_tableReadOnly = false;

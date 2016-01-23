@@ -38,7 +38,8 @@ QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *pa
       parameters[key] = fn(this, engine, parameterContainer, sqls, parameters);
       ProcessResultPointerType resultItem = parameters[key];
       if(!specification.isNull() && !resultItem->isNull && resultItem->type == ProcessResultType::Array){
-         sqls[key] = createSqlFromSpecificationAndParameters(specification, resultItem->getValue().toMap());
+         sqls[key] = createSqlFromSpecificationAndParameters(specification, resultItem->getValue().toList());
+         cit++;
          continue;
       }
       if(!resultItem->isNull && ProcessResultType::String == resultItem->type){
@@ -49,8 +50,9 @@ QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *pa
    return sqls.values().join(' ');
 }
 
-QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, const QMap<QString, QVariant> &parameters)
+QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters)
 {
+   
    return QString();
 }
 
