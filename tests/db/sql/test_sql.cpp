@@ -127,13 +127,21 @@ void TestSql::testWherePredicate()
       //         //qDebug() << sql.buildSqlString(deleteSql);
       //         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `range` BETWEEN 'a' AND 'z'"));
       //      }
+//      {
+//         QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
+//         QSharedPointer<Where> where(new Where);
+//         where->expression("`name` = ? AND `age` = ?", {QVariant("xiuxiu"), QVariant(123)});
+//         deleteSql->where(where);
+//         //qDebug() << sql.buildSqlString(deleteSql);
+//         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu' AND `age` = 123"));
+//      }
       {
          QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
          QSharedPointer<Where> where(new Where);
-         where->expression("`name` = ? AND `age` = ?", {QVariant("xiuxiu"), QVariant(123)});
+         where->literal("`name` = 'xiuxiu'");
          deleteSql->where(where);
-         //qDebug() << sql.buildSqlString(deleteSql);
-         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu' AND `age` = 123"));
+         qDebug() << sql.buildSqlString(deleteSql);
+         //QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu'"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();

@@ -187,6 +187,17 @@ Predicate& Predicate::expression(const QString &expression, const QList<QVariant
    return *this;
 }
 
+Predicate& Predicate::literal(const QString &literal)
+{
+   QString combineOperator = m_defaultCombination;
+   if(!m_nextPredicateCombineOperator.isEmpty()){
+      combineOperator = m_nextPredicateCombineOperator;
+   }
+   addPredicate(PredicatePointerType(new Literal(literal)), combineOperator);
+   m_nextPredicateCombineOperator.clear();
+   return *this;
+}
+
 Predicate& Predicate::between(const QString &identifier, const QVariant &minValue, const QVariant &maxValue)
 {
    QString combineOperator = m_defaultCombination;

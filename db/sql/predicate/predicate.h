@@ -47,6 +47,7 @@ public:
    Predicate& notLike(const QString &identifier, const QString &like);
    Predicate& between(const QString &identifier, const QVariant &minValue, const QVariant &maxValue);
    Predicate& expression(const QString &expression, const QList<QVariant> &parameters = QList<QVariant>());
+   Predicate& literal(const QString &literal);
    Predicate& predicate(QSharedPointer<Predicate> predicate);
    Predicate& setOrCombination();
    Predicate& setAndCombination();
