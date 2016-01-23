@@ -8,13 +8,14 @@
 #include "abstract_preparable_sql.h"
 #include "table_identifier.h"
 #include "db/sql/predicate/simple_predicate.h"
+#include "db/sql/simple_sql.h"
 
 namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
 
-using sn::corelib::db::sql::predicate::Where;
+using sn::corelib::db::sql::Where;
 using sn::corelib::db::sql::predicate::PredicateSet;
 
 class SN_CORELIB_EXPORT Delete : public AbstractPreparableSql

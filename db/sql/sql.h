@@ -9,12 +9,15 @@
 #include "db/sql/platform/platform.h"
 #include "db/sql/delete.h"
 #include "db/sql/abstract_sql.h"
+#include "db/sql/select.h"
+#include "kernel/errorinfo.h"
 
 namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
 
+using sn::corelib::ErrorInfo;
 using sn::corelib::db::sql::platform::Platform;
 using sn::corelib::db::engine::Engine;
 using sn::corelib::db::sql::AbstractSql;
@@ -33,6 +36,7 @@ public:
    QString buildSqlString(QSharedPointer<AbstractSql> sqlObject);
 public:
    QSharedPointer<Delete> getDeleteSql(const QString &table = QString());
+   QSharedPointer<Select> getSelectSql(const QString &table = QString())throw(ErrorInfo);
 protected:
    Engine& m_engine;
    TableIdentifier m_table;

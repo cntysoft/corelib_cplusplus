@@ -4,10 +4,12 @@
 #include "sql.h"
 #include <typeinfo>
 
+
 namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
+
 
 Sql::Sql(Engine &engine, const QString &table)
    : m_engine(engine),
@@ -59,6 +61,15 @@ QSharedPointer<Delete> Sql::getDeleteSql(const QString &table)
       return QSharedPointer<Delete>(new Delete(targetTable));
    }
    return QSharedPointer<Delete>(new Delete(m_table));
+}
+
+QSharedPointer<Select> Sql::getSelectSql(const QString &table)throw(ErrorInfo)
+{
+   if(!table.isEmpty()){
+      TableIdentifier targetTable(table);
+      return QSharedPointer<Select>(new Select(targetTable));
+   }
+   return QSharedPointer<Select>(new Select(m_table));
 }
 
 QString Sql::buildSqlString(QSharedPointer<AbstractSql> sqlObject)

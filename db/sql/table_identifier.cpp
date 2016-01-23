@@ -47,6 +47,11 @@ QPair<QString, QString> TableIdentifier::getTableAndSchema()const
    };
 }
 
+bool TableIdentifier::isNull()const
+{
+   return m_table.isNull() || m_table.isEmpty();
+}
+
 }//sql
 }//db
 }//corelib

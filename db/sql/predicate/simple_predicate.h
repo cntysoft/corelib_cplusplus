@@ -11,8 +11,8 @@
 #include "db/sql/abstract_expression.h"
 #include "db/sql/predicate/predicateset.h"
 #include "db/sql/predicate/predicate.h"
-#include "db/sql/literal.h"
 #include "db/sql/expression.h"
+#include "db/sql/simple_sql.h"
 
 namespace sn{
 namespace corelib{
@@ -74,13 +74,6 @@ class SN_CORELIB_EXPORT NotIn : public In
 public:
    NotIn(const QString &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
    NotIn(const QStringList &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
-};
-
-class SN_CORELIB_EXPORT Where : public Predicate
-{
-   Q_OBJECT
-public:
-   Where();
 };
 
 class SN_CORELIB_EXPORT Literal : public BaseLiteral

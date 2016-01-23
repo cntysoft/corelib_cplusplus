@@ -6,6 +6,7 @@
 #include "db/sql/abstract_sql.h"
 #include "db/sql/predicate/predicate.h"
 #include "db/sql/predicate/simple_predicate.h"
+#include "db/sql/simple_sql.h"
 #include "db/sql/expression.h"
 #include "kernel/errorinfo.h"
 
@@ -23,7 +24,7 @@ using sn::corelib::db::sql::AbstractSql;
 using sn::corelib::db::sql::AbstractPreparableSql;
 using sn::corelib::db::sql::predicate::PredicateSet;
 using sn::corelib::instanceof;
-using sn::corelib::db::sql::predicate::Where;
+using sn::corelib::db::sql::Where;
 using sn::corelib::db::sql::AbstractExpression;
 using sn::corelib::ErrorInfo;
 
@@ -141,7 +142,7 @@ void TestSql::testWherePredicate()
          where->literal("`name` = 'xiuxiu'");
          deleteSql->where(where);
          //qDebug() << sql.buildSqlString(deleteSql);
-         //QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu'"));
+         QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `name` = 'xiuxiu'"));
       }
       {
          QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
@@ -151,6 +152,16 @@ void TestSql::testWherePredicate()
          //qDebug() << sql.buildSqlString(deleteSql);
          QCOMPARE(sql.buildSqlString(deleteSql), QString("DELETE FROM `userinfo` WHERE `id` IN (1, 23, 221, 'z')"));
       }
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
+
+void TestSql::testSelectSql()
+{
+   try{
+      Sql sql(m_engine, "userinfo");
+      
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

@@ -1,11 +1,18 @@
 #include <QVariant>
+#include <QStringList>
 
-#include "literal.h"
+#include "simple_sql.h"
 
 namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
+
+Where::Where()
+{}
+
+Having::Having()
+{}
 
 Literal::Literal(const QString &literal)
    : m_literal(literal)
@@ -28,8 +35,8 @@ AbstractExpression::ExpressionDataType Literal::getExpressionData()const
    QString literal(m_literal);
    return {
       QVariant(literal.replace("%", "%%")),
-            QVariant(),
-            QVariant()
+            QVariant(QList<QVariant>()),
+            QVariant(QStringList())
    };
 }
 

@@ -22,6 +22,7 @@ public:
    TableIdentifier& setSchema(const QString &schema);
    const QString& getSchema()const;
    QPair<QString, QString> getTableAndSchema()const;
+   bool isNull()const;
 protected:
    QString m_table;
    QString m_schema;

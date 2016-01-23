@@ -92,9 +92,9 @@ In::In(const QStringList &identifier, const QList<QVariant> &valueSet)
 }
 
 In::In(const QVariant &identifier, const QVariant &valueSet)
-   : m_identifier(identifier),
-     m_valueSet(valueSet),
-     m_specification("%1 IN %2")
+   : m_specification("%1 IN %2"),
+     m_identifier(identifier),
+     m_valueSet(valueSet)
 {}
 
 In& In::setIdentifier(const QString &identifier)
@@ -202,8 +202,7 @@ NotIn::NotIn(const QStringList &identifier, const QList<QVariant> &valueSet)
    m_specification = "%1 NOT IN %2";
 }
 
-Where::Where()
-{}
+
 
 Literal::Literal(const QString &literal)
    : BaseLiteral(literal)
@@ -216,8 +215,9 @@ Expression::Expression(const QString &expression, const QList<QVariant> &paramet
 //IsNull
 
 IsNull::IsNull(const QString &identifier)
-   : m_identifier(identifier),
-     m_specification("%1 IS NULL")
+   : m_specification("%1 IS NULL"),
+     m_identifier(identifier)
+     
 {
 }
 

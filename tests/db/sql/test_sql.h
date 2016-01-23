@@ -14,12 +14,12 @@ class TestSql : public QObject
    Q_OBJECT
 public:
    TestSql();
-//   ~TestSql();
 private slots:
    void initTestCase();
    void testSqlTableName();
    void testDeleteSql();
    void testWherePredicate();
+   void testSelectSql();
 protected:
    Engine m_engine;
 };
