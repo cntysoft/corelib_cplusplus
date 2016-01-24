@@ -5,6 +5,7 @@
 #include <QString>
 #include <QList>
 #include <QVariant>
+#include <QSharedPointer>
 
 #include "abstract_expression.h"
 
@@ -20,6 +21,7 @@ public:
    const static QChar PLACEHOLDER;
 public:
    Expression(const QString &expression, const QList<QVariant> &parameters = QList<QVariant>());
+   Expression(const Expression& other) = default;
    Expression& setExpression();
    const QString& getExpression()const;
    Expression& setExpression(const QString &expression);
@@ -27,7 +29,7 @@ public:
    const QList<QVariant>& getParameters()const;
 public:
    virtual AbstractExpression::ExpressionDataType getExpressionData()const;
-protected:
+public:
    QString m_expression;
    QList<QVariant> m_parameters;
 };
@@ -36,5 +38,7 @@ protected:
 }//db
 }//corelib
 }//sn
+
+Q_DECLARE_METATYPE(QSharedPointer<sn::corelib::db::sql::Expression>)
 
 #endif // SN_CORELIB_DB_SQL_EXPRESSION_H

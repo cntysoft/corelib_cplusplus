@@ -1,5 +1,6 @@
 #include <QRegularExpression>
 #include <QMetaType>
+#include <algorithm>
 
 #include "abstract_sql.h"
 #include "table_identifier.h"
@@ -13,6 +14,7 @@ namespace db{
 namespace sql{
 
 using sn::corelib::instanceof;
+using sn::corelib::format_str;
 
 AbstractSql& AbstractSql::setSpecificationFn(const QString &name, SpecificationFuncPtr fn)
 {
@@ -50,9 +52,52 @@ QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *pa
    return sqls.values().join(' ');
 }
 
-QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters)
+QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters)throw(ErrorInfo)
 {
-   
+   if(specification.type() == QVariant::String){
+      QStringList strParams;
+      std::for_each(parameters.cbegin(), parameters.cend(), [&strParams](const QVariant& param){
+         strParams.append(param.toString());
+      });
+      //这里不需要转义吗？
+      return format_str(specification.toString(), strParams);
+   }
+   int parameterCount = parameters.size();
+   QMap<QString, QVariant> specifications = specification.toMap();
+   QString specificationString;
+   QVariant vparamSpecs;
+   QMap<QString, QVariant>::const_iterator it = specifications.cbegin();
+   QMap<QString, QVariant>::const_iterator endMark = specifications.cend();
+   while(it != endMark){
+      const QVariant &item = it.value();
+      int paramSpecCount = 0;
+      if(item.type() == QVariant::List){
+         paramSpecCount = item.toList().size();
+      }else if(item.type() == QVariant::Map){
+         paramSpecCount = item.toMap().size();
+      }
+      if(paramSpecCount == parameterCount){
+         vparamSpecs = item;
+         specificationString = it.key();
+         break;
+      }
+      it++;
+   }
+   if(specificationString.isNull()){
+      throw ErrorInfo("A number of parameters was found that is not supported by this specification");
+   }
+   QStringList topParameters;
+   QList<QVariant> paramSpecs = vparamSpecs.toList();
+   for(int i = 0; i < parameterCount; i++){
+      QList<QVariant> paramsForPosition = parameters.at(i).toList();
+      if(i < paramSpecs.size()){
+         QMap<QString, QVariant> currentSpec = paramSpecs.at(i).toMap();
+         if(currentSpec.contains("combinedby")){
+            QStringList multiParamValues;
+            
+         }
+      }
+   }
    return QString();
 }
 

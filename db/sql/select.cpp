@@ -37,8 +37,8 @@ const  QString Select::COMBINE_INTERSECT = "intersect";
 
 
 AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Engine &engine, 
-                                               ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                               QMap<QString, AbstractSql::ProcessResultPointerType> &parameters)
+                                                     ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                     QMap<QString, AbstractSql::ProcessResultPointerType> &parameters)
 {
    int expr = 1;
    Select* selectSql = qobject_cast<Select*>(self);
@@ -46,15 +46,39 @@ AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Eng
    QString tableName(tablePair.first);
    QString fromTableName(tablePair.second);
    // process table columns
-   QStringList columns;
+   QList<QPair<QString, QString>> columns;
+   if(selectSql->m_columns.isEmpty()){
+      selectSql->addColumn(QVariant(Select::SQL_STAR), 0);
+   }
+   //这样可以吗？
+   QList<QVariant> *columnsPointer = &selectSql->m_columns;
+   int colCount = columnsPointer->size();
+   for(int i = 0; i < colCount; i++){
+      QVariant columnIndexOrAs;
+      const QVariant &colItem = columnsPointer->at(i);
+      QVariant column;
+      if(colItem.userType() == qMetaTypeId<QPair<int, QVariant>>()){
+         auto pairItem = colItem.value<QPair<int, QVariant>>();
+         columnIndexOrAs = pairItem.first;
+         column = pairItem.second;
+      }else if(colItem.userType() == qMetaTypeId<QPair<QString, QVariant>>()){
+         auto pairItem = colItem.value<QPair<QString, QVariant>>();
+         columnIndexOrAs = pairItem.first;
+         column = pairItem.second;
+      }
+      if(column.type() == QVariant::String && column.toString() == Select::SQL_STAR){
+         columns.append(QPair<QString, QString>(fromTableName+Select::SQL_STAR, ""));
+         continue;
+      }
+   }
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
    result->isNull = false;
    result->type = AbstractSql::ProcessResultType::Array;
    QList<QVariant> values;
-   if(tableName.isEmpty()){
-      values << QVariant(columns);
+   if(!tableName.isEmpty()){
+      values << QVariant::fromValue(columns);
    }else{
-      values << QVariant(columns) << QVariant(tableName);
+      values << QVariant::fromValue(columns) << QVariant(tableName);
    }
    result->value = QVariant(values);
    return result;
@@ -63,13 +87,12 @@ AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Eng
 Select::Select(const QString &table, const QString &schema)
    : Select(TableIdentifier(table, schema))
 {
-   
 }
 
 Select::Select(const TableIdentifier &table)
    : m_table(table)
 {
-//   m_specifications.insert("statementStart", "%1");
+   //   m_specifications.insert("statementStart", "%1");
    //select
    QMap<QString, QVariant> selectSpecification;
    {
@@ -121,8 +144,8 @@ Select::Select(const TableIdentifier &table)
       };
       joinSpecification.insert("%1", QVariant(joinSpecificationItem));
    }
-//   m_specifications.insert(Select::JOINS, QVariant(joinSpecification));
-//   m_specifications.insert(Select::WHERE, QVariant("WHERE %1"));
+   //   m_specifications.insert(Select::JOINS, QVariant(joinSpecification));
+   //   m_specifications.insert(Select::WHERE, QVariant("WHERE %1"));
    //group
    QMap<QString, QVariant> groupSpecification;
    {
@@ -135,9 +158,9 @@ Select::Select(const TableIdentifier &table)
       };
       groupSpecification.insert("GROUP BY %1", QVariant(groupSpecificationItem));
    }
-//   m_specifications.insert(Select::GROUP, QVariant(groupSpecification));
-//   //having
-//   m_specifications.insert(Select::HAVING, QVariant("HAVING %1"));
+   //   m_specifications.insert(Select::GROUP, QVariant(groupSpecification));
+   //   //having
+   //   m_specifications.insert(Select::HAVING, QVariant("HAVING %1"));
    //order
    //group
    QMap<QString, QVariant> orderSpecification;
@@ -152,11 +175,11 @@ Select::Select(const TableIdentifier &table)
       };
       orderSpecification.insert("ORDER BY %1", QVariant(orderSpecificationItem));
    }
-//   m_specifications.insert(Select::ORDER, orderSpecification);
-//   m_specifications.insert(Select::LIMIT, QVariant("LIMIT %1"));
-//   m_specifications.insert(Select::OFFSET, QVariant("OFFSET %1"));
-//   m_specifications.insert("statementEnd", QVariant("%1"));
-//   m_specifications.insert(Select::COMBINE, QVariant("%1 ( %2 )"));
+   //   m_specifications.insert(Select::ORDER, orderSpecification);
+   //   m_specifications.insert(Select::LIMIT, QVariant("LIMIT %1"));
+   //   m_specifications.insert(Select::OFFSET, QVariant("OFFSET %1"));
+   //   m_specifications.insert("statementEnd", QVariant("%1"));
+   //   m_specifications.insert(Select::COMBINE, QVariant("%1 ( %2 )"));
    if(!m_table.isNull()){
       m_tableReadOnly = true;
    }
@@ -180,7 +203,7 @@ Select& Select::from(const TableIdentifier &table)throw(ErrorInfo)
    return *this;
 }
 
-Select& Select::quantifier(const QString &quantifier)
+Select& Select::setQuantifier(const QString &quantifier)
 {
    if(!m_quantifier.isNull()){
       m_quantifier.clear();
@@ -189,12 +212,39 @@ Select& Select::quantifier(const QString &quantifier)
    return *this;
 }
 
-Select& Select::quantifier(const QSharedPointer<AbstractExpression> &quantifier)
+Select& Select::setQuantifier(const QSharedPointer<AbstractExpression> &quantifier)
 {
    if(!m_quantifier.isNull()){
       m_quantifier.clear();
    }
    m_quantifier.setValue(quantifier);
+   return *this;
+}
+
+Select& Select::addColumn(const QVariant &column, const QString &alias)
+{
+   m_columns.append(QVariant::fromValue(QPair<QString, QVariant>(alias, column)));
+   return *this;
+}
+
+Select& Select::addColumn(const QVariant &column, int index)
+{
+   m_columns.append(QVariant::fromValue(QPair<int, QVariant>(index, column)));
+   return *this;
+}
+
+Select& Select::setColumns(QList<QVariant> &columns, bool prefixColumnsWithTable)
+{
+   //这里是否需要进行检验
+   m_columns.clear();
+   m_columns = columns;
+   m_prefixColumnsWithTable = prefixColumnsWithTable;
+   return *this;
+}
+
+Select& Select::setPrefixColumnsWithTable(bool flag)
+{
+   m_prefixColumnsWithTable = flag;
    return *this;
 }
 
@@ -214,7 +264,7 @@ QPair<QString, QString> Select::resolveTable(const TableIdentifier &table, const
    }
    return {
       tableName,
-      fromTableName
+            fromTableName
    };
 }
 
@@ -236,7 +286,7 @@ QPair<QString, QString> Select::resolveTable(const QString &table, const QString
    }
    return {
       tableName,
-      fromTableName
+            fromTableName
    };
 }
 

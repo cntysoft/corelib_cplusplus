@@ -5,6 +5,7 @@
 #include <QVariant>
 #include <QSharedPointer>
 #include <QPair>
+#include <QMap>
 
 #include "global/global.h"
 #include "kernel/errorinfo.h"
@@ -60,8 +61,22 @@ public:
    Select(const QString &table, const QString &schema = QString());
    Select& from(const QString &tableName, const QString &schema = QString())throw(ErrorInfo);
    Select& from(const TableIdentifier &table)throw(ErrorInfo);
-   Select& quantifier(const QString &quantifier);
-   Select& quantifier(const QSharedPointer<AbstractExpression> &quantifier);
+   Select& setQuantifier(const QString &quantifier);
+   Select& setQuantifier(const QSharedPointer<AbstractExpression> &quantifier);
+   /*
+     Specify columns from which to select
+     Possible valid states:
+     array()
+     array(value, ...)
+     value can be strings or Expression objects
+     array(string => value, ...)
+     key string will be use as alias,
+     value can be string or Expression objects
+   */
+   Select& setColumns(QList<QVariant> &columns, bool prefixColumnsWithTable = true);
+   Select& addColumn(const QVariant &column, int index);
+   Select& addColumn(const QVariant &column, const QString &alias);
+   Select& setPrefixColumnsWithTable(bool flag);
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
                                         ParameterContainer *parameterContainer = nullptr);
@@ -75,6 +90,7 @@ protected:
    bool m_tableReadOnly = false;
    bool m_prefixColumnsWithTable = true;
    QVariant m_quantifier;
+   QList<QVariant> m_columns;
    QSharedPointer<Where> m_where;
    QSharedPointer<Having> m_having;
 };
@@ -83,5 +99,5 @@ protected:
 }//db
 }//corelib
 }//sn
-
+Q_DECLARE_METATYPE(QSharedPointer<sn::corelib::db::sql::Select>)
 #endif // SN_CORELIB_DB_SQL_SELECT_H
