@@ -46,7 +46,7 @@ AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Eng
    QString tableName(tablePair.first);
    QString fromTableName(tablePair.second);
    // process table columns
-   QList<QPair<QString, QString>> columns;
+   QList<QVariant> columns;
    if(selectSql->m_columns.isEmpty()){
       selectSql->addColumn(QVariant(Select::SQL_STAR), 0);
    }
@@ -67,7 +67,7 @@ AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Eng
          column = pairItem.second;
       }
       if(column.type() == QVariant::String && column.toString() == Select::SQL_STAR){
-         columns.append(QPair<QString, QString>(fromTableName+Select::SQL_STAR, ""));
+         columns.append(QVariant(QStringList(fromTableName+Select::SQL_STAR)));
          continue;
       }
    }
@@ -75,10 +75,11 @@ AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Eng
    result->isNull = false;
    result->type = AbstractSql::ProcessResultType::Array;
    QList<QVariant> values;
+   //可以返回QList<QVariant> 其中QVariant为 QString 或者 QString  
    if(!tableName.isEmpty()){
-      values << QVariant::fromValue(columns);
+      values << QVariant(columns);
    }else{
-      values << QVariant::fromValue(columns) << QVariant(tableName);
+      values << QVariant(columns) << QVariant(tableName);
    }
    result->value = QVariant(values);
    return result;

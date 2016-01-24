@@ -89,16 +89,58 @@ QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &spe
    QStringList topParameters;
    QList<QVariant> paramSpecs = vparamSpecs.toList();
    for(int i = 0; i < parameterCount; i++){
-      QList<QVariant> paramsForPosition = parameters.at(i).toList();
-      if(i < paramSpecs.size()){
-         QMap<QString, QVariant> currentSpec = paramSpecs.at(i).toMap();
-         if(currentSpec.contains("combinedby")){
-            QStringList multiParamValues;
-            
+      const QVariant & vparamsForPosition = parameters.at(i);
+      if(vparamsForPosition.type() == QVariant::List){
+         QList<QVariant> paramsForPosition = parameters.at(i).toList();
+         int paramForPositionCount = paramsForPosition.size();
+         if(i < paramSpecs.size()){
+            QVariant vcurrentSpec = paramSpecs.at(i);
+            if(!vcurrentSpec.isNull() && vcurrentSpec.type() == QVariant::Map){
+               QMap<QString, QVariant> currentSpec = paramSpecs.at(i).toMap();
+               if(currentSpec.contains("combinedby")){
+                  QStringList multiParamValues;
+                  for(int j = 0; j < paramForPositionCount; j++){
+                     const QVariant &vparamsForPositionItem = paramsForPosition.at(j);
+                     QStringList paramsForPositionItem = vparamsForPositionItem.toStringList();
+                     int ppCount = paramsForPositionItem.size();
+                     if(!paramSpecs[i].toMap().contains(QString("%1").arg(ppCount))){
+                        throw ErrorInfo(QString("A number of parameters (%1) was found that is not supported by this specification").arg(ppCount));
+                     }
+                     multiParamValues << format_str(paramSpecs[i].toMap().value(QString("%1").arg(ppCount)).toString(), paramsForPositionItem);
+                  }
+                  topParameters << multiParamValues.join(paramSpecs[i].toMap().value("combinedby").toString());
+               }
+            }else if(!vcurrentSpec.isNull()){
+               int ppCount = paramForPositionCount;
+               if(!paramSpecs[i].toMap().contains(QString("%1").arg(ppCount))){
+                  throw ErrorInfo(QString("A number of parameters (%1) was found that is not supported by this specification").arg(ppCount));
+               }
+               QStringList formatArgs;
+               std::for_each(paramsForPosition.cbegin(), paramsForPosition.cend(), 
+                             [&formatArgs](const QVariant &item){
+                  formatArgs.append(item.toString());
+               });
+               topParameters << format_str(paramSpecs[i].toMap().value(QString("%1").arg(ppCount)).toString(), formatArgs);
+            }
+         }
+      }else if(vparamsForPosition.type() == QVariant::String){
+         QString paramsForPosition = parameters.at(i).toString();
+         if(i < paramSpecs.size()){
+            QVariant vcurrentSpec = paramSpecs.at(i);
+            if(!vcurrentSpec.isNull() && vcurrentSpec.type() == QVariant::Map){
+               QMap<QString, QVariant> currentSpec = paramSpecs.at(i).toMap();
+               if(currentSpec.contains("combinedby")){
+                  continue;
+               }
+            }else if(!vcurrentSpec.isNull()){
+               continue;
+            }else{
+               topParameters << paramsForPosition;
+            }
          }
       }
    }
-   return QString();
+   return format_str(specificationString, topParameters);
 }
 
 QString AbstractSql::getSqlString(const Engine &engine)
@@ -145,7 +187,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
       // expression data)
       AbstractExpression::ExpressionDataType subParts = part.toList();
       QList<QVariant> types;
-      QList<QVariant> values = subParts[1].toList();
+      QList<QVariant> values = subParts[1].toList( );
       QStringList strValues;
       if(subParts.size() > 2){
          types = subParts[2].toList();
