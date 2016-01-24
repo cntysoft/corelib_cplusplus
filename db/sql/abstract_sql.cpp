@@ -143,6 +143,36 @@ QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &spe
    return format_str(specificationString, topParameters);
 }
 
+QString AbstractSql::resolveColumnValue(const QVariant &column, const Engine &engine, 
+                                        ParameterContainer *parameterContainer, 
+                                        QString namedParameterPrefix)
+{
+   namedParameterPrefix = (namedParameterPrefix.isNull() || namedParameterPrefix.isEmpty()) ? 
+            namedParameterPrefix : m_processInfo.at("paramPrefix") + namedParameterPrefix;
+   bool isIdentifier = false;
+   QString fromTable("");
+   QVariant vcolumn;
+   if(column.type() == QVariant::Map){
+      QMap<QString, QVariant> vcolumn = column.toMap();
+      if(vcolumn.contains("isIdentifier")){
+         isIdentifier = vcolumn.value("isIdentifier").toBool();
+      }
+      if(vcolumn.contains("fromTable")){
+         QString tempFromTable(vcolumn.value("fromTable").toString());
+         if(!tempFromTable.isNull() && !tempFromTable.isEmpty()){
+            fromTable = tempFromTable;
+         }
+      }
+      vcolumn = vcolumn.value("column");
+   }else{
+      vcolumn = column;
+   }
+   if(vcolumn.isNull()){
+      return "NULL";
+   }
+   return isIdentifier ? fromTable+engine : engine.quoteValue(column.toString());
+}
+
 QString AbstractSql::getSqlString(const Engine &engine)
 {
    return buildSqlString(engine);

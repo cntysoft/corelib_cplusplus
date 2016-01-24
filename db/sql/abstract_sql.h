@@ -58,6 +58,8 @@ protected:
    QString processExpression(const QSharedPointer<AbstractExpression> expression, const Engine &engine, 
                              ParameterContainer *parameterContainer = nullptr, 
                              QString namedParameterPrefix = QString());
+   QString resolveColumnValue(const QVariant &column, const Engine &engine,
+                              ParameterContainer *parameterContainer = nullptr, QString namedParameterPrefix = QString());
 protected:
    QMap<QString, QVariant> m_specifications;
    QMap<QString, QVariant> m_processInfo;

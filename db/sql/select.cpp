@@ -70,6 +70,13 @@ AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Eng
          columns.append(QVariant(QStringList(fromTableName+Select::SQL_STAR)));
          continue;
       }
+      QMap<QString, QVariant> colMeta{
+         {"column", column},
+         {"fromTable", fromTableName},
+         {"isIdentifier", true}
+      };
+      QString columnName = selectSql->resolveColumnValue(QVariant(colMeta), engine, parameterContainer, 
+                                                         columnIndexOrAs.type() == QVariant::String?columnIndexOrAs.toString():"column");
    }
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
    result->isNull = false;

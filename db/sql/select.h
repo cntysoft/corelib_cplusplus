@@ -82,9 +82,10 @@ protected:
                                         ParameterContainer *parameterContainer = nullptr);
    QPair<QString, QString> resolveTable(const QString &table, const Engine &engine, 
                                         ParameterContainer *parameterContainer = nullptr);
-   QPair<QString, QString> resolveTable(const QString &table, const QString &alias, const 
-                                        Engine &engine, ParameterContainer *parameterContainer = nullptr);
+   QPair<QString, QString> resolveTable(const QString &table, const QString &alias, 
+                                        const Engine &engine, ParameterContainer *parameterContainer = nullptr);
    QString renderTable(const QString &table, const QString &alias = QString());
+   
 protected:
    TableIdentifier m_table;
    bool m_tableReadOnly = false;
