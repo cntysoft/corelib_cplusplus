@@ -191,6 +191,16 @@ void TestSql::testSelectSql()
 //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `userinfo`.`name` AS `name_alias` WHERE `name` = 'sheneninfo'"));
 //         //qDebug() << sql.buildSqlString(selectSql);
 //      }
+      {
+         QSharedPointer<Select> selectSql = sql.getSelectSql();
+         selectSql->addColumn(QString("name"), "name_alias");
+         QSharedPointer<Where> where(new Where);
+         where->equalTo("name", "sheneninfo");
+         selectSql->where(where);
+         selectSql->setTableReadOnly(false);
+         selectSql->from("userinfo", "metainfo");
+         qDebug() << sql.buildSqlString(selectSql);
+      }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

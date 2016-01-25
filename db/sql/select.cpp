@@ -93,6 +93,13 @@ AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,co
          columns.append(QVariant(QStringList({columnName, columnAlias})));
       }
    }
+   //process quantifier
+   if(selectSql->m_quantifier.isNull()){
+      if(selectSql->m_quantifier.userType() == qRegisterMetaType<QSharedPointer<AbstractExpression>>()){
+         
+      }
+   }
+   
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
    result->isNull = false;
    result->type = AbstractSql::ProcessResultType::Array;
@@ -328,8 +335,7 @@ QPair<QString, QString> Select::resolveTable(const QString &table, const QString
       fromTableName = "";
    }
    return {
-      tableName,
-            fromTableName
+      tableName, fromTableName
    };
 }
 
@@ -347,6 +353,12 @@ Select& Select::where(const QSharedPointer<Where> &where)
 Select& Select::where(const QString &where, const QString &combination)
 {
    m_where->addPredicate(where, combination);
+   return *this;
+}
+
+Select& Select::setTableReadOnly(bool flag)
+{
+   m_tableReadOnly = flag;
    return *this;
 }
 

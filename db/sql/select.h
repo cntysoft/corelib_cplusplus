@@ -84,6 +84,7 @@ public:
    Select& setPrefixColumnsWithTable(bool flag);
    Select& where(const QSharedPointer<Where> &where);
    Select& where(const QString &where, const QString &combination = PredicateSet::OP_AND);
+   Select& setTableReadOnly(bool flag);
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
                                         ParameterContainer *parameterContainer = nullptr);
