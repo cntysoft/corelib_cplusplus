@@ -93,10 +93,14 @@ AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,co
          columns.append(QVariant(QStringList({columnName, columnAlias})));
       }
    }
+   
+   QString quantifier;
    //process quantifier
-   if(selectSql->m_quantifier.isNull()){
+   if(!selectSql->m_quantifier.isNull()){
       if(selectSql->m_quantifier.userType() == qRegisterMetaType<QSharedPointer<AbstractExpression>>()){
-         
+         quantifier = selectSql->processExpression(selectSql->m_quantifier.value<QSharedPointer<AbstractExpression>>(), engine, parameterContainer, "quantifier");
+      }else if(selectSql->m_quantifier.type() == QVariant::String){
+         quantifier = selectSql->m_quantifier.toString();
       }
    }
    
@@ -105,8 +109,10 @@ AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,co
    result->type = AbstractSql::ProcessResultType::Array;
    QList<QVariant> values;
    //可以返回QList<QVariant> 其中QVariant为 QString 或者 QString
-   if(!tableName.isEmpty()){
+   if(tableName.isEmpty()){
       values << QVariant(columns);
+   }else if(!quantifier.isNull() && !quantifier.isEmpty()){
+      values << QVariant(quantifier) << QVariant(columns) << QVariant(tableName);
    }else{
       values << QVariant(columns) << QVariant(tableName);
    }
@@ -119,9 +125,9 @@ AbstractSql::ProcessResultPointerType select_process_where(AbstractSql *self,con
                                                      QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Select* selectSql = qobject_cast<Select*>(self);
-   Q_ASSERT_X(selectSql != 0, "delete friend function process_where", "self pointer cast fail");
+   Q_ASSERT_X(selectSql != 0, "where friend function process_where", "self pointer cast fail");
    if(0 == selectSql){
-      throw ErrorInfo(QString("delete friend function process_where self pointer cast fail"));
+      throw ErrorInfo(QString("where friend function process_where self pointer cast fail"));
    }
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
    if(selectSql->m_where->count() == 0){
@@ -131,6 +137,26 @@ AbstractSql::ProcessResultPointerType select_process_where(AbstractSql *self,con
    result->isNull = false;
    result->type = AbstractSql::ProcessResultType::String;
    result->value = QVariant(QString(selectSql->m_specifications.value(Select::WHERE).toString()).arg(selectSql->processExpression(selectSql->m_where, engine, parameterContainer, "where")));
+   return result;
+}
+
+AbstractSql::ProcessResultPointerType select_process_having(AbstractSql *self,const Engine &engine, 
+                                                     ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = qobject_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "where friend function process_where", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("where friend function process_where self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_having->count() == 0){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::String;
+   result->value = QVariant(QString(selectSql->m_specifications.value(Select::HAVING).toString()).arg(selectSql->processExpression(selectSql->m_having, engine, parameterContainer, "having")));
    return result;
 }
 
@@ -210,7 +236,7 @@ Select::Select(const TableIdentifier &table)
    }
    //   m_specifications.insert(Select::GROUP, QVariant(groupSpecification));
    //   //having
-   //   m_specifications.insert(Select::HAVING, QVariant("HAVING %1"));
+   m_specifications.insert(Select::HAVING, QVariant("HAVING %1"));
    //order
    //group
    QMap<QString, QVariant> orderSpecification;
@@ -237,6 +263,10 @@ Select::Select(const TableIdentifier &table)
    m_having.reset(new Having());
    m_specificationFnPtrs.insert("select", select_process_select);
    m_specificationFnPtrs.insert("where", select_process_where);
+   m_specificationFnPtrs.insert("having", select_process_having);
+   m_specKeys.append("select");
+   m_specKeys.append("where");
+   m_specKeys.append("having");
 }
 
 Select& Select::from(const QString &tableName, const QString &schema)throw(ErrorInfo)
@@ -255,15 +285,6 @@ Select& Select::from(const TableIdentifier &table)throw(ErrorInfo)
 }
 
 Select& Select::setQuantifier(const QString &quantifier)
-{
-   if(!m_quantifier.isNull()){
-      m_quantifier.clear();
-   }
-   m_quantifier.setValue(quantifier);
-   return *this;
-}
-
-Select& Select::setQuantifier(const QSharedPointer<AbstractExpression> &quantifier)
 {
    if(!m_quantifier.isNull()){
       m_quantifier.clear();
@@ -355,6 +376,19 @@ Select& Select::where(const QString &where, const QString &combination)
    m_where->addPredicate(where, combination);
    return *this;
 }
+
+Select& Select::having(const QSharedPointer<Having> &having)
+{
+   m_having = having;
+   return *this;
+}
+
+Select& Select::having(const QString &having, const QString &combination)
+{
+   m_having->addPredicate(having, combination);
+   return *this;
+}
+
 
 Select& Select::setTableReadOnly(bool flag)
 {

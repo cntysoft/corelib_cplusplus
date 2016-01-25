@@ -61,13 +61,15 @@ public:
    friend ProcessResultPointerType select_process_where(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType select_process_having(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
    Select(const TableIdentifier &table = TableIdentifier());
    Select(const QString &table, const QString &schema = QString());
    Select& from(const QString &tableName, const QString &schema = QString())throw(ErrorInfo);
    Select& from(const TableIdentifier &table)throw(ErrorInfo);
    Select& setQuantifier(const QString &quantifier);
-   Select& setQuantifier(const QSharedPointer<AbstractExpression> &quantifier);
    /*
      Specify columns from which to select
      Possible valid states:
@@ -84,6 +86,8 @@ public:
    Select& setPrefixColumnsWithTable(bool flag);
    Select& where(const QSharedPointer<Where> &where);
    Select& where(const QString &where, const QString &combination = PredicateSet::OP_AND);
+   Select& having(const QSharedPointer<Having> &having);
+   Select& having(const QString &having, const QString &combination = PredicateSet::OP_AND);
    Select& setTableReadOnly(bool flag);
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 

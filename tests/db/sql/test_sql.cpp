@@ -29,6 +29,7 @@ using sn::corelib::db::sql::AbstractPreparableSql;
 using sn::corelib::db::sql::predicate::PredicateSet;
 using sn::corelib::instanceof;
 using sn::corelib::db::sql::Where;
+using sn::corelib::db::sql::Having;
 using sn::corelib::db::sql::AbstractExpression;
 using sn::corelib::db::sql::Expression;
 using sn::corelib::ErrorInfo;
@@ -201,6 +202,21 @@ void TestSql::testSelectSql()
          selectSql->from("userinfo", "metainfo");
          qDebug() << sql.buildSqlString(selectSql);
       }
+//      {
+//         QSharedPointer<Select> selectSql = sql.getSelectSql();
+//         selectSql->addColumn(QString("name"), "name_alias");
+//         QSharedPointer<Where> where(new Where);
+//         where->equalTo("name", "sheneninfo");
+//         selectSql->where(where);
+//         selectSql->setQuantifier("DISTINCT");
+//         selectSql->setTableReadOnly(false);
+//         selectSql->from("userinfo");
+//         QSharedPointer<Having> having(new Having);
+//         having->equalTo("goupid", 12);
+//         selectSql->having(having);
+//         qDebug() << sql.buildSqlString(selectSql);
+//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT DISTINCT `userinfo`.`name` AS `name_alias` FROM `userinfo` WHERE `name` = 'sheneninfo' HAVING `goupid` = 12"));
+//      }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

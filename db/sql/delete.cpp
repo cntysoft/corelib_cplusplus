@@ -58,6 +58,8 @@ Delete::Delete(const TableIdentifier &table)
    m_specifications.insert(Delete::SPECIFICATION_WHERE, "WHERE %1");
    m_specificationFnPtrs.insert("where", delete_process_where);
    m_specificationFnPtrs.insert("delete", delete_process_delete);
+   m_specKeys.append("where");
+   m_specKeys.append("delete");
 }
 
 Delete::RawState Delete::getRawState()

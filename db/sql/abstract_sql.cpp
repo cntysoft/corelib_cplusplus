@@ -28,11 +28,12 @@ QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *pa
 {
    QMap<QString, QString> sqls;
    QMap<QString, ProcessResultPointerType> parameters;
-   QMap<QString, QVariant>::const_iterator cit = m_specifications.cbegin();
-   while(cit != m_specifications.cend()){
+   QStringList::const_iterator keyIterator = m_specKeys.cbegin();
+   QStringList::const_iterator keyItEndMarker = m_specKeys.cend();
+   while(keyIterator != keyItEndMarker){
+      QString key(*keyIterator);
       SpecificationFuncPtr fn = nullptr;
-      QString key(cit.key());
-      QVariant specification = cit.value();
+      QVariant specification = m_specifications.value(key);
       if(m_specificationFnPtrs.contains(key)){
          fn = m_specificationFnPtrs.value(key);
       }
@@ -41,15 +42,22 @@ QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *pa
       ProcessResultPointerType resultItem = parameters[key];
       if(!specification.isNull() && !resultItem->isNull && resultItem->type == ProcessResultType::Array){
          sqls[key] = createSqlFromSpecificationAndParameters(specification, resultItem->getValue().toList());
-         cit++;
+         keyIterator++;
          continue;
       }
       if(!resultItem->isNull && ProcessResultType::String == resultItem->type){
          sqls.insert(key, resultItem->getValue().toString());
       }
-      cit++;
+      keyIterator++;
    }
-   return sqls.values().join(' ');
+   QStringList sqlList;
+   std::for_each(m_specKeys.cbegin(), m_specKeys.cend(), [&sqlList, &sqls](const QString &key){
+      if(sqls.contains(key)){
+         sqlList.append(sqls.value(key));
+      }
+   });
+   
+   return sqlList.join(' ');
 }
 
 QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters)throw(ErrorInfo)
@@ -232,7 +240,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
          }
          QString type = types.at(vIndex).toString();
          if(type == AbstractExpression::TYPE_IDENTIFIER){
-            strValues.insert(vIndex, engine.quoteFieldName(value.toString()));
+            strValues.insert(vIndex, engine.quoteIdentifierInFragment(value.toString()));
          }else if(type == AbstractExpression::TYPE_VALUE){
             // if prepareType is
             // passed back to the statement in a way it can be used as a placeholder value

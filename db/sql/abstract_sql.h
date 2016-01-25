@@ -61,6 +61,7 @@ protected:
    QString resolveColumnValue(const QVariant &column, const Engine &engine,
                               ParameterContainer *parameterContainer = nullptr, QString namedParameterPrefix = QString());
 protected:
+   QStringList m_specKeys;
    QMap<QString, QVariant> m_specifications;
    QMap<QString, QVariant> m_processInfo;
    QMap<QString, int> m_instanceParameterIndex;
