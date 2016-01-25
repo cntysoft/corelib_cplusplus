@@ -36,9 +36,9 @@ const  QString Select::COMBINE_EXCEPT = "except";
 const  QString Select::COMBINE_INTERSECT = "intersect";
 
 
-AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Engine &engine, 
-                                                     ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                     QMap<QString, AbstractSql::ProcessResultPointerType> &parameters)
+AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
+                                                     ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    int expr = 1;
    Select* selectSql = qobject_cast<Select*>(self);
@@ -107,6 +107,26 @@ AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Eng
    return result;
 }
 
+AbstractSql::ProcessResultPointerType select_process_where(AbstractSql *self,const Engine &engine, 
+                                                     ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = qobject_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "delete friend function process_where", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("delete friend function process_where self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_where->count() == 0){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::String;
+   result->value = QVariant(QString(selectSql->m_specifications.value(Select::WHERE).toString()).arg(selectSql->processExpression(selectSql->m_where, engine, parameterContainer, "where")));
+   return result;
+}
+
 Select::Select(const QString &table, const QString &schema)
    : Select(TableIdentifier(table, schema))
 {
@@ -168,7 +188,7 @@ Select::Select(const TableIdentifier &table)
       joinSpecification.insert("%1", QVariant(joinSpecificationItem));
    }
    //   m_specifications.insert(Select::JOINS, QVariant(joinSpecification));
-   //   m_specifications.insert(Select::WHERE, QVariant("WHERE %1"));
+   m_specifications.insert(Select::WHERE, QVariant("WHERE %1"));
    //group
    QMap<QString, QVariant> groupSpecification;
    {
@@ -208,7 +228,8 @@ Select::Select(const TableIdentifier &table)
    }
    m_where.reset(new Where());
    m_having.reset(new Having());
-   m_specificationFnPtrs.insert("select", process_select);
+   m_specificationFnPtrs.insert("select", select_process_select);
+   m_specificationFnPtrs.insert("where", select_process_where);
 }
 
 Select& Select::from(const QString &tableName, const QString &schema)throw(ErrorInfo)
@@ -315,6 +336,18 @@ QPair<QString, QString> Select::resolveTable(const QString &table, const QString
 QString Select::renderTable(const QString &table, const QString &alias)
 {
    return table + ((!alias.isNull() && !alias.isEmpty()) ? " AS " + alias : "");
+}
+
+Select& Select::where(const QSharedPointer<Where> &where)
+{
+   m_where = where;
+   return *this;
+}
+
+Select& Select::where(const QString &where, const QString &combination)
+{
+   m_where->addPredicate(where, combination);
+   return *this;
 }
 
 }//sql

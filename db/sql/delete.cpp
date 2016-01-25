@@ -13,7 +13,7 @@ namespace sql{
 const QString Delete::SPECIFICATION_WHERE = "where";
 const QString Delete::SPECIFICATION_DELETE = "delete";
 
-AbstractSql::ProcessResultPointerType process_delete(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResultPointerType>&)
+AbstractSql::ProcessResultPointerType delete_process_delete(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Delete* deleteSql = qobject_cast<Delete*>(self);
    Q_ASSERT_X(deleteSql != 0, "delete friend function process_delete", "self pointer cast fail");
@@ -27,7 +27,7 @@ AbstractSql::ProcessResultPointerType process_delete(AbstractSql *self, const En
    return result;
 }
 
-AbstractSql::ProcessResultPointerType process_where(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResultPointerType>&)
+AbstractSql::ProcessResultPointerType delete_process_where(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Delete* deleteSql = qobject_cast<Delete*>(self);
    Q_ASSERT_X(deleteSql != 0, "delete friend function process_where", "self pointer cast fail");
@@ -56,8 +56,8 @@ Delete::Delete(const TableIdentifier &table)
 {
    m_specifications.insert(Delete::SPECIFICATION_DELETE, "DELETE FROM %1");
    m_specifications.insert(Delete::SPECIFICATION_WHERE, "WHERE %1");
-   m_specificationFnPtrs.insert("where", process_where);
-   m_specificationFnPtrs.insert("delete", process_delete);
+   m_specificationFnPtrs.insert("where", delete_process_where);
+   m_specificationFnPtrs.insert("delete", delete_process_delete);
 }
 
 Delete::RawState Delete::getRawState()

@@ -170,20 +170,27 @@ void TestSql::testWherePredicate()
 void TestSql::testSelectSql()
 {
    try{
-      
       Sql sql(m_engine, "userinfo");
+      //      {
+      //         QSharedPointer<Select> selectSql = sql.getSelectSql();
+      //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `userinfo`.*"));
+      //         //qDebug() << sql.buildSqlString(selectSql);
+      //      }
 //      {
 //         QSharedPointer<Select> selectSql = sql.getSelectSql();
-//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `userinfo`.*"));
-//         qDebug() << sql.buildSqlString(selectSql);
+//         selectSql->addColumn(QString("name"), "name_alias");
+//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `userinfo`.`name` AS `name_alias`"));
+//         //qDebug() << sql.buildSqlString(selectSql);
 //      }
-      {
-         QSharedPointer<Select> selectSql = sql.getSelectSql();
-         selectSql->addColumn(QString("name"), "name_alias");
-         //QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `userinfo`.*"));
-         qDebug() << sql.buildSqlString(selectSql);
-      }
-      
+//      {
+//         QSharedPointer<Select> selectSql = sql.getSelectSql();
+//         selectSql->addColumn(QString("name"), "name_alias");
+//         QSharedPointer<Where> where(new Where);
+//         where->equalTo("name", "sheneninfo");
+//         selectSql->where(where);
+//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `userinfo`.`name` AS `name_alias` WHERE `name` = 'sheneninfo'"));
+//         //qDebug() << sql.buildSqlString(selectSql);
+//      }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

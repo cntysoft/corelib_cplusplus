@@ -13,6 +13,7 @@
 #include "db/sql/abstract_preparable_sql.h"
 #include "db/sql/abstract_expression.h"
 #include "db/sql/simple_sql.h"
+#include "db/sql/predicate/predicateset.h"
 #include "table_identifier.h"
 
 namespace sn{
@@ -21,6 +22,7 @@ namespace db{
 namespace sql{
 
 using sn::corelib::db::sql::AbstractSql;
+using sn::corelib::db::sql::predicate::PredicateSet;
 
 class SN_CORELIB_EXPORT Select : public AbstractPreparableSql
 {
@@ -53,9 +55,12 @@ public:
    const static QString COMBINE_EXCEPT;
    const static QString COMBINE_INTERSECT;
 public:
-   friend ProcessResultPointerType process_select(AbstractSql *self,const Engine &engine, 
+   friend ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
                                                   ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                   QMap<QString, ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType select_process_where(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
    Select(const TableIdentifier &table = TableIdentifier());
    Select(const QString &table, const QString &schema = QString());
@@ -77,6 +82,8 @@ public:
    Select& addColumn(const QVariant &column, int index);
    Select& addColumn(const QVariant &column, const QString &alias);
    Select& setPrefixColumnsWithTable(bool flag);
+   Select& where(const QSharedPointer<Where> &where);
+   Select& where(const QString &where, const QString &combination = PredicateSet::OP_AND);
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
                                         ParameterContainer *parameterContainer = nullptr);
