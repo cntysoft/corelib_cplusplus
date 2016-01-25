@@ -148,29 +148,30 @@ QString AbstractSql::resolveColumnValue(const QVariant &column, const Engine &en
                                         QString namedParameterPrefix)
 {
    namedParameterPrefix = (namedParameterPrefix.isNull() || namedParameterPrefix.isEmpty()) ? 
-            namedParameterPrefix : m_processInfo.at("paramPrefix") + namedParameterPrefix;
+            namedParameterPrefix : m_processInfo.value("paramPrefix").toString() + namedParameterPrefix;
    bool isIdentifier = false;
    QString fromTable("");
    QVariant vcolumn;
    if(column.type() == QVariant::Map){
-      QMap<QString, QVariant> vcolumn = column.toMap();
-      if(vcolumn.contains("isIdentifier")){
-         isIdentifier = vcolumn.value("isIdentifier").toBool();
+      QMap<QString, QVariant> columnMetaInfo = column.toMap();
+      if(columnMetaInfo.contains("isIdentifier")){
+         isIdentifier = columnMetaInfo.value("isIdentifier").toBool();
       }
-      if(vcolumn.contains("fromTable")){
-         QString tempFromTable(vcolumn.value("fromTable").toString());
+      if(columnMetaInfo.contains("fromTable")){
+         QString tempFromTable(columnMetaInfo.value("fromTable").toString());
          if(!tempFromTable.isNull() && !tempFromTable.isEmpty()){
             fromTable = tempFromTable;
          }
       }
-      vcolumn = vcolumn.value("column");
+      vcolumn = columnMetaInfo.value("column");
    }else{
       vcolumn = column;
    }
    if(vcolumn.isNull()){
       return "NULL";
    }
-   return isIdentifier ? fromTable+engine : engine.quoteValue(column.toString());
+   //到这里应该是字符串了
+   return isIdentifier ? fromTable+engine.quoteIdentifierInFragment(vcolumn.toString()) : engine.quoteValue(vcolumn.toString());
 }
 
 QString AbstractSql::getSqlString(const Engine &engine)
@@ -217,7 +218,7 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
       // expression data)
       AbstractExpression::ExpressionDataType subParts = part.toList();
       QList<QVariant> types;
-      QList<QVariant> values = subParts[1].toList( );
+      QList<QVariant> values = subParts[1].toList();
       QStringList strValues;
       if(subParts.size() > 2){
          types = subParts[2].toList();

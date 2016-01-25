@@ -1,9 +1,13 @@
 #include <QStringList>
+#include <QSqlField>
+#include <QDebug>
+#include <QRegularExpression>
+
+#include <algorithm>
 
 #include "engine.h"
 #include "kernel/errorinfo.h"
-#include <QSqlField>
-#include <QDebug>
+
 
 namespace sn{
 namespace corelib{
@@ -16,11 +20,23 @@ const QLatin1String Engine::PREPARE_TYPE_POSITIONAL("positional");
 const QLatin1String Engine::PREPARE_TYPE_NAMED("named");
 
 const QString Engine::QMYSQL("QMYSQL");
+const QString Engine::QDB2("QDB2");
+const QString Engine::QODBC("QODBC");
+const QString Engine::QSQLITE("QSQLITE");
+const QString Engine::QSQLITE2("QSQLITE2");
+const QString Engine::QOCI("QOCI");
+const QString Engine::QPSQL("QPSQL");
 
 int Engine::DB_CONN_NAME_SEED = 0;
 
 const QMap<QString, Engine::PlatformType> Engine::sm_driverToPlatformMap{
-   {Engine::QMYSQL, Engine::PlatformType::Mysql}
+   {Engine::QMYSQL, Engine::PlatformType::Mysql},
+   {Engine::QDB2, Engine::PlatformType::IbmDb2},
+   {Engine::QODBC, Engine::PlatformType::Mssql},
+   {Engine::QSQLITE, Engine::PlatformType::SqlLite},
+   {Engine::QSQLITE2, Engine::PlatformType::SqlLite},
+   {Engine::QOCI, Engine::PlatformType::Oracle},
+   {Engine::QPSQL, Engine::PlatformType::PostgreSql}
 };
 
 Engine::Engine(const QString &driverType, QMap<QString, QString> connectionParams)
@@ -99,6 +115,70 @@ void Engine::query(const QString &sql, QueryMode queryMode)
 Engine::PlatformType Engine::getPlatformType()
 {
    return m_platformType;
+}
+
+bool Engine::getQuoteIdentifiersFlag() const
+{
+   return m_quoteIdentifiers;   
+}
+
+Engine& Engine::setQuoteIdentifiersFlag(bool flag)
+{
+   m_quoteIdentifiers = flag;
+   return *this;
+}
+
+QString Engine::quoteIdentifierInFragment(const QString &identifier, const QStringList &safeWords)const
+{
+   if(!m_quoteIdentifiers){
+      return identifier;
+   }
+   
+   QMap<QString, bool> safeWordsInt{
+      {"*", true},
+      {" ", true},
+      {".", true},
+      {"as", true}
+   };
+   std::for_each(safeWords.cbegin(), safeWords.cend(), [&safeWordsInt](const QString &item){
+      safeWordsInt.insert(item, true);
+   });
+   QString result(identifier);
+   QStringList parts = result.split(QRegularExpression("([^0-9,a-z,A-Z$_:])"), QString::SkipEmptyParts);
+   result = "";
+   std::for_each(parts.cbegin(), parts.cend(), [&result, &safeWords, this](QString part){
+      if(safeWords.contains(part.toLower())){
+         result += part;
+      }else{
+         QPair<QString, QString> quoteIdentifier = this->getQuoteIdentifier();
+         result += quoteIdentifier.first + part.replace(quoteIdentifier.first, this->getQuoteIdentifierTo()) + quoteIdentifier.second;
+      }
+   });
+   return result;
+}
+
+QPair<QChar, QChar> Engine::getQuoteIdentifier()const
+{
+   if(m_platformType == PlatformType::Mysql){
+      return {'`','`'};
+   }else if(m_platformType == PlatformType::Mssql){
+      return {'[', ']'};
+   }else{
+      return {'"', '"'};
+   }
+}
+
+QString Engine::getQuoteIdentifierTo() const
+{
+   if(m_platformType == PlatformType::Mysql){
+      return "``";
+   }else if(m_platformType == PlatformType::PostgreSql){
+      return "\"\"";
+   }else if(m_platformType == PlatformType::Mssql){
+      return "\\";
+   }else{
+      return "\'";
+   }
 }
 
 }//engine

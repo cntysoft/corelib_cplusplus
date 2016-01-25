@@ -7,6 +7,7 @@
 #include <QMap>
 #include <QSqlDriver>
 #include <QChar>
+#include <QPair>
 
 #include "global/global.h"
 
@@ -23,7 +24,9 @@ public:
       Mysql,
       Mssql,
       Oracle,
-      IbmDb2
+      IbmDb2,
+      SqlLite,
+      PostgreSql
    };
    enum class QueryMode{
       Execute,
@@ -38,6 +41,13 @@ public:
    const static QLatin1String PREPARE_TYPE_NAMED;
    
    const static QString QMYSQL;
+   const static QString QDB2;
+   const static QString QODBC;
+   const static QString QSQLITE;
+   const static QString QSQLITE2;
+   const static QString QOCI;
+   const static QString QPSQL;
+   
    static int DB_CONN_NAME_SEED;
    const static QMap<QString, PlatformType> sm_driverToPlatformMap;
 public:
@@ -50,11 +60,18 @@ public:
    QString quoteTableName(const QString &tableName)const;
    QString quoteFieldName(const QString &fieldName)const;
    QChar getIdentifierSeparator()const;
+   QString quoteIdentifierInFragment(const QString &identifier, const QStringList &safeWords = QStringList())const;
    PlatformType getPlatformType();
+   Engine& setQuoteIdentifiersFlag(bool flag);
+   bool getQuoteIdentifiersFlag()const;
+protected:
+   QPair<QChar, QChar> getQuoteIdentifier()const;
+   QString getQuoteIdentifierTo()const;
 protected:
    QSqlDatabase m_database;
    QString m_dbname;
    PlatformType m_platformType;
+   bool m_quoteIdentifiers = true;
 };
 
 }//engine

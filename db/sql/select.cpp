@@ -77,12 +77,27 @@ AbstractSql::ProcessResultPointerType process_select(AbstractSql *self,const Eng
       };
       QString columnName = selectSql->resolveColumnValue(QVariant(colMeta), engine, parameterContainer, 
                                                          columnIndexOrAs.type() == QVariant::String?columnIndexOrAs.toString():"column");
+      QString columnAlias;
+      if(columnIndexOrAs.type() == QVariant::String){
+         columnAlias = engine.quoteFieldName(columnIndexOrAs.toString());
+      }else if(columnName.indexOf(" as ") == -1){
+         if(column.type() == QVariant::String){
+            columnAlias = engine.quoteFieldName(column.toString());
+         }else{
+            columnAlias = QString("Expression%1").arg(expr++);
+         }
+      }
+      if(columnAlias.isEmpty()){
+         columns.append(QVariant(QStringList(columnName)));
+      }else{
+         columns.append(QVariant(QStringList({columnName, columnAlias})));
+      }
    }
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
    result->isNull = false;
    result->type = AbstractSql::ProcessResultType::Array;
    QList<QVariant> values;
-   //可以返回QList<QVariant> 其中QVariant为 QString 或者 QString  
+   //可以返回QList<QVariant> 其中QVariant为 QString 或者 QString
    if(!tableName.isEmpty()){
       values << QVariant(columns);
    }else{
@@ -271,8 +286,7 @@ QPair<QString, QString> Select::resolveTable(const TableIdentifier &table, const
       fromTableName = "";
    }
    return {
-      tableName,
-            fromTableName
+      tableName, fromTableName
    };
 }
 
