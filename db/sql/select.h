@@ -64,6 +64,9 @@ public:
    friend ProcessResultPointerType select_process_having(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType select_process_group(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
    Select(const TableIdentifier &table = TableIdentifier());
    Select(const QString &table, const QString &schema = QString());
@@ -88,6 +91,8 @@ public:
    Select& where(const QString &where, const QString &combination = PredicateSet::OP_AND);
    Select& having(const QSharedPointer<Having> &having);
    Select& having(const QString &having, const QString &combination = PredicateSet::OP_AND);
+   Select& group(const QString &group);
+   Select& group(const QStringList &groups);
    Select& setTableReadOnly(bool flag);
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
@@ -106,6 +111,7 @@ protected:
    QList<QVariant> m_columns;
    QSharedPointer<Where> m_where;
    QSharedPointer<Having> m_having;
+   QStringList m_group;
 };
 
 }//sql

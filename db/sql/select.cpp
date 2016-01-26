@@ -160,6 +160,33 @@ AbstractSql::ProcessResultPointerType select_process_having(AbstractSql *self,co
    return result;
 }
 
+AbstractSql::ProcessResultPointerType select_process_group(AbstractSql *self,const Engine &engine, 
+                                                     ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = qobject_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "group friend function process_where", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("group friend function process_where self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_group.size() == 0){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::Array;
+   QList<QVariant> groups;
+   std::for_each(selectSql->m_group.cbegin(), selectSql->m_group.cend(), [&groups, &selectSql, &engine, &parameterContainer](const QString &column){
+      groups.append(QVariant(selectSql->resolveColumnValue(QMap<QString, QVariant>{
+                                       {"column", column},
+                                       {"isIdentifier", true}
+                                    }, engine, parameterContainer, "group")));
+   });
+   result->value = QVariant(QList<QVariant>{groups});
+   return result;
+}
+
 Select::Select(const QString &table, const QString &schema)
    : Select(TableIdentifier(table, schema))
 {
@@ -234,8 +261,8 @@ Select::Select(const TableIdentifier &table)
       };
       groupSpecification.insert("GROUP BY %1", QVariant(groupSpecificationItem));
    }
-   //   m_specifications.insert(Select::GROUP, QVariant(groupSpecification));
-   //   //having
+   m_specifications.insert(Select::GROUP, QVariant(groupSpecification));
+   //having
    m_specifications.insert(Select::HAVING, QVariant("HAVING %1"));
    //order
    //group
@@ -264,9 +291,12 @@ Select::Select(const TableIdentifier &table)
    m_specificationFnPtrs.insert("select", select_process_select);
    m_specificationFnPtrs.insert("where", select_process_where);
    m_specificationFnPtrs.insert("having", select_process_having);
+   m_specificationFnPtrs.insert("group", select_process_group);
+   
    m_specKeys.append("select");
    m_specKeys.append("where");
    m_specKeys.append("having");
+   m_specKeys.append("group");
 }
 
 Select& Select::from(const QString &tableName, const QString &schema)throw(ErrorInfo)
@@ -389,6 +419,17 @@ Select& Select::having(const QString &having, const QString &combination)
    return *this;
 }
 
+Select& Select::group(const QString &group)
+{
+   m_group.append(group);
+   return *this;
+}
+
+Select& Select::group(const QStringList &groups)
+{
+   m_group.append(groups);
+   return *this;
+}
 
 Select& Select::setTableReadOnly(bool flag)
 {
