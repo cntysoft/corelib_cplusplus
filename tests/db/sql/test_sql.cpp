@@ -217,19 +217,44 @@ void TestSql::testSelectSql()
       //         qDebug() << sql.buildSqlString(selectSql);
       //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT DISTINCT `userinfo`.`name` AS `name_alias` FROM `userinfo` WHERE `name` = 'sheneninfo' HAVING `goupid` = 12"));
       //      }
-      {
-         QSharedPointer<Select> selectSql = sql.getSelectSql();
-         selectSql->addColumn(QString("name"), "name_alias");
-         QSharedPointer<Where> where(new Where);
-         where->equalTo("name", "sheneninfo");
-         selectSql->where(where);
-         selectSql->setTableReadOnly(false);
-         selectSql->from("userinfo", "metainfo");
-         selectSql->group("age");
-         selectSql->group("height");
-         //qDebug() << sql.buildSqlString(selectSql);
-         QCOMPARE(sql.buildSqlString(selectSql), "SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' GROUP BY `age`, `height`");
-      }
+      //      {
+      //         QSharedPointer<Select> selectSql = sql.getSelectSql();
+      //         selectSql->addColumn(QString("name"), "name_alias");
+      //         QSharedPointer<Where> where(new Where);
+      //         where->equalTo("name", "sheneninfo");
+      //         selectSql->where(where);
+      //         selectSql->setTableReadOnly(false);
+      //         selectSql->from("userinfo", "metainfo");
+      //         selectSql->group("age");
+      //         selectSql->group("height");
+      //         //qDebug() << sql.buildSqlString(selectSql);
+      //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' GROUP BY `age`, `height`"));
+      //      }
+//      {
+//         QSharedPointer<Select> selectSql = sql.getSelectSql();
+//         selectSql->addColumn(QString("name"), "name_alias");
+//         QSharedPointer<Where> where(new Where);
+//         where->equalTo("name", "sheneninfo");
+//         selectSql->where(where);
+//         selectSql->setTableReadOnly(false);
+//         selectSql->from("userinfo", "metainfo");
+//         selectSql->order("id", Select::ORDER_ASCENDING);
+//         selectSql->order("name", Select::ORDER_DESCENDING);
+//         //qDebug() << sql.buildSqlString(selectSql);
+//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' ORDER BY `id` ASC, `name` DESC"));
+//      }
+//      {
+//         QSharedPointer<Select> selectSql = sql.getSelectSql();
+//         selectSql->addColumn(QString("name"), "name_alias");
+//         QSharedPointer<Where> where(new Where);
+//         where->equalTo("name", "sheneninfo");
+//         selectSql->where(where);
+//         selectSql->setTableReadOnly(false);
+//         selectSql->limit(10);
+//         selectSql->from("userinfo", "metainfo");
+//         qDebug() << sql.buildSqlString(selectSql);
+//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' LIMIT 10"));
+//      }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

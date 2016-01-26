@@ -54,6 +54,7 @@ public:
    const static QString COMBINE_UNION;
    const static QString COMBINE_EXCEPT;
    const static QString COMBINE_INTERSECT;
+   
 public:
    friend ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
                                                   ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
@@ -65,6 +66,12 @@ public:
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_group(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType select_process_order(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType select_process_limit(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
@@ -93,6 +100,9 @@ public:
    Select& having(const QString &having, const QString &combination = PredicateSet::OP_AND);
    Select& group(const QString &group);
    Select& group(const QStringList &groups);
+   Select& order(const QString &name, const QString &orderType = Select::ORDER_ASCENDING);
+   Select& order(const QMap<QString, QString> &orders);
+   Select& limit(quint32 limit);
    Select& setTableReadOnly(bool flag);
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
@@ -112,6 +122,8 @@ protected:
    QSharedPointer<Where> m_where;
    QSharedPointer<Having> m_having;
    QStringList m_group;
+   QMap<QString, QString> m_order;
+   QVariant m_limit;
 };
 
 }//sql

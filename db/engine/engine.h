@@ -64,6 +64,7 @@ public:
    PlatformType getPlatformType();
    Engine& setQuoteIdentifiersFlag(bool flag);
    bool getQuoteIdentifiersFlag()const;
+   QString formatParameterName(const QString &name)const;
 protected:
    QPair<QChar, QChar> getQuoteIdentifier()const;
    QString getQuoteIdentifierTo()const;

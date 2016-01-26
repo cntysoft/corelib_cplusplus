@@ -8,37 +8,37 @@ namespace corelib{
 namespace db{
 namespace sql{
 
-const  QString Select::SELECT = "select";
-const  QString Select::QUANTIFIER = "quantifier";
-const  QString Select::COLUMNS = "columns";
-const  QString Select::TABLE = "table";
-const  QString Select::JOINS = "joins";
-const  QString Select::WHERE = "where";
-const  QString Select::GROUP = "group";
-const  QString Select::HAVING = "having";
-const  QString Select::ORDER = "order";
-const  QString Select::LIMIT = "limit";
-const  QString Select::OFFSET = "offset";
-const  QString Select::QUANTIFIER_DISTINCT = "DISTINCT";
-const  QString Select::QUANTIFIER_ALL = "ALL";
-const  QString Select::JOIN_INNER = "inner";
-const  QString Select::JOIN_OUTER = "outer";
-const  QString Select::JOIN_LEFT = "left";
-const  QString Select::JOIN_RIGHT = "right";
-const  QString Select::JOIN_OUTER_RIGHT = "outer right";
-const  QString Select::JOIN_OUTER_LEFT  = "outer left";
-const  QString Select::SQL_STAR = "*";
-const  QString Select::ORDER_ASCENDING = "ASC";
-const  QString Select::ORDER_DESCENDING = "DESC";
-const  QString Select::COMBINE = "combine";
-const  QString Select::COMBINE_UNION = "union";
-const  QString Select::COMBINE_EXCEPT = "except";
-const  QString Select::COMBINE_INTERSECT = "intersect";
+const QString Select::SELECT = "select";
+const QString Select::QUANTIFIER = "quantifier";
+const QString Select::COLUMNS = "columns";
+const QString Select::TABLE = "table";
+const QString Select::JOINS = "joins";
+const QString Select::WHERE = "where";
+const QString Select::GROUP = "group";
+const QString Select::HAVING = "having";
+const QString Select::ORDER = "order";
+const QString Select::LIMIT = "limit";
+const QString Select::OFFSET = "offset";
+const QString Select::QUANTIFIER_DISTINCT = "DISTINCT";
+const QString Select::QUANTIFIER_ALL = "ALL";
+const QString Select::JOIN_INNER = "inner";
+const QString Select::JOIN_OUTER = "outer";
+const QString Select::JOIN_LEFT = "left";
+const QString Select::JOIN_RIGHT = "right";
+const QString Select::JOIN_OUTER_RIGHT = "outer right";
+const QString Select::JOIN_OUTER_LEFT = "outer left";
+const QString Select::SQL_STAR = "*";
+const QString Select::ORDER_ASCENDING = "ASC";
+const QString Select::ORDER_DESCENDING = "DESC";
+const QString Select::COMBINE = "combine";
+const QString Select::COMBINE_UNION = "union";
+const QString Select::COMBINE_EXCEPT = "except";
+const QString Select::COMBINE_INTERSECT = "intersect";
 
 
 AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
-                                                     ParameterContainer *parameterContainer, QMap<QString, QString>&, 
-                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
+                                                            ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                            QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    int expr = 1;
    Select* selectSql = qobject_cast<Select*>(self);
@@ -121,8 +121,8 @@ AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,co
 }
 
 AbstractSql::ProcessResultPointerType select_process_where(AbstractSql *self,const Engine &engine, 
-                                                     ParameterContainer *parameterContainer, QMap<QString, QString>&, 
-                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
+                                                           ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                           QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Select* selectSql = qobject_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "where friend function process_where", "self pointer cast fail");
@@ -141,8 +141,8 @@ AbstractSql::ProcessResultPointerType select_process_where(AbstractSql *self,con
 }
 
 AbstractSql::ProcessResultPointerType select_process_having(AbstractSql *self,const Engine &engine, 
-                                                     ParameterContainer *parameterContainer, QMap<QString, QString>&, 
-                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
+                                                            ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                            QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Select* selectSql = qobject_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "where friend function process_where", "self pointer cast fail");
@@ -161,8 +161,8 @@ AbstractSql::ProcessResultPointerType select_process_having(AbstractSql *self,co
 }
 
 AbstractSql::ProcessResultPointerType select_process_group(AbstractSql *self,const Engine &engine, 
-                                                     ParameterContainer *parameterContainer, QMap<QString, QString>&, 
-                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
+                                                           ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                           QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Select* selectSql = qobject_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "group friend function process_where", "self pointer cast fail");
@@ -179,11 +179,66 @@ AbstractSql::ProcessResultPointerType select_process_group(AbstractSql *self,con
    QList<QVariant> groups;
    std::for_each(selectSql->m_group.cbegin(), selectSql->m_group.cend(), [&groups, &selectSql, &engine, &parameterContainer](const QString &column){
       groups.append(QVariant(selectSql->resolveColumnValue(QMap<QString, QVariant>{
-                                       {"column", column},
-                                       {"isIdentifier", true}
-                                    }, engine, parameterContainer, "group")));
+                                                              {"column", column},
+                                                              {"isIdentifier", true}
+                                                           }, engine, parameterContainer, "group")));
    });
    result->value = QVariant(QList<QVariant>{groups});
+   return result;
+}
+
+AbstractSql::ProcessResultPointerType select_process_order(AbstractSql *self,const Engine &engine, 
+                                                           ParameterContainer*, QMap<QString, QString>&, 
+                                                           QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = qobject_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "group friend function process_where", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("group friend function process_where self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_order.size() == 0){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::Array;
+   QList<QVariant> orders;
+   QMap<QString, QString>::const_iterator it = selectSql->m_order.cbegin();
+   QMap<QString, QString>::const_iterator endMarker = selectSql->m_order.cend();
+   while(it != endMarker){
+      orders.append(QVariant(QStringList{
+                                engine.quoteIdentifierInFragment(it.key()),
+                                it.value()
+                             }));
+      it++;
+   }
+   result->value = QVariant(QList<QVariant>{orders});
+   return result;
+}
+
+AbstractSql::ProcessResultPointerType select_process_limit(AbstractSql *self,const Engine &engine, 
+                                                           ParameterContainer* parameterContainer, QMap<QString, QString>&, 
+                                                           QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = qobject_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "group friend function process_where", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("group friend function process_where self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_limit.isNull()){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::Array;
+   if(nullptr != parameterContainer){
+      parameterContainer->offsetSet("limit", selectSql->m_limit.toInt(), ParameterContainer::TYPE_INTEGER);
+      result->value = QVariant(QList<QVariant>{QVariant(engine.formatParameterName("limit"))});
+   }else{
+      result->value = QVariant(QList<QVariant>{QVariant(QVariant(engine.quoteValue(selectSql->m_limit.toInt())))});
+   }
    return result;
 }
 
@@ -278,8 +333,8 @@ Select::Select(const TableIdentifier &table)
       };
       orderSpecification.insert("ORDER BY %1", QVariant(orderSpecificationItem));
    }
-   //   m_specifications.insert(Select::ORDER, orderSpecification);
-   //   m_specifications.insert(Select::LIMIT, QVariant("LIMIT %1"));
+   m_specifications.insert(Select::ORDER, orderSpecification);
+   m_specifications.insert(Select::LIMIT, QVariant("LIMIT %1"));
    //   m_specifications.insert(Select::OFFSET, QVariant("OFFSET %1"));
    //   m_specifications.insert("statementEnd", QVariant("%1"));
    //   m_specifications.insert(Select::COMBINE, QVariant("%1 ( %2 )"));
@@ -292,11 +347,14 @@ Select::Select(const TableIdentifier &table)
    m_specificationFnPtrs.insert("where", select_process_where);
    m_specificationFnPtrs.insert("having", select_process_having);
    m_specificationFnPtrs.insert("group", select_process_group);
-   
+   m_specificationFnPtrs.insert("order", select_process_order);
+   m_specificationFnPtrs.insert("limit", select_process_limit);
    m_specKeys.append("select");
    m_specKeys.append("where");
    m_specKeys.append("having");
    m_specKeys.append("group");
+   m_specKeys.append("order");
+   m_specKeys.append("limit");
 }
 
 Select& Select::from(const QString &tableName, const QString &schema)throw(ErrorInfo)
@@ -428,6 +486,32 @@ Select& Select::group(const QString &group)
 Select& Select::group(const QStringList &groups)
 {
    m_group.append(groups);
+   return *this;
+}
+
+Select& Select::order(const QString &name, const QString &orderType)
+{
+   if(orderType != Select::ORDER_ASCENDING && orderType != Select::ORDER_DESCENDING){
+      m_order.insert(name, Select::ORDER_ASCENDING);
+   }else{
+      m_order.insert(name, orderType);
+   }
+   return *this;
+}
+
+Select& Select::order(const QMap<QString, QString> &orders)
+{
+   QMap<QString, QString>::const_iterator it = orders.cbegin();
+   QMap<QString, QString>::const_iterator endMarker = orders.cend();
+   while(it != endMarker){
+      order(it.key(), it.value());
+   }
+   return *this;
+}
+
+Select& Select::limit(quint32 limit)
+{
+   m_limit.setValue(limit);
    return *this;
 }
 

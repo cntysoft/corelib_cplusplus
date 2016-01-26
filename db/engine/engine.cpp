@@ -181,6 +181,18 @@ QString Engine::getQuoteIdentifierTo() const
    }
 }
 
+QString Engine::formatParameterName(const QString &name)const
+{
+   if(m_platformType == PlatformType::Mysql || m_platformType == PlatformType::IbmDb2 || m_platformType == PlatformType::Mssql){
+      return "?";
+   }else if(m_platformType == PlatformType::Oracle){
+      return QString(":%1").arg(name);
+   }else if(m_platformType == PlatformType::PostgreSql){
+      return "$#";
+   }
+   return "?";
+}
+
 }//engine
 }//db
 }//corelib

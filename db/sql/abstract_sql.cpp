@@ -41,8 +41,6 @@ QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *pa
       parameters[key] = fn(this, engine, parameterContainer, sqls, parameters);
       ProcessResultPointerType resultItem = parameters[key];
       if(!specification.isNull() && !resultItem->isNull && resultItem->type == ProcessResultType::Array){
-         
-         qDebug() << resultItem->getValue().toList();
          sqls[key] = createSqlFromSpecificationAndParameters(specification, resultItem->getValue().toList());
          keyIterator++;
          continue;
