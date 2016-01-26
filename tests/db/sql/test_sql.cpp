@@ -255,6 +255,19 @@ void TestSql::testSelectSql()
 //         qDebug() << sql.buildSqlString(selectSql);
 //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' LIMIT 10"));
 //      }
+//      {
+//         QSharedPointer<Select> selectSql = sql.getSelectSql();
+//         selectSql->addColumn(QString("name"), "name_alias");
+//         QSharedPointer<Where> where(new Where);
+//         where->equalTo("name", "sheneninfo");
+//         selectSql->where(where);
+//         selectSql->setTableReadOnly(false);
+//         selectSql->limit(10);
+//         selectSql->offset(2);
+//         selectSql->from("userinfo", "metainfo");
+//         qDebug() << sql.buildSqlString(selectSql);
+//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' LIMIT 10 OFFSET 2"));
+//      }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

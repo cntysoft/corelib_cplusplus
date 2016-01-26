@@ -222,9 +222,9 @@ AbstractSql::ProcessResultPointerType select_process_limit(AbstractSql *self,con
                                                            QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Select* selectSql = qobject_cast<Select*>(self);
-   Q_ASSERT_X(selectSql != 0, "group friend function process_where", "self pointer cast fail");
+   Q_ASSERT_X(selectSql != 0, "limit friend function process_where", "self pointer cast fail");
    if(0 == selectSql){
-      throw ErrorInfo(QString("group friend function process_where self pointer cast fail"));
+      throw ErrorInfo(QString("limit friend function process_where self pointer cast fail"));
    }
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
    if(selectSql->m_limit.isNull()){
@@ -238,6 +238,32 @@ AbstractSql::ProcessResultPointerType select_process_limit(AbstractSql *self,con
       result->value = QVariant(QList<QVariant>{QVariant(engine.formatParameterName("limit"))});
    }else{
       result->value = QVariant(QList<QVariant>{QVariant(QVariant(engine.quoteValue(selectSql->m_limit.toInt())))});
+   }
+   return result;
+}
+
+
+AbstractSql::ProcessResultPointerType select_process_offset(AbstractSql *self,const Engine &engine, 
+                                                           ParameterContainer* parameterContainer, QMap<QString, QString>&, 
+                                                           QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = qobject_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "offset friend function process_where", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("offset friend function process_where self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_offset.isNull()){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::Array;
+   if(nullptr != parameterContainer){
+      parameterContainer->offsetSet("offset", selectSql->m_limit.toInt(), ParameterContainer::TYPE_INTEGER);
+      result->value = QVariant(QList<QVariant>{QVariant(engine.formatParameterName("offset"))});
+   }else{
+      result->value = QVariant(QList<QVariant>{QVariant(QVariant(engine.quoteValue(selectSql->m_offset.toInt())))});
    }
    return result;
 }
@@ -335,7 +361,7 @@ Select::Select(const TableIdentifier &table)
    }
    m_specifications.insert(Select::ORDER, orderSpecification);
    m_specifications.insert(Select::LIMIT, QVariant("LIMIT %1"));
-   //   m_specifications.insert(Select::OFFSET, QVariant("OFFSET %1"));
+   m_specifications.insert(Select::OFFSET, QVariant("OFFSET %1"));
    //   m_specifications.insert("statementEnd", QVariant("%1"));
    //   m_specifications.insert(Select::COMBINE, QVariant("%1 ( %2 )"));
    if(!m_table.isNull()){
@@ -349,12 +375,14 @@ Select::Select(const TableIdentifier &table)
    m_specificationFnPtrs.insert("group", select_process_group);
    m_specificationFnPtrs.insert("order", select_process_order);
    m_specificationFnPtrs.insert("limit", select_process_limit);
+   m_specificationFnPtrs.insert("offset", select_process_offset);
    m_specKeys.append("select");
    m_specKeys.append("where");
    m_specKeys.append("having");
    m_specKeys.append("group");
    m_specKeys.append("order");
    m_specKeys.append("limit");
+   m_specKeys.append("offset");
 }
 
 Select& Select::from(const QString &tableName, const QString &schema)throw(ErrorInfo)
@@ -512,6 +540,12 @@ Select& Select::order(const QMap<QString, QString> &orders)
 Select& Select::limit(quint32 limit)
 {
    m_limit.setValue(limit);
+   return *this;
+}
+
+Select& Select::offset(quint32 offset)
+{
+   m_offset.setValue(offset);
    return *this;
 }
 

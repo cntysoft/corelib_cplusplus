@@ -74,6 +74,9 @@ public:
    friend ProcessResultPointerType select_process_limit(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType select_process_offset(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
    Select(const TableIdentifier &table = TableIdentifier());
    Select(const QString &table, const QString &schema = QString());
@@ -103,6 +106,7 @@ public:
    Select& order(const QString &name, const QString &orderType = Select::ORDER_ASCENDING);
    Select& order(const QMap<QString, QString> &orders);
    Select& limit(quint32 limit);
+   Select& offset(quint32 offset);
    Select& setTableReadOnly(bool flag);
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
@@ -124,6 +128,7 @@ protected:
    QStringList m_group;
    QMap<QString, QString> m_order;
    QVariant m_limit;
+   QVariant m_offset;
 };
 
 }//sql
