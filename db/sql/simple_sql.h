@@ -14,14 +14,12 @@ using sn::corelib::db::sql::predicate::Predicate;
 
 class SN_CORELIB_EXPORT Where : public Predicate
 {
-   Q_OBJECT
 public:
    Where();
 };
 
 class SN_CORELIB_EXPORT Having : public Predicate
 {
-   Q_OBJECT
 public:
    Having();
 };

@@ -20,7 +20,6 @@ using sn::corelib::db::sql::predicate::PredicateSet;
 
 class SN_CORELIB_EXPORT Delete : public AbstractPreparableSql
 {
-   Q_OBJECT
 public:
    friend ProcessResultPointerType delete_process_delete(AbstractSql *self,const Engine &engine, 
                                                   ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 

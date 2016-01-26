@@ -209,12 +209,12 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
    for(int i = 0; i < partCount; i++){
       QVariant &part = expressionData[i];
       if(part.type() == QVariant::String && instanceof<Expression>(expression)){
-         Expression* exprPointer = qobject_cast<Expression*>(expression.data());
+         Expression* exprPointer = dynamic_cast<Expression*>(expression.data());
          if(0 != exprPointer){
             sql += exprPointer->getExpression();
          }else{
             Q_ASSERT_X(0 != exprPointer, "AbstractSql::processExpression", 
-                       "Expression* exprPointer = qobject_cast<Expression*>(expression.data()); fail");
+                       "Expression* exprPointer = dynamic_cast<Expression*>(expression.data()); fail");
          }
          continue;
       }

@@ -26,7 +26,6 @@ using sn::corelib::db::sql::predicate::PredicateSet;
 
 class SN_CORELIB_EXPORT Select : public AbstractPreparableSql
 {
-   Q_OBJECT
 public:
    const static QString SELECT;
    const static QString QUANTIFIER;

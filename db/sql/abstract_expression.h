@@ -3,7 +3,6 @@
 
 #include <QStringList>
 #include <QSharedPointer>
-#include <QObject>
 #include <QList>
 #include <QVariant>
 #include <QString>
@@ -15,9 +14,8 @@ namespace corelib{
 namespace db{
 namespace sql{
 
-class SN_CORELIB_EXPORT AbstractExpression : public QObject
+class SN_CORELIB_EXPORT AbstractExpression
 {
-   Q_OBJECT
 public:
    struct ExpressionData
    {
@@ -46,5 +44,5 @@ protected:
 }//db
 }//corelib
 }//sn
-
+Q_DECLARE_METATYPE(QSharedPointer<sn::corelib::db::sql::AbstractExpression>)
 #endif // SN_CORELIB_DB_SQL_ABSTRACT_EXPRESSION_H

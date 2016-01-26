@@ -31,14 +31,14 @@ QMap<QString, QSharedPointer<AbstractSql>>& AbstractPlatform::getDecorators()
 
 QSharedPointer<AbstractSql> AbstractPlatform::getTypeDecorator(QSharedPointer<AbstractSql> subject)
 {
-   QString className(subject->metaObject()->className());
-   DecoratorPoolType::const_iterator it = m_decorators.cbegin();
-   while(it != m_decorators.cend()){
-      if(className == it.key()){
-         return it.value();
-      }
-      it++;
-   }
+//   QString className(subject->metaObject()->className());
+//   DecoratorPoolType::const_iterator it = m_decorators.cbegin();
+//   while(it != m_decorators.cend()){
+//      if(className == it.key()){
+//         return it.value();
+//      }
+//      it++;
+//   }
    return subject;
 }
 

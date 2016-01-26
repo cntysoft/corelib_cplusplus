@@ -15,7 +15,7 @@ const QString Delete::SPECIFICATION_DELETE = "delete";
 
 AbstractSql::ProcessResultPointerType delete_process_delete(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
-   Delete* deleteSql = qobject_cast<Delete*>(self);
+   Delete* deleteSql = dynamic_cast<Delete*>(self);
    Q_ASSERT_X(deleteSql != 0, "delete friend function process_delete", "self pointer cast fail");
    if(0 == deleteSql){
       throw ErrorInfo(QString("delete friend function process_delete self pointer cast fail"));
@@ -29,7 +29,7 @@ AbstractSql::ProcessResultPointerType delete_process_delete(AbstractSql *self, c
 
 AbstractSql::ProcessResultPointerType delete_process_where(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString>&, QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
-   Delete* deleteSql = qobject_cast<Delete*>(self);
+   Delete* deleteSql = dynamic_cast<Delete*>(self);
    Q_ASSERT_X(deleteSql != 0, "delete friend function process_where", "self pointer cast fail");
    if(0 == deleteSql){
       throw ErrorInfo(QString("delete friend function process_where self pointer cast fail"));

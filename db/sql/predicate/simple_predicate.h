@@ -27,7 +27,6 @@ using sn::corelib::ErrorInfo;
 
 class SN_CORELIB_EXPORT Between : public AbstractExpression
 {
-   Q_OBJECT
 public:
    Between(const QString &identifier = QString(), const QVariant &minValue = QVariant(), const QVariant &maxValue = QVariant());
    Between& setIdentifier(const QString &identifier);
@@ -49,7 +48,6 @@ protected:
 
 class SN_CORELIB_EXPORT In : public AbstractExpression
 {
-   Q_OBJECT
 public:
    In(const QString &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
    In(const QStringList &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
@@ -70,7 +68,6 @@ protected:
 
 class SN_CORELIB_EXPORT NotIn : public In
 {
-   Q_OBJECT
 public:
    NotIn(const QString &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
    NotIn(const QStringList &identifier, const QList<QVariant> &valueSet = QList<QVariant>());
@@ -78,21 +75,18 @@ public:
 
 class SN_CORELIB_EXPORT Literal : public BaseLiteral
 {
-   Q_OBJECT
 public:
    Literal(const QString &literal);
 };
 
 class SN_CORELIB_EXPORT Expression : public BaseExpression
 {
-   Q_OBJECT
 public:
    Expression(const QString &expression, const QList<QVariant> &parameters = QList<QVariant>());
 };
 
 class SN_CORELIB_EXPORT IsNull : public AbstractExpression
 {
-   Q_OBJECT
 public:
    IsNull(const QString &identifier = QString());
    IsNull& setIdentifier(const QString &identifier);
@@ -114,7 +108,6 @@ public:
 
 class SN_CORELIB_EXPORT Operator : public AbstractExpression
 {
-   Q_OBJECT
 public:
    const static QLatin1String OPERATOR_EQUAL_TO;
    const static QLatin1String OP_EQ;

@@ -14,7 +14,6 @@ using sn::corelib::db::engine::StatementContainerInterface;
 
 class SN_CORELIB_EXPORT AbstractPreparableSql : public AbstractSql
 {
-   Q_OBJECT
 public:
    StatementContainerInterface& prepareStatement(const Engine &engine, const StatementContainerInterface &statementContainer);
    virtual ~AbstractPreparableSql();

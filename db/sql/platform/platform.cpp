@@ -36,13 +36,13 @@ QSharedPointer<AbstractSql> Platform::getTypeDecorator(QSharedPointer<AbstractSq
    }
    DecoratorPoolType& decorators = m_decorators[platformType];
    DecoratorPoolType::const_iterator it = decorators.cbegin();
-   QString className(subject->metaObject()->className());
-   while(it != decorators.cend()){
-      if(className == it.key()){
-         return it.value();
-      }
-      it++;
-   }
+//   QString className(subject->metaObject()->className());
+//   while(it != decorators.cend()){
+//      if(className == it.key()){
+//         return it.value();
+//      }
+//      it++;
+//   }
    return subject;
 }
 

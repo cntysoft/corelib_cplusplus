@@ -41,7 +41,7 @@ AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,co
                                                             QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    int expr = 1;
-   Select* selectSql = qobject_cast<Select*>(self);
+   Select* selectSql = dynamic_cast<Select*>(self);
    QPair<QString, QString> tablePair = selectSql->resolveTable(selectSql->m_table, engine, parameterContainer);
    QString tableName(tablePair.first);
    QString fromTableName(tablePair.second);
@@ -97,7 +97,7 @@ AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,co
    QString quantifier;
    //process quantifier
    if(!selectSql->m_quantifier.isNull()){
-      if(selectSql->m_quantifier.userType() == qRegisterMetaType<QSharedPointer<AbstractExpression>>()){
+      if(selectSql->m_quantifier.userType() == qMetaTypeId<QSharedPointer<AbstractExpression>>()){
          quantifier = selectSql->processExpression(selectSql->m_quantifier.value<QSharedPointer<AbstractExpression>>(), engine, parameterContainer, "quantifier");
       }else if(selectSql->m_quantifier.type() == QVariant::String){
          quantifier = selectSql->m_quantifier.toString();
@@ -124,7 +124,7 @@ AbstractSql::ProcessResultPointerType select_process_where(AbstractSql *self,con
                                                            ParameterContainer *parameterContainer, QMap<QString, QString>&, 
                                                            QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
-   Select* selectSql = qobject_cast<Select*>(self);
+   Select* selectSql = dynamic_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "where friend function process_where", "self pointer cast fail");
    if(0 == selectSql){
       throw ErrorInfo(QString("where friend function process_where self pointer cast fail"));
@@ -144,7 +144,7 @@ AbstractSql::ProcessResultPointerType select_process_having(AbstractSql *self,co
                                                             ParameterContainer *parameterContainer, QMap<QString, QString>&, 
                                                             QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
-   Select* selectSql = qobject_cast<Select*>(self);
+   Select* selectSql = dynamic_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "where friend function process_where", "self pointer cast fail");
    if(0 == selectSql){
       throw ErrorInfo(QString("where friend function process_where self pointer cast fail"));
@@ -164,7 +164,7 @@ AbstractSql::ProcessResultPointerType select_process_group(AbstractSql *self,con
                                                            ParameterContainer *parameterContainer, QMap<QString, QString>&, 
                                                            QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
-   Select* selectSql = qobject_cast<Select*>(self);
+   Select* selectSql = dynamic_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "group friend function process_where", "self pointer cast fail");
    if(0 == selectSql){
       throw ErrorInfo(QString("group friend function process_where self pointer cast fail"));
@@ -191,7 +191,7 @@ AbstractSql::ProcessResultPointerType select_process_order(AbstractSql *self,con
                                                            ParameterContainer*, QMap<QString, QString>&, 
                                                            QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
-   Select* selectSql = qobject_cast<Select*>(self);
+   Select* selectSql = dynamic_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "group friend function process_where", "self pointer cast fail");
    if(0 == selectSql){
       throw ErrorInfo(QString("group friend function process_where self pointer cast fail"));
@@ -221,7 +221,7 @@ AbstractSql::ProcessResultPointerType select_process_limit(AbstractSql *self,con
                                                            ParameterContainer* parameterContainer, QMap<QString, QString>&, 
                                                            QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
-   Select* selectSql = qobject_cast<Select*>(self);
+   Select* selectSql = dynamic_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "limit friend function process_where", "self pointer cast fail");
    if(0 == selectSql){
       throw ErrorInfo(QString("limit friend function process_where self pointer cast fail"));
@@ -247,7 +247,7 @@ AbstractSql::ProcessResultPointerType select_process_offset(AbstractSql *self,co
                                                            ParameterContainer* parameterContainer, QMap<QString, QString>&, 
                                                            QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
-   Select* selectSql = qobject_cast<Select*>(self);
+   Select* selectSql = dynamic_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "offset friend function process_where", "self pointer cast fail");
    if(0 == selectSql){
       throw ErrorInfo(QString("offset friend function process_where self pointer cast fail"));

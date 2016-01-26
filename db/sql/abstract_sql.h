@@ -27,9 +27,8 @@ using sn::corelib::ErrorInfo;
 class TableIdentifier;
 class AbstractExpression;
 
-class SN_CORELIB_EXPORT AbstractSql : public QObject
+class SN_CORELIB_EXPORT AbstractSql
 {
-   Q_OBJECT
 public:
    enum class ProcessResultType
    {
