@@ -35,6 +35,25 @@ const QString Select::COMBINE_UNION = "union";
 const QString Select::COMBINE_EXCEPT = "except";
 const QString Select::COMBINE_INTERSECT = "intersect";
 
+AbstractSql::ProcessResultPointerType select_process_statement_start(AbstractSql *self,const Engine&, 
+                                                           ParameterContainer*, QMap<QString, QString>&, 
+                                                           QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = dynamic_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "statement start friend function process_where", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("statement start friend function process_where self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_combine.isEmpty()){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::String;
+   result->value = QVariant(QString("("));
+   return result;
+}
 
 AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
                                                             ParameterContainer *parameterContainer, QMap<QString, QString>&, 
@@ -268,6 +287,26 @@ AbstractSql::ProcessResultPointerType select_process_offset(AbstractSql *self,co
    return result;
 }
 
+AbstractSql::ProcessResultPointerType select_process_statement_end(AbstractSql *self,const Engine&, 
+                                                           ParameterContainer*, QMap<QString, QString>&, 
+                                                           QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = dynamic_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "statement end friend function process_where", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("statement end friend function process_where self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_combine.isEmpty()){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::String;
+   result->value = QVariant(QString(")"));
+   return result;
+}
+
 Select::Select(const QString &table, const QString &schema)
    : Select(TableIdentifier(table, schema))
 {
@@ -276,7 +315,7 @@ Select::Select(const QString &table, const QString &schema)
 Select::Select(const TableIdentifier &table)
    : m_table(table)
 {
-   //   m_specifications.insert("statementStart", "%1");
+   m_specifications.insert("statementStart", "%1");
    //select
    QMap<QString, QVariant> selectSpecification;
    {
@@ -362,13 +401,14 @@ Select::Select(const TableIdentifier &table)
    m_specifications.insert(Select::ORDER, orderSpecification);
    m_specifications.insert(Select::LIMIT, QVariant("LIMIT %1"));
    m_specifications.insert(Select::OFFSET, QVariant("OFFSET %1"));
-   //   m_specifications.insert("statementEnd", QVariant("%1"));
+   m_specifications.insert("statementEnd", QVariant("%1"));
    //   m_specifications.insert(Select::COMBINE, QVariant("%1 ( %2 )"));
    if(!m_table.isNull()){
       m_tableReadOnly = true;
    }
    m_where.reset(new Where());
    m_having.reset(new Having());
+   m_specificationFnPtrs.insert("statementStart", select_process_statement_start);
    m_specificationFnPtrs.insert("select", select_process_select);
    m_specificationFnPtrs.insert("where", select_process_where);
    m_specificationFnPtrs.insert("having", select_process_having);
@@ -376,6 +416,8 @@ Select::Select(const TableIdentifier &table)
    m_specificationFnPtrs.insert("order", select_process_order);
    m_specificationFnPtrs.insert("limit", select_process_limit);
    m_specificationFnPtrs.insert("offset", select_process_offset);
+   m_specificationFnPtrs.insert("statementEnd", select_process_statement_end);
+   m_specKeys.append("statementStart");
    m_specKeys.append("select");
    m_specKeys.append("where");
    m_specKeys.append("having");
@@ -383,6 +425,7 @@ Select::Select(const TableIdentifier &table)
    m_specKeys.append("order");
    m_specKeys.append("limit");
    m_specKeys.append("offset");
+   m_specKeys.append("statementEnd");
 }
 
 Select& Select::from(const QString &tableName, const QString &schema)throw(ErrorInfo)

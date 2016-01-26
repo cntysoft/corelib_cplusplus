@@ -55,6 +55,9 @@ public:
    const static QString COMBINE_INTERSECT;
    
 public:
+   friend ProcessResultPointerType select_process_statement_start(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
                                                   ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                   QMap<QString, ProcessResultPointerType> &parameters);
@@ -76,6 +79,10 @@ public:
    friend ProcessResultPointerType select_process_offset(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType select_process_statement_end(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+   
 public:
    Select(const TableIdentifier &table = TableIdentifier());
    Select(const QString &table, const QString &schema = QString());
@@ -128,6 +135,7 @@ protected:
    QMap<QString, QString> m_order;
    QVariant m_limit;
    QVariant m_offset;
+   QMap<QString, QVariant> m_combine;
 };
 
 }//sql
