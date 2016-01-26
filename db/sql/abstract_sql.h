@@ -24,6 +24,7 @@ using sn::corelib::db::engine::Engine;
 using sn::corelib::db::engine::ParameterContainer;
 using sn::corelib::ErrorInfo;
 
+class Select;
 class TableIdentifier;
 class AbstractExpression;
 
@@ -59,6 +60,7 @@ protected:
                              QString namedParameterPrefix = QString());
    QString resolveColumnValue(const QVariant &column, const Engine &engine,
                               ParameterContainer *parameterContainer = nullptr, QString namedParameterPrefix = QString());
+   
 protected:
    QStringList m_specKeys;
    QMap<QString, QVariant> m_specifications;

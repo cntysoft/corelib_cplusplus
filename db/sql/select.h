@@ -13,6 +13,7 @@
 #include "db/sql/abstract_preparable_sql.h"
 #include "db/sql/abstract_expression.h"
 #include "db/sql/simple_sql.h"
+#include "db/sql/abstract_sql.h"
 #include "db/sql/predicate/predicateset.h"
 #include "table_identifier.h"
 
@@ -23,6 +24,7 @@ namespace sql{
 
 using sn::corelib::db::sql::AbstractSql;
 using sn::corelib::db::sql::predicate::PredicateSet;
+using sn::corelib::ErrorInfo;
 
 class SN_CORELIB_EXPORT Select : public AbstractPreparableSql
 {
@@ -82,7 +84,9 @@ public:
    friend ProcessResultPointerType select_process_statement_end(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
-   
+   friend ProcessResultPointerType select_process_combine(AbstractSql *self,const Engine &engine, 
+                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
    Select(const TableIdentifier &table = TableIdentifier());
    Select(const QString &table, const QString &schema = QString());
@@ -113,6 +117,11 @@ public:
    Select& order(const QMap<QString, QString> &orders);
    Select& limit(quint32 limit);
    Select& offset(quint32 offset);
+   Select& combine(const QSharedPointer<Select> select, const QString &type = Select::COMBINE_UNION, 
+                   const QString &modifier = QString())throw(ErrorInfo);
+   QString processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
+                            ParameterContainer *parameterContainer = nullptr);
+   virtual Select& setSubject(QSharedPointer<Select> subject);
    Select& setTableReadOnly(bool flag);
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 

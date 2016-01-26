@@ -7,6 +7,7 @@
 #include "abstract_expression.h"
 #include "expression.h"
 #include "global/common_funcs.h"
+#include "db/sql/select.h"
 
 namespace sn{
 namespace corelib{
@@ -15,6 +16,7 @@ namespace sql{
 
 using sn::corelib::instanceof;
 using sn::corelib::format_str;
+
 
 AbstractSql& AbstractSql::setSpecificationFn(const QString &name, SpecificationFuncPtr fn)
 {

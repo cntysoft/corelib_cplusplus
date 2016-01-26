@@ -34,6 +34,10 @@ protected:
    DecoratorPoolType m_decorators;
 };
 
+class SN_CORELIB_EXPORT PlatformDecoratorInterface
+{
+};
+
 }//platform
 }//sql
 }//db
