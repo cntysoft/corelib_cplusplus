@@ -300,10 +300,27 @@ void TestSql::testExpression()
 {
    try{
       Sql sql(m_engine, "userinfo");
-      QSharedPointer<Select> selectSql = sql.getSelectSql();
-      selectSql->addColumn(QSharedPointer<AbstractExpression>(new Expression("`expr_column` = ? and `age` = ?", {1, "xiuxiu"})), "name_alias");
-      //qDebug() << sql.buildSqlString(selectSql);
-      QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `expr_column` = 1 and `age` = 'xiuxiu' AS `name_alias` FROM `userinfo`"));
+      {
+         QSharedPointer<Select> selectSql = sql.getSelectSql();
+         selectSql->addColumn(QSharedPointer<AbstractExpression>(new Expression("`expr_column` = ? and `age` = ?", {1, "xiuxiu"})), "name_alias");
+         //qDebug() << sql.buildSqlString(selectSql);
+         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `expr_column` = 1 and `age` = 'xiuxiu' AS `name_alias` FROM `userinfo`"));
+      }
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
+
+void TestSql::testSubSelect()
+{
+   try{
+      Sql sql(m_engine, "userinfo");
+      {
+         QSharedPointer<Select> selectSql = sql.getSelectSql();
+         selectSql->addColumn(QSharedPointer<AbstractExpression>(new Expression("`expr_column` = ? and `age` = ?", {1, "xiuxiu"})), "name_alias");
+         //qDebug() << sql.buildSqlString(selectSql);
+         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `expr_column` = 1 and `age` = 'xiuxiu' AS `name_alias` FROM `userinfo`"));
+      }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

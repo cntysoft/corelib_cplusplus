@@ -221,8 +221,8 @@ AbstractSql::ProcessResultPointerType select_process_join(AbstractSql *self,cons
          vjoinName = vtmpJoinName;
       }
       QString joinName;
-      if(vjoinName.userType() == qMetaTypeId<QSharedPointer<Expression>>()){
-         joinName = vjoinName.value<QSharedPointer<Expression>>()->getExpression();
+      if(vjoinName.userType() == qMetaTypeId<QSharedPointer<AbstractExpression>>()){
+         joinName = selectSql->processExpression(vjoinName.value<QSharedPointer<AbstractExpression>>(), engine, parameterContainer);
       }else if(vjoinName.userType() == qMetaTypeId<TableIdentifier>()){
          TableIdentifier table = vjoinName.value<TableIdentifier>();
          QPair<QString, QString> tableParts = table.getTableAndSchema();

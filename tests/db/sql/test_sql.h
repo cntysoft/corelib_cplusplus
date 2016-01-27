@@ -21,6 +21,7 @@ private slots:
    void testWherePredicate();
    void testSelectSql();
    void testExpression();
+   void testSubSelect();
 protected:
    Engine m_engine;
 };
