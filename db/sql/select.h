@@ -127,6 +127,8 @@ public:
                 const QString &type = Select::JOIN_INNER);
    Select& join(const QVariant &name, const QString &alias, const QString &on, const QMap<QVariant, QVariant> &columns = QMap<QVariant, QVariant>{{QVariant(0), QVariant(Select::SQL_STAR)}}, 
                 const QString &type = Select::JOIN_INNER);
+   Select& join(const QSharedPointer<Select> &name, const QString &alias, const QString &on, const QMap<QVariant, QVariant> &columns = QMap<QVariant, QVariant>{{QVariant(0), QVariant(Select::SQL_STAR)}}, 
+                const QString &type = Select::JOIN_INNER);
    Select& offset(quint32 offset);
    Select& combine(const QSharedPointer<Select> select, const QString &type = Select::COMBINE_UNION, 
                    const QString &modifier = QString())throw(ErrorInfo);

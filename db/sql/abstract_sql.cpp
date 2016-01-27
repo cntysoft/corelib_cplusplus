@@ -195,7 +195,7 @@ QString AbstractSql::resolveColumnValue(const QVariant &column, const Engine &en
 
 
 QString AbstractSql::processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
-                                 ParameterContainer *parameterContainer)throw(ErrorInfo)
+                                      ParameterContainer *parameterContainer)throw(ErrorInfo)
 {
    QSharedPointer<Select> decorator;
    if(instanceof<PlatformDecoratorInterface>(*this)){
@@ -288,7 +288,14 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
             continue;
          }
          QString type = types.at(vIndex).toString();
-         if(type == AbstractExpression::TYPE_IDENTIFIER){
+         if(value.userType() == qMetaTypeId<QSharedPointer<Select>>()){
+            // process sub-select
+            strValues.insert(vIndex,"("+ processSubSelect(value.value<QSharedPointer<Select>>(),engine, parameterContainer) + ")");
+         }else if(value.userType() == qMetaTypeId<QSharedPointer<AbstractExpression>>()){
+            // recursive call to satisfy nested expressions
+            strValues.insert(vIndex, processExpression(value.value<QSharedPointer<AbstractExpression>>(), engine, 
+                                                       parameterContainer, namedParameterPrefix + QString("%1subpart").arg(vIndex)));
+         }else if(type == AbstractExpression::TYPE_IDENTIFIER){
             strValues.insert(vIndex, engine.quoteIdentifierInFragment(value.toString()));
          }else if(type == AbstractExpression::TYPE_VALUE){
             // if prepareType is

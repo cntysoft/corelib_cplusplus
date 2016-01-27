@@ -819,6 +819,12 @@ Select& Select::join(const QVariant &name, const QString &alias,
    return *this;
 }
 
+Select& Select::join(const QSharedPointer<Select> &name, const QString &alias, 
+                     const QString &on, const QMap<QVariant, QVariant> &columns, const QString &type)
+{
+   join(QVariant::fromValue(name), alias, on, columns, type);
+   return *this;
+}
 
 Select& Select::setSubject(QSharedPointer<Select>)
 {
