@@ -2,7 +2,6 @@
 #include <QList>
 
 #include "select.h"
-#include "db/sql/platform/abstract_platform.h"
 #include "db/sql/expression.h"
 
 namespace sn{
@@ -11,7 +10,7 @@ namespace db{
 namespace sql{
 
 using sn::corelib::db::sql::Expression;
-using sn::corelib::db::sql::platform::PlatformDecoratorInterface;
+
 
 const QString Select::SELECT = "select";
 const QString Select::QUANTIFIER = "quantifier";
@@ -609,6 +608,18 @@ Select& Select::addColumn(const QVariant &column, const QString &alias)
    return *this;
 }
 
+Select& Select::addColumn(const QSharedPointer<AbstractExpression> &column, const QString &alias)
+{
+   m_columns.append(QVariant::fromValue(QPair<QString, QVariant>(alias, QVariant::fromValue(column))));
+   return *this;
+}
+
+Select& Select::addColumn(const QSharedPointer<AbstractExpression> &column, int index)
+{
+   m_columns.append(QVariant::fromValue(QPair<int, QVariant>(index, QVariant::fromValue(column))));
+   return *this;
+}
+
 Select& Select::addColumn(const QVariant &column, int index)
 {
    m_columns.append(QVariant::fromValue(QPair<int, QVariant>(index, column)));
@@ -806,37 +817,6 @@ Select& Select::join(const QVariant &name, const QString &alias,
                      {"type", QVariant(type)}
                   });
    return *this;
-}
-
-
-QString Select::processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
-                                 ParameterContainer *parameterContainer)
-{
-   QSharedPointer<Select> decorator;
-   if(instanceof<PlatformDecoratorInterface>(*this)){
-      decorator.reset(new Select(*this));
-      decorator->setSubject(subSelect);
-   }else{
-      decorator = subSelect;
-   }
-   if(nullptr != parameterContainer && !parameterContainer->isEmpty()){
-      QSharedPointer<Select> processInfoContext;
-      // Track subselect prefix and count for parameters
-      if(instanceof<PlatformDecoratorInterface>(*decorator.data())){
-         processInfoContext = subSelect;
-      }else{
-         processInfoContext = decorator;
-      }
-      int subselectCount = m_processInfo.value("subselectCount").toInt();
-      subselectCount++;
-      m_processInfo["subselectCount"].setValue(subselectCount);
-      processInfoContext->m_processInfo["subselectCount"].setValue(subselectCount);
-      processInfoContext->m_processInfo["paramPrefix"].setValue(QString("subselect") + QString("%1").arg(subselectCount));
-      QString sql = decorator->buildSqlString(engine, parameterContainer);
-      m_processInfo["subselectCount"].setValue(decorator->m_processInfo["subselectCount"].toInt());
-      return sql;
-   }
-   return decorator->buildSqlString(engine, parameterContainer);
 }
 
 

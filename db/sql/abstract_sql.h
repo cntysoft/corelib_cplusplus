@@ -65,7 +65,8 @@ protected:
                              QString namedParameterPrefix = QString());
    QString resolveColumnValue(const QVariant &column, const Engine &engine,
                               ParameterContainer *parameterContainer = nullptr, QString namedParameterPrefix = QString());
-   
+   virtual QString processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
+                            ParameterContainer *parameterContainer = nullptr)throw(ErrorInfo);
 protected:
    QStringList m_specKeys;
    QMap<QString, QVariant> m_specifications;

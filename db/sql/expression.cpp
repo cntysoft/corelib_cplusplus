@@ -48,10 +48,7 @@ AbstractExpression::ExpressionDataType Expression::getExpressionData()const
    targetExpr.replace("%", "&");
    if(parametersCount == 0){
       return {
-         targetExpr.replace(Expression::PLACEHOLDER, ""),
-               QVariant(QList<QVariant>()),
-               QVariant(QStringList())
-               
+         QVariant(targetExpr.replace(Expression::PLACEHOLDER, "")) 
       };
    }
    QList<int> placeHolders;
@@ -80,9 +77,11 @@ AbstractExpression::ExpressionDataType Expression::getExpressionData()const
    }
    targetExpr.replace("&", "%");
    return {
-      QVariant(targetExpr),
-            QVariant(values),
-            QVariant(types)
+      QVariant(QList<QVariant>{
+                  QVariant(targetExpr),
+                  QVariant(values),
+                  QVariant(types)
+               })
    };
 }
 

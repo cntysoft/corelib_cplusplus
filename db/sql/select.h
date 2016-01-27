@@ -58,20 +58,20 @@ public:
    
 public:
    friend ProcessResultPointerType select_process_statement_start(AbstractSql *self,const Engine &engine, 
-                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+                                                                  ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                                  QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
-                                                  ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                  QMap<QString, ProcessResultPointerType> &parameters);
+                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                         QMap<QString, ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_join(AbstractSql *self,const Engine &engine, 
-                                                  ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                  QMap<QString, ProcessResultPointerType> &parameters);
+                                                       ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                       QMap<QString, ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_where(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_having(AbstractSql *self,const Engine &engine, 
-                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_group(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
@@ -82,14 +82,14 @@ public:
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_offset(AbstractSql *self,const Engine &engine, 
-                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_statement_end(AbstractSql *self,const Engine &engine, 
-                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+                                                                ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                                QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_combine(AbstractSql *self,const Engine &engine, 
-                                                        ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                        QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+                                                          ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                          QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
    Select(const TableIdentifier &table = TableIdentifier());
    Select(const QString &table, const QString &schema = QString());
@@ -107,7 +107,9 @@ public:
      value can be string or Expression objects
    */
    Select& setColumns(QList<QVariant> &columns, bool prefixColumnsWithTable = true);
+   Select& addColumn(const QSharedPointer<AbstractExpression> &column, int index);
    Select& addColumn(const QVariant &column, int index);
+   Select& addColumn(const QSharedPointer<AbstractExpression> &column, const QString &alias);
    Select& addColumn(const QVariant &column, const QString &alias);
    Select& setPrefixColumnsWithTable(bool flag);
    Select& where(const QSharedPointer<Where> &where);
@@ -128,8 +130,6 @@ public:
    Select& offset(quint32 offset);
    Select& combine(const QSharedPointer<Select> select, const QString &type = Select::COMBINE_UNION, 
                    const QString &modifier = QString())throw(ErrorInfo);
-   QString processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
-                            ParameterContainer *parameterContainer = nullptr);
    virtual Select& setSubject(QSharedPointer<Select> subject);
    Select& setTableReadOnly(bool flag);
 protected:

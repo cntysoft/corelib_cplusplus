@@ -8,6 +8,7 @@
 #include "expression.h"
 #include "global/common_funcs.h"
 #include "db/sql/select.h"
+#include "db/sql/platform/abstract_platform.h"
 
 namespace sn{
 namespace corelib{
@@ -16,7 +17,7 @@ namespace sql{
 
 using sn::corelib::instanceof;
 using sn::corelib::format_str;
-
+using sn::corelib::db::sql::platform::PlatformDecoratorInterface;
 
 AbstractSql& AbstractSql::setSpecificationFn(const QString &name, SpecificationFuncPtr fn)
 {
@@ -154,7 +155,7 @@ QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &spe
 }
 
 QString AbstractSql::resolveColumnValue(const QVariant &column, const Engine &engine, 
-                                        ParameterContainer *, 
+                                        ParameterContainer *parameterContainer, 
                                         QString namedParameterPrefix)
 {
    namedParameterPrefix = (namedParameterPrefix.isNull() || namedParameterPrefix.isEmpty()) ? 
@@ -177,12 +178,58 @@ QString AbstractSql::resolveColumnValue(const QVariant &column, const Engine &en
    }else{
       vcolumn = column;
    }
+   if(vcolumn.userType() == qMetaTypeId<QSharedPointer<AbstractExpression>>()){
+      return processExpression(vcolumn.value<QSharedPointer<AbstractExpression>>(), engine, parameterContainer, namedParameterPrefix);
+   }
+   
+   if(vcolumn.userType() == qMetaTypeId<QSharedPointer<Select>>()){
+      return "(" + processSubSelect(vcolumn.value<QSharedPointer<Select>>(), engine, parameterContainer)+ ")";
+   }
+   
    if(vcolumn.isNull()){
       return "NULL";
    }
    //到这里应该是字符串了
    return isIdentifier ? fromTable+engine.quoteIdentifierInFragment(vcolumn.toString()) : engine.quoteValue(vcolumn.toString());
 }
+
+
+QString AbstractSql::processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
+                                 ParameterContainer *parameterContainer)throw(ErrorInfo)
+{
+   QSharedPointer<Select> decorator;
+   if(instanceof<PlatformDecoratorInterface>(*this)){
+      Select *childPtr = dynamic_cast<Select*>(this);
+      Q_ASSERT_X(childPtr != nullptr, "AbstractSql::processSubSelect", "this pointer cast failure");
+      if(nullptr == childPtr){
+         throw ErrorInfo("Select *childPtr = dynamic_cast<Select*>(this) failure");
+      }
+      decorator.reset(new Select(*childPtr));
+      decorator->setSubject(subSelect);
+   }else{
+      decorator = subSelect;
+   }
+   if(nullptr != parameterContainer && !parameterContainer->isEmpty()){
+      QSharedPointer<Select> processInfoContext;
+      // Track subselect prefix and count for parameters
+      if(instanceof<PlatformDecoratorInterface>(*decorator.data())){
+         processInfoContext = subSelect;
+      }else{
+         processInfoContext = decorator;
+      }
+      int subselectCount = m_processInfo.value("subselectCount").toInt();
+      subselectCount++;
+      m_processInfo["subselectCount"].setValue(subselectCount);
+      processInfoContext->m_processInfo["subselectCount"].setValue(subselectCount);
+      processInfoContext->m_processInfo["paramPrefix"].setValue(QString("subselect") + QString("%1").arg(subselectCount));
+      QString sql = decorator->buildSqlString(engine, parameterContainer);
+      m_processInfo["subselectCount"].setValue(decorator->m_processInfo["subselectCount"].toInt());
+      return sql;
+   }
+   return decorator->buildSqlString(engine, parameterContainer);
+}
+
+
 
 QString AbstractSql::getSqlString(const Engine &engine)
 {

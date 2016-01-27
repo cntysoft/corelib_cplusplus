@@ -20,6 +20,7 @@ private slots:
    void testDeleteSql();
    void testWherePredicate();
    void testSelectSql();
+   void testExpression();
 protected:
    Engine m_engine;
 };
