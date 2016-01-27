@@ -132,6 +132,16 @@ QString SN_CORELIB_EXPORT format_str(const QString &format, const QStringList &a
    return result;
 }
 
+bool is_scalar(const QVariant &value)
+{
+   if(value.type() == QVariant::Int || value.type() == QVariant::Bool ||
+         value.type() == QVariant::UInt || value.type() == QVariant::LongLong ||
+         value.type() == QVariant::ULongLong || value.type() == QVariant::Double ||
+         value.type() == QVariant::Char){
+      return true;
+   }
+   return false;
+}
 
 }//corelib
 }//sn

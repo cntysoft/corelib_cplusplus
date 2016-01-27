@@ -555,27 +555,27 @@ Select::Select(const TableIdentifier &table)
    m_where.reset(new Where());
    m_having.reset(new Having());
    m_specificationFnPtrs.insert("statementStart", select_process_statement_start);
-   m_specificationFnPtrs.insert("select", select_process_select);
-   m_specificationFnPtrs.insert("joins", select_process_join);
-   m_specificationFnPtrs.insert("where", select_process_where);
-   m_specificationFnPtrs.insert("having", select_process_having);
-   m_specificationFnPtrs.insert("group", select_process_group);
-   m_specificationFnPtrs.insert("order", select_process_order);
-   m_specificationFnPtrs.insert("limit", select_process_limit);
-   m_specificationFnPtrs.insert("offset", select_process_offset);
+   m_specificationFnPtrs.insert(Select::SELECT, select_process_select);
+   m_specificationFnPtrs.insert(Select::JOINS, select_process_join);
+   m_specificationFnPtrs.insert(Select::WHERE, select_process_where);
+   m_specificationFnPtrs.insert(Select::HAVING, select_process_having);
+   m_specificationFnPtrs.insert(Select::GROUP, select_process_group);
+   m_specificationFnPtrs.insert(Select::ORDER, select_process_order);
+   m_specificationFnPtrs.insert(Select::LIMIT, select_process_limit);
+   m_specificationFnPtrs.insert(Select::OFFSET, select_process_offset);
    m_specificationFnPtrs.insert("statementEnd", select_process_statement_end);
-   m_specificationFnPtrs.insert("combine", select_process_combine);
+   m_specificationFnPtrs.insert(Select::COMBINE, select_process_combine);
    m_specKeys.append("statementStart");
-   m_specKeys.append("select");
-   m_specKeys.append("joins");
-   m_specKeys.append("where");
-   m_specKeys.append("having");
-   m_specKeys.append("group");
-   m_specKeys.append("order");
-   m_specKeys.append("limit");
-   m_specKeys.append("offset");
+   m_specKeys.append(Select::SELECT);
+   m_specKeys.append(Select::JOINS);
+   m_specKeys.append(Select::WHERE);
+   m_specKeys.append(Select::HAVING);
+   m_specKeys.append(Select::GROUP);
+   m_specKeys.append(Select::ORDER);
+   m_specKeys.append(Select::LIMIT);
+   m_specKeys.append(Select::OFFSET);
    m_specKeys.append("statementEnd");
-   m_specKeys.append("combine");
+   m_specKeys.append(Select::COMBINE);
 }
 
 Select& Select::from(const QString &tableName, const QString &schema)throw(ErrorInfo)

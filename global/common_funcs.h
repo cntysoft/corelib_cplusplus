@@ -8,6 +8,7 @@
 
 QT_BEGIN_NAMESPACE
 class QString;
+class QVariant;
 QT_END_NAMESPACE
 
 namespace sn{
@@ -32,6 +33,8 @@ bool SN_CORELIB_EXPORT instanceof(const T2&)
 }
 
 QString SN_CORELIB_EXPORT format_str(const QString &format, const QStringList &args = QStringList());
+
+bool SN_CORELIB_EXPORT is_scalar(const QVariant &value);
 
 }//corelib
 }//sn
