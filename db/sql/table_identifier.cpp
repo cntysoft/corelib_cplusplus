@@ -52,6 +52,13 @@ bool TableIdentifier::isNull()const
    return m_table.isNull() || m_table.isEmpty();
 }
 
+TableIdentifier& TableIdentifier::reset()
+{
+   m_table.clear();
+   m_schema.clear();
+   return *this;
+}
+
 }//sql
 }//db
 }//corelib

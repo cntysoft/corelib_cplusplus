@@ -23,6 +23,7 @@ public:
    const QString& getSchema()const;
    QPair<QString, QString> getTableAndSchema()const;
    bool isNull()const;
+   TableIdentifier& reset();
 protected:
    QString m_table;
    QString m_schema;

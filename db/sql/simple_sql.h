@@ -4,6 +4,7 @@
 #include "global/global.h"
 #include "predicate/predicate.h"
 #include "db/sql/abstract_expression.h"
+#include "db/sql/simple_sql.h"
 
 namespace sn{
 namespace corelib{

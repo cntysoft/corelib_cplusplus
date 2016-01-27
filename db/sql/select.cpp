@@ -837,6 +837,67 @@ Select& Select::setTableReadOnly(bool flag)
    return *this;
 }
 
+const QSharedPointer<Where>& Select::getWhere()const
+{
+   return m_where;
+}
+
+const QSharedPointer<Having>& Select::getHaving()const
+{
+   return m_having;
+}
+
+Select& Select::reset(const QString &part)throw(ErrorInfo)
+{
+   if(Select::TABLE == part){
+      if(m_tableReadOnly){
+         throw ErrorInfo("Since this object was created with a table and/or schema in the constructor, it is read only.");
+      }
+      m_table.reset();
+   }else if(Select::QUANTIFIER == part){
+       m_quantifier.clear();
+   }else if(Select::COLUMNS == part){
+      m_columns.clear();
+   }else if(Select::JOINS == part){
+      m_joins.clear();
+   }else if(Select::WHERE == part){
+      m_where.clear();
+      m_where.reset(new Where);
+   }else if(Select::GROUP == part){
+      m_group.clear();
+   }else if(Select::HAVING == part){
+      m_having.clear();
+      m_having.reset(new Having);
+   }else if(Select::LIMIT == part){
+      m_limit.clear();
+   }else if(Select::OFFSET == part){
+      m_offset.clear();
+   }else if(Select::ORDER == part){
+      m_order.clear();
+   }else if(Select::COLUMNS == part){
+      m_combine.clear();
+   }
+   return *this;
+}
+
+Select::RawState Select::getRawState()const
+{
+   RawState state;
+   state.table = m_table;
+   state.tableReadOnly = m_tableReadOnly;
+   state.prefixColumnsWithTable = m_prefixColumnsWithTable;
+   state.quantifier = m_quantifier;
+   state.columns = m_columns;
+   state.where = m_where;
+   state.having = m_having;
+   state.group = m_group;
+   state.order = m_order;
+   state.limit = m_limit;
+   state.offset = m_offset;
+   state.combine = m_combine;
+   state.joins = m_joins;
+   return state;
+}
 }//sql
 }//db
 }//corelib

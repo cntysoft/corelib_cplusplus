@@ -56,6 +56,23 @@ public:
    const static QString COMBINE_EXCEPT;
    const static QString COMBINE_INTERSECT;
    
+   struct RawState
+   {
+      TableIdentifier table;
+      bool tableReadOnly = false;
+      bool prefixColumnsWithTable = true;
+      QVariant quantifier;
+      QList<QVariant> columns;
+      QSharedPointer<Where> where;
+      QSharedPointer<Having> having;
+      QStringList group;
+      QMap<QString, QString> order;
+      QVariant limit;
+      QVariant offset;
+      QMap<QString, QVariant> combine;
+      QList<QMap<QString, QVariant>> joins;
+   };
+
 public:
    friend ProcessResultPointerType select_process_statement_start(AbstractSql *self,const Engine &engine, 
                                                                   ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
@@ -134,6 +151,10 @@ public:
                    const QString &modifier = QString())throw(ErrorInfo);
    virtual Select& setSubject(QSharedPointer<Select> subject);
    Select& setTableReadOnly(bool flag);
+   const QSharedPointer<Where>& getWhere()const;
+   const QSharedPointer<Having>& getHaving()const;
+   Select& reset(const QString &part)throw(ErrorInfo);
+   RawState getRawState()const;
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
                                         ParameterContainer *parameterContainer = nullptr);
@@ -143,7 +164,6 @@ protected:
                                         const Engine &engine, ParameterContainer *parameterContainer = nullptr);
    using AbstractSql::resolveTable;
    QString renderTable(const QString &table, const QString &alias = QString());
-   
 protected:
    TableIdentifier m_table;
    bool m_tableReadOnly = false;
