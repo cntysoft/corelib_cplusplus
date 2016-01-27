@@ -2,6 +2,8 @@
 #include <QSqlField>
 #include <QDebug>
 #include <QRegularExpression>
+#include <QRegularExpressionMatchIterator>
+#include <QRegularExpressionMatch>
 
 #include <algorithm>
 
@@ -144,10 +146,28 @@ QString Engine::quoteIdentifierInFragment(const QString &identifier, const QStri
       safeWordsInt.insert(item, true);
    });
    QString result(identifier);
-   QStringList parts = result.split(QRegularExpression("([^0-9,a-z,A-Z$_:])"), QString::SkipEmptyParts);
+   if(result == "*"){
+      return result;
+   }
+   QRegularExpression regex("[^a-zA-Z0-9$_:]", QRegularExpression::CaseInsensitiveOption);
+   QStringList parts = result.split(regex, QString::SkipEmptyParts);
+   QRegularExpressionMatchIterator matchIterator = regex.globalMatch(result);
+   int insertPos = 1;
+   while (matchIterator.hasNext()) {
+      QRegularExpressionMatch match = matchIterator.next();
+      QString delimeter = match.capturedTexts().first();
+      delimeter = delimeter.trimmed();
+      if(!delimeter.isEmpty()){
+         parts.insert(insertPos, delimeter);
+         insertPos += 2;
+      }
+   }
    result = "";
-   std::for_each(parts.cbegin(), parts.cend(), [&result, &safeWords, this](QString part){
-      if(safeWords.contains(part.toLower())){
+   std::for_each(parts.cbegin(), parts.cend(), [&result, &safeWordsInt, this](QString part){
+      if(safeWordsInt.contains(part.toLower())){
+         if("=" == part){
+            part = " = ";
+         }
          result += part;
       }else{
          QPair<QString, QString> quoteIdentifier = this->getQuoteIdentifier();

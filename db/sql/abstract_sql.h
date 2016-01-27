@@ -54,7 +54,12 @@ protected:
    QString buildSqlString(const Engine &engine, ParameterContainer *parameterContainer = nullptr);
    QString createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters)throw(ErrorInfo);
    AbstractSql& setSpecificationFn(const QString &name, SpecificationFuncPtr fn);
-   QString resolveTable(const TableIdentifier &table, const Engine &engine, ParameterContainer *parameterContainer = nullptr);
+   QString resolveTable(const TableIdentifier &table, const Engine &engine, 
+                        ParameterContainer *parameterContainer = nullptr);
+   QString resolveTable(const QString &table, const Engine &engine, 
+                                     ParameterContainer *parameterContainer);
+   QString resolveTable(const QVariant &vtable, const Engine &engine, 
+                        ParameterContainer *parameterContainer = nullptr);
    QString processExpression(const QSharedPointer<AbstractExpression> expression, const Engine &engine, 
                              ParameterContainer *parameterContainer = nullptr, 
                              QString namedParameterPrefix = QString());

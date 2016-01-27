@@ -63,6 +63,9 @@ public:
    friend ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
                                                   ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                   QMap<QString, ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType select_process_join(AbstractSql *self,const Engine &engine, 
+                                                  ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+                                                  QMap<QString, ProcessResultPointerType> &parameters);
    friend ProcessResultPointerType select_process_where(AbstractSql *self,const Engine &engine, 
                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
@@ -116,6 +119,12 @@ public:
    Select& order(const QString &name, const QString &orderType = Select::ORDER_ASCENDING);
    Select& order(const QMap<QString, QString> &orders);
    Select& limit(quint32 limit);
+   Select& join(const QString &name, const QString &on, const QMap<QVariant, QVariant> &columns = QMap<QVariant, QVariant>{{QVariant(0), QVariant(Select::SQL_STAR)}}, 
+                const QString &type = Select::JOIN_INNER);
+   Select& join(const QVariant &name, const QString &on, const QMap<QVariant, QVariant> &columns = QMap<QVariant, QVariant>{{QVariant(0), QVariant(Select::SQL_STAR)}}, 
+                const QString &type = Select::JOIN_INNER);
+   Select& join(const QVariant &name, const QString &alias, const QString &on, const QMap<QVariant, QVariant> &columns = QMap<QVariant, QVariant>{{QVariant(0), QVariant(Select::SQL_STAR)}}, 
+                const QString &type = Select::JOIN_INNER);
    Select& offset(quint32 offset);
    Select& combine(const QSharedPointer<Select> select, const QString &type = Select::COMBINE_UNION, 
                    const QString &modifier = QString())throw(ErrorInfo);
@@ -130,6 +139,7 @@ protected:
                                         ParameterContainer *parameterContainer = nullptr);
    QPair<QString, QString> resolveTable(const QString &table, const QString &alias, 
                                         const Engine &engine, ParameterContainer *parameterContainer = nullptr);
+   using AbstractSql::resolveTable;
    QString renderTable(const QString &table, const QString &alias = QString());
    
 protected:
@@ -145,6 +155,7 @@ protected:
    QVariant m_limit;
    QVariant m_offset;
    QMap<QString, QVariant> m_combine;
+   QList<QMap<QString, QVariant>> m_joins;
 };
 
 }//sql

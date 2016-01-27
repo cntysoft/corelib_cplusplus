@@ -33,4 +33,6 @@ protected:
 }//corelib
 }//sn
 
+Q_DECLARE_METATYPE(sn::corelib::db::sql::TableIdentifier)
+
 #endif // SN_CORELIB_DB_SQL_TABLE_IDENTIFIER_H

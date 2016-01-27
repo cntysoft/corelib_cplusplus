@@ -230,44 +230,67 @@ void TestSql::testSelectSql()
       //         //qDebug() << sql.buildSqlString(selectSql);
       //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' GROUP BY `age`, `height`"));
       //      }
-//      {
-//         QSharedPointer<Select> selectSql = sql.getSelectSql();
-//         selectSql->addColumn(QString("name"), "name_alias");
-//         QSharedPointer<Where> where(new Where);
-//         where->equalTo("name", "sheneninfo");
-//         selectSql->where(where);
-//         selectSql->setTableReadOnly(false);
-//         selectSql->from("userinfo", "metainfo");
-//         selectSql->order("id", Select::ORDER_ASCENDING);
-//         selectSql->order("name", Select::ORDER_DESCENDING);
-//         //qDebug() << sql.buildSqlString(selectSql);
-//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' ORDER BY `id` ASC, `name` DESC"));
-//      }
-//      {
-//         QSharedPointer<Select> selectSql = sql.getSelectSql();
-//         selectSql->addColumn(QString("name"), "name_alias");
-//         QSharedPointer<Where> where(new Where);
-//         where->equalTo("name", "sheneninfo");
-//         selectSql->where(where);
-//         selectSql->setTableReadOnly(false);
-//         selectSql->limit(10);
-//         selectSql->from("userinfo", "metainfo");
-//         qDebug() << sql.buildSqlString(selectSql);
-//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' LIMIT 10"));
-//      }
-//      {
-//         QSharedPointer<Select> selectSql = sql.getSelectSql();
-//         selectSql->addColumn(QString("name"), "name_alias");
-//         QSharedPointer<Where> where(new Where);
-//         where->equalTo("name", "sheneninfo");
-//         selectSql->where(where);
-//         selectSql->setTableReadOnly(false);
-//         selectSql->limit(10);
-//         selectSql->offset(2);
-//         selectSql->from("userinfo", "metainfo");
-//         qDebug() << sql.buildSqlString(selectSql);
-//         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' LIMIT 10 OFFSET 2"));
-//      }
+      //      {
+      //         QSharedPointer<Select> selectSql = sql.getSelectSql();
+      //         selectSql->addColumn(QString("name"), "name_alias");
+      //         QSharedPointer<Where> where(new Where);
+      //         where->equalTo("name", "sheneninfo");
+      //         selectSql->where(where);
+      //         selectSql->setTableReadOnly(false);
+      //         selectSql->from("userinfo", "metainfo");
+      //         selectSql->order("id", Select::ORDER_ASCENDING);
+      //         selectSql->order("name", Select::ORDER_DESCENDING);
+      //         //qDebug() << sql.buildSqlString(selectSql);
+      //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' ORDER BY `id` ASC, `name` DESC"));
+      //      }
+      //      {
+      //         QSharedPointer<Select> selectSql = sql.getSelectSql();
+      //         selectSql->addColumn(QString("name"), "name_alias");
+      //         QSharedPointer<Where> where(new Where);
+      //         where->equalTo("name", "sheneninfo");
+      //         selectSql->where(where);
+      //         selectSql->setTableReadOnly(false);
+      //         selectSql->limit(10);
+      //         selectSql->from("userinfo", "metainfo");
+      //         qDebug() << sql.buildSqlString(selectSql);
+      //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' LIMIT 10"));
+      //      }
+      //      {
+      //         QSharedPointer<Select> selectSql = sql.getSelectSql();
+      //         selectSql->addColumn(QString("name"), "name_alias");
+      //         QSharedPointer<Where> where(new Where);
+      //         where->equalTo("name", "sheneninfo");
+      //         selectSql->where(where);
+      //         selectSql->setTableReadOnly(false);
+      //         selectSql->limit(10);
+      //         selectSql->offset(2);
+      //         selectSql->from("userinfo", "metainfo");
+      //         qDebug() << sql.buildSqlString(selectSql);
+      //         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' LIMIT 10 OFFSET 2"));
+      //      }
+      //      {
+      //         QSharedPointer<Select> selectSql = sql.getSelectSql();
+      //         selectSql->addColumn(QString("name"), "name_alias");
+      //         QSharedPointer<Where> where(new Where);
+      //         where->equalTo("name", "sheneninfo");
+      //         selectSql->where(where);
+      //         selectSql->setTableReadOnly(false);
+      //         selectSql->limit(10);
+      //         selectSql->offset(2);
+      //         selectSql->from("userinfo", "metainfo");
+      //         QSharedPointer<Select> selectSql1 = sql.getSelectSql("meta");
+      //         selectSql->combine(selectSql1);
+      //         qDebug() << sql.buildSqlString(selectSql);
+      //         QCOMPARE(sql.buildSqlString(selectSql), QString("( SELECT `metainfo`.`userinfo`.`name` AS `name_alias` FROM `metainfo`.`userinfo` WHERE `name` = 'sheneninfo' LIMIT 10 OFFSET 2 ) UNION ( SELECT `meta`.* FROM `meta` )"));
+      //      }
+      {
+         QSharedPointer<Select> selectSql = sql.getSelectSql();
+         selectSql->setTableReadOnly(false);
+         selectSql->from("foo");
+         selectSql->join(QString("bar"), "foo.foo_id = bar.foo_id");
+         //qDebug() << sql.buildSqlString(selectSql);
+         QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `foo`.*, `bar`.* FROM `foo` INNER JOIN `bar` ON `foo`.`foo_id` = `bar`.`foo_id`"));
+      }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

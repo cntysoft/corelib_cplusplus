@@ -154,7 +154,7 @@ QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &spe
 }
 
 QString AbstractSql::resolveColumnValue(const QVariant &column, const Engine &engine, 
-                                        ParameterContainer *parameterContainer, 
+                                        ParameterContainer *, 
                                         QString namedParameterPrefix)
 {
    namedParameterPrefix = (namedParameterPrefix.isNull() || namedParameterPrefix.isEmpty()) ? 
@@ -329,19 +329,36 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
    return sql;
 }
 
-QString AbstractSql::resolveTable(const TableIdentifier &table, const Engine &engine, ParameterContainer *)
+QString AbstractSql::resolveTable(const TableIdentifier &table, const Engine &engine, ParameterContainer *parameterContainer)
+{
+   return resolveTable(QVariant::fromValue(table), engine, parameterContainer);
+}
+
+QString AbstractSql::resolveTable(const QString &table, const Engine &engine, ParameterContainer *parameterContainer)
+{
+   return resolveTable(TableIdentifier(table), engine, parameterContainer);
+}
+
+QString AbstractSql::resolveTable(const QVariant &vtable, const Engine &engine, ParameterContainer *)
 {
    //暂时不支持子查询
-   QString schema(table.getSchema());
-   QString tableName(table.getTable());
-   if(!tableName.isNull()){
-      tableName = engine.quoteIdentifier(tableName, Engine::IdentifierType::TableName);
+   QString schema;
+   QString tableName;
+   if(vtable.userType() == qMetaTypeId<TableIdentifier>()){
+      TableIdentifier table = vtable.value<TableIdentifier>();
+      schema = table.getSchema();
+      tableName = engine.quoteTableName(table.getTable());
+   }else if(vtable.type() == QVariant::String){
+      tableName = vtable.toString();
+      tableName = engine.quoteTableName(tableName);
    }
-   if(!schema.isNull() && !tableName.isNull()){
-      tableName = engine.quoteTableName(schema)+engine.getIdentifierSeparator()+engine.quoteTableName(tableName);
+   
+   if(!schema.isEmpty() && !tableName.isEmpty()){
+      tableName = engine.quoteTableName(schema)+engine.getIdentifierSeparator()+tableName;
    }
    return tableName;
 }
+
 
 }//sql
 }//db

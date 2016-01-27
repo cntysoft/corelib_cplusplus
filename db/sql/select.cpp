@@ -3,12 +3,14 @@
 
 #include "select.h"
 #include "db/sql/platform/abstract_platform.h"
+#include "db/sql/expression.h"
 
 namespace sn{
 namespace corelib{
 namespace db{
 namespace sql{
 
+using sn::corelib::db::sql::Expression;
 using sn::corelib::db::sql::platform::PlatformDecoratorInterface;
 
 const QString Select::SELECT = "select";
@@ -119,7 +121,49 @@ AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,co
          columns.append(QVariant(QStringList({columnName, columnAlias})));
       }
    }
-   
+   //process join columns
+   std::for_each(selectSql->m_joins.cbegin(), selectSql->m_joins.cend(), [&self, &selectSql, &columns, &engine, &parameterContainer](const QMap<QString, QVariant> &join){
+      QVariant vjoinName = join.value("name");
+      QVariant tpmJoinName;
+      if(vjoinName.userType() == qMetaTypeId<QPair<QString, QVariant>>()){
+         tpmJoinName.setValue(vjoinName.value<QPair<QString, QVariant>>().first);//取alias
+      }else{
+         tpmJoinName = vjoinName;
+      }
+      QString joinName = selectSql->resolveTable(tpmJoinName, engine, parameterContainer);
+      QMap<QVariant, QVariant> vjoinColumns = join.value("columns").value<QMap<QVariant, QVariant>>();
+      QMap<QVariant, QVariant>::const_iterator joinColIterator = vjoinColumns.cbegin();
+      QMap<QVariant, QVariant>::const_iterator joinColEndMarker = vjoinColumns.cend();
+      while(joinColIterator != joinColEndMarker){
+         QStringList jColumns;
+         QString jFromTableName;
+         QVariant vkey = joinColIterator.key();
+         QVariant vColumn = joinColIterator.value();
+         if(vkey.type() == QVariant::Int || vkey.type() == QVariant::Bool ||
+               vkey.type() == QVariant::UInt || vkey.type() == QVariant::LongLong ||
+               vkey.type() == QVariant::ULongLong || vkey.type() == QVariant::Double){
+            jFromTableName = joinName + engine.getIdentifierSeparator();
+         }else{
+            jFromTableName = "";
+         }
+         QMap<QString, QVariant> colMeta{
+            {"column", vColumn},
+            {"fromTable", jFromTableName},
+            {"isIdentifier", true}
+         };
+         
+         
+         jColumns.append(selectSql->resolveColumnValue(QVariant(colMeta), engine, parameterContainer,
+                                                       vkey.type() == QVariant::String ? vkey.toString() : "column"));
+         if(vkey.type() == QVariant::String){
+            jColumns.append(engine.quoteFieldName(vkey.toString()));
+         }else if(vColumn.type() == QVariant::String && vColumn.toString() != Select::SQL_STAR){
+            jColumns.append(engine.quoteFieldName(vColumn.toString()));
+         }
+         columns.append(QVariant(jColumns));
+         joinColIterator++;
+      }
+   });
    QString quantifier;
    //process quantifier
    if(!selectSql->m_quantifier.isNull()){
@@ -143,6 +187,73 @@ AbstractSql::ProcessResultPointerType select_process_select(AbstractSql *self,co
       values << QVariant(columns) << QVariant(tableName);
    }
    result->value = QVariant(values);
+   return result;
+}
+
+AbstractSql::ProcessResultPointerType select_process_join(AbstractSql *self,const Engine &engine, 
+                                                          ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                          QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Select* selectSql = dynamic_cast<Select*>(self);
+   Q_ASSERT_X(selectSql != 0, "join friend function select_process_join", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("join friend function select_process_join self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(selectSql->m_joins.size() == 0){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::Array;
+   QList<QVariant> values;
+   int joinCount = selectSql->m_joins.size();
+   for(int i = 0; i < joinCount; i++){
+      const QMap<QString, QVariant> &vjoin = selectSql->m_joins.at(i);
+      QVariant vjoinName;
+      QString joinAs;
+      QVariant vtmpJoinName = vjoin.value("name");
+      // table name
+      if(vtmpJoinName.userType() == qMetaTypeId<QPair<QString, QVariant>>()){
+         QPair<QString, QVariant> namePair = vtmpJoinName.value<QPair<QString, QVariant>>();
+         vjoinName = namePair.second;
+         joinAs = engine.quoteFieldName(namePair.first);
+      }else{
+         vjoinName = vtmpJoinName;
+      }
+      QString joinName;
+      if(vjoinName.userType() == qMetaTypeId<QSharedPointer<Expression>>()){
+         joinName = vjoinName.value<QSharedPointer<Expression>>()->getExpression();
+      }else if(vjoinName.userType() == qMetaTypeId<TableIdentifier>()){
+         TableIdentifier table = vjoinName.value<TableIdentifier>();
+         QPair<QString, QString> tableParts = table.getTableAndSchema();
+         if(!tableParts.first.isEmpty()){
+            joinName = engine.quoteTableName(tableParts.first) + engine.getIdentifierSeparator();
+         }else{
+            joinName = "";
+         }
+         joinName += engine.quoteFieldName(tableParts.second);
+      }else if(vjoinName.userType() == qMetaTypeId<QSharedPointer<Select>>()){
+         joinName = "(" + selectSql->processSubSelect(vjoinName.value<QSharedPointer<Select>>(), engine, parameterContainer) + ")";
+      }else if(vjoinName.type() == QVariant::String){
+         joinName = engine.quoteFieldName(vjoinName.toString());
+      }
+      QStringList joinMetaList{vjoin.value("type").toString().toUpper(), selectSql->renderTable(joinName, joinAs)
+                              };
+      QVariant von = vjoin.value("on");
+      // on expression
+      // note: for Expression objects, pass them to processExpression with a prefix specific to each join (used for named parameters)
+      if(von.userType() == qMetaTypeId<QSharedPointer<Expression>>()){
+         joinMetaList.append(selectSql->processExpression(von.value<QSharedPointer<Expression>>(),engine, 
+                                                          parameterContainer, QString("join%1part").arg(i+1)));
+      }else{
+         joinMetaList.append(engine.quoteIdentifierInFragment(von.toString(), {
+                                                                 "=", "AND", "OR", "(", ")", "BETWEEN", "<", ">"
+                                                              }));
+      }
+      values.insert(i, QVariant(joinMetaList));
+   }
+   result->value = QVariant(QList<QVariant>{QVariant(values)});
    return result;
 }
 
@@ -315,8 +426,8 @@ AbstractSql::ProcessResultPointerType select_process_statement_end(AbstractSql *
 }
 
 AbstractSql::ProcessResultPointerType select_process_combine(AbstractSql *self,const Engine& engine, 
-                                                                   ParameterContainer* parameterContainer, QMap<QString, QString>&, 
-                                                                   QMap<QString, AbstractSql::ProcessResultPointerType>&)
+                                                             ParameterContainer* parameterContainer, QMap<QString, QString>&, 
+                                                             QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Select* selectSql = dynamic_cast<Select*>(self);
    Q_ASSERT_X(selectSql != 0, "combine friend function select_process_statement_end", "self pointer cast fail");
@@ -331,7 +442,7 @@ AbstractSql::ProcessResultPointerType select_process_combine(AbstractSql *self,c
    result->isNull = false;
    result->type = AbstractSql::ProcessResultType::Array;
    QString modifider = selectSql->m_combine.value("modifier").toString();
-   QString type = selectSql->m_combine.value("type").toString();
+   QString type = selectSql->m_combine.value("type").toString().toUpper();
    if(!modifider.isNull() && !modifider.isEmpty()){
       type += " " + modifider;
    }
@@ -403,7 +514,7 @@ Select::Select(const TableIdentifier &table)
       };
       joinSpecification.insert("%1", QVariant(joinSpecificationItem));
    }
-   //   m_specifications.insert(Select::JOINS, QVariant(joinSpecification));
+   m_specifications.insert(Select::JOINS, QVariant(joinSpecification));
    m_specifications.insert(Select::WHERE, QVariant("WHERE %1"));
    //group
    QMap<QString, QVariant> groupSpecification;
@@ -446,6 +557,7 @@ Select::Select(const TableIdentifier &table)
    m_having.reset(new Having());
    m_specificationFnPtrs.insert("statementStart", select_process_statement_start);
    m_specificationFnPtrs.insert("select", select_process_select);
+   m_specificationFnPtrs.insert("joins", select_process_join);
    m_specificationFnPtrs.insert("where", select_process_where);
    m_specificationFnPtrs.insert("having", select_process_having);
    m_specificationFnPtrs.insert("group", select_process_group);
@@ -456,6 +568,7 @@ Select::Select(const TableIdentifier &table)
    m_specificationFnPtrs.insert("combine", select_process_combine);
    m_specKeys.append("statementStart");
    m_specKeys.append("select");
+   m_specKeys.append("joins");
    m_specKeys.append("where");
    m_specKeys.append("having");
    m_specKeys.append("group");
@@ -642,8 +755,62 @@ Select& Select::combine(const QSharedPointer<Select> select, const QString &type
    return *this;
 }
 
+Select& Select::join(const QString &name, const QString &on, 
+                     const QMap<QVariant, QVariant> &columns, const QString &type)
+{
+   join(QVariant(name), on, columns, type);
+   return *this;
+}
+
+Select& Select::join(const QVariant &name, const QString &on, 
+                     const QMap<QVariant, QVariant> &columns, const QString &type)
+{
+   QStringList validJoinType{
+      Select::JOIN_INNER,
+            Select::JOIN_OUTER,
+            Select::JOIN_LEFT,
+            Select::JOIN_RIGHT,
+            Select::JOIN_OUTER_RIGHT,
+            Select::JOIN_OUTER_LEFT
+   };
+   if(!validJoinType.contains(type)){
+      return *this;
+   }
+   m_joins.append({
+                     {"name", name},
+                     {"on", QVariant(on)},
+                     {"columns", QVariant::fromValue(columns)},
+                     {"type", QVariant(type)}
+                  });
+   return *this;
+}
+
+Select& Select::join(const QVariant &name, const QString &alias, 
+                     const QString &on, const QMap<QVariant, QVariant> &columns, const QString &type)
+{
+   QStringList validJoinType{
+      Select::JOIN_INNER,
+            Select::JOIN_OUTER,
+            Select::JOIN_LEFT,
+            Select::JOIN_RIGHT,
+            Select::JOIN_OUTER_RIGHT,
+            Select::JOIN_OUTER_LEFT
+   };
+   if(!validJoinType.contains(type)){
+      return *this;
+   }
+   m_joins.append({
+                     {"name", QVariant::fromValue(QPair<QString, QVariant>(alias, name))},
+                     {"on", QVariant(on)},
+                     {"columns", QVariant::fromValue(columns)},
+                     {"type", QVariant(type)}
+                  });
+   return *this;
+}
+
+
 QString Select::processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
-                                      ParameterContainer *parameterContainer)
+                                 ParameterContainer *parameterContainer)
 {
    QSharedPointer<Select> decorator;
    if(instanceof<PlatformDecoratorInterface>(*this)){
