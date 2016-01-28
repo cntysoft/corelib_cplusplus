@@ -91,7 +91,115 @@ AbstractExpression::ExpressionDataType AbstractColumn::getExpressionData()const
          spec, params, types
       }
    };
+   std::for_each(m_constraints.cbegin(), m_constraints.cend(), [&data](const QSharedPointer<AbstractConstraint> &constraint){
+      data.append(QVariant(" "));
+      data.append(constraint->getExpressionData());
+   });
+   return data;
+}
+
+AbstractLengthColumn::AbstractLengthColumn(const QString &name, const QVariant &length, bool nullable, const QVariant &defaultValue, const QMap<QString, QVariant> &options)
+   : AbstractColumn(name, nullable, defaultValue, options),
+     m_length(length)
+{
+}
+
+AbstractLengthColumn& AbstractLengthColumn::setLength(int length)
+{
+   m_length.setValue(length);
+   return *this;
+}
+
+int AbstractLengthColumn::getLength()const
+{
+   return m_length.toInt();
+}
+
+QString AbstractLengthColumn::getLengthExpression()const
+{
+   return QString("%1").arg(m_length.toInt());
+}
+
+AbstractExpression::ExpressionDataType AbstractLengthColumn::getExpressionData() const
+{
+   ExpressionDataType data = AbstractColumn::getExpressionData();
+   QString lengthExpr(getLengthExpression());
+   if(!lengthExpr.isEmpty()){
+      QList<QVariant> targetList = data[0].toList();
+      QStringList params = targetList[1].value<QStringList>();\
+      targetList[1] = QVariant::fromValue(params);
+      params[1] += "(" + getLengthExpression() + ")";
+      data[0] = QVariant::fromValue(targetList);
+   }
+   return data;
+}
+
+AbstractExpression::ExpressionDataType AbstractTimestampColumn::getExpressionData()const
+{
+   QString spec(m_specification);
+   QStringList params{
+      m_name, m_type 
+   };
+   QStringList types{
+       AbstractExpression::TYPE_IDENTIFIER, AbstractExpression::TYPE_LITERAL
+   };
+   if(!m_isNullable){
+      spec += " NOT NULL";
+   }
+   if(!m_default.isNull()){
+      spec += " DEFAULT %s";
+      params.append(m_default.toString());
+      types.append(AbstractExpression::TYPE_VALUE);
+   }
+   QList<QVariant> data{
+      QList<QVariant>{
+         spec, params, types
+      }
+   };
+   std::for_each(m_constraints.cbegin(), m_constraints.cend(), [&data](const QSharedPointer<AbstractConstraint> &constraint){
+      data.append(QVariant(" "));
+      data.append(constraint->getExpressionData());
+   });
+   return data;
+}
+
+AbstractPrecisionColumn::AbstractPrecisionColumn(const QString &name, const QVariant & digits, const QVariant & decimal, 
+                                                 bool nullable, const QVariant &defaultValue, 
+                                                 const QMap<QString, QVariant> &options)
+   : AbstractLengthColumn(name, digits, nullable, defaultValue, options),
+     m_decimal(decimal)
+{
    
+}
+
+AbstractPrecisionColumn& AbstractPrecisionColumn::setDigits(int digits)
+{
+   setLength(digits);
+   return *this;
+}
+
+int AbstractPrecisionColumn::getDigits()const
+{
+   return getLength();
+}
+
+int AbstractPrecisionColumn::getDecimal()const
+{
+   return m_decimal.toInt();
+}
+
+AbstractPrecisionColumn& AbstractPrecisionColumn::setDecimal(int decimal)
+{
+   m_decimal.setValue(decimal);
+   return *this;
+}
+
+QString AbstractPrecisionColumn::getLengthExpression()const
+{
+   if(!m_decimal.isNull()){
+      return QString("%1,%2").arg(m_length.toInt(), m_decimal.toInt());
+   }
+   return QString("%1").arg(m_length.toInt());
 }
 
 }//column

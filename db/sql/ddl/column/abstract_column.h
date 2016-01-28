@@ -48,6 +48,42 @@ protected:
    QString m_type;
 };
 
+class SN_CORELIB_EXPORT AbstractLengthColumn : public AbstractColumn
+{
+public:
+   AbstractLengthColumn(const QString &name, const QVariant &length = QVariant(), bool nullable = false,
+                        const QVariant &defaultValue = QVariant(), const QMap<QString, QVariant> &options = QMap<QString, QVariant>());
+   AbstractLengthColumn& setLength(int length);
+   int getLength()const;
+public:
+   virtual ExpressionDataType getExpressionData() const;
+   virtual QString getLengthExpression()const;
+protected:
+   QVariant m_length;
+};
+
+class SN_CORELIB_EXPORT AbstractTimestampColumn : public AbstractColumn
+{
+public:
+   virtual ExpressionDataType getExpressionData() const;
+};
+
+class SN_CORELIB_EXPORT AbstractPrecisionColumn : public AbstractLengthColumn
+{
+public:
+   AbstractPrecisionColumn(const QString &name, const QVariant &digits = QVariant(), const QVariant &decimal = QVariant(), 
+                           bool nullable = false, const QVariant &defaultValue = QVariant(), 
+                           const QMap<QString, QVariant> &options = QMap<QString, QVariant>());
+   AbstractPrecisionColumn& setDigits(int digits);
+   int getDigits()const;
+   AbstractPrecisionColumn& setDecimal(int decimal);
+   int getDecimal()const;
+public:
+   virtual QString getLengthExpression()const;
+protected:
+   QVariant m_decimal;
+};
+
 }//column
 }//ddl
 }//sql
