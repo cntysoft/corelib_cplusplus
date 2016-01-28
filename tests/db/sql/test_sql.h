@@ -23,6 +23,7 @@ private slots:
    void testExpression();
    void testSubSelect();
    void testInsertSql();
+   void testUpdateSql();
 protected:
    Engine m_engine;
 };

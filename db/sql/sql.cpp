@@ -81,6 +81,15 @@ QSharedPointer<Insert> Sql::getInsertSql(const QString &table)
    return QSharedPointer<Insert>(new Insert(m_table));
 }
 
+QSharedPointer<Update> Sql::getUpdateSql(const QString &table)
+{
+   if(!table.isEmpty()){
+      TableIdentifier targetTable(table);
+      return QSharedPointer<Update>(new Update(targetTable));
+   }
+   return QSharedPointer<Update>(new Update(m_table));
+}
+
 QString Sql::buildSqlString(QSharedPointer<AbstractSql> sqlObject)
 {
    return m_platfrom.setSubject(sqlObject).getSqlString(m_engine);

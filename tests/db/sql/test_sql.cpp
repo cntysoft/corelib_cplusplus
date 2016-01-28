@@ -3,6 +3,7 @@
 #include "db/sql/sql.h"
 #include "db/sql/delete.h"
 #include "db/sql/insert.h"
+#include "db/sql/update.h"
 #include "db/sql/table_identifier.h"
 #include "db/sql/abstract_sql.h"
 #include "db/sql/predicate/predicate.h"
@@ -24,6 +25,7 @@ namespace db{
 using sn::corelib::db::sql::Sql;
 using sn::corelib::db::sql::Delete;
 using sn::corelib::db::sql::Select;
+using sn::corelib::db::sql::Update;
 using sn::corelib::db::sql::Insert;
 using sn::corelib::db::sql::TableIdentifier;
 using sn::corelib::db::sql::AbstractSql;
@@ -356,6 +358,28 @@ void TestSql::testInsertSql()
          //qDebug() << sql.buildSqlString(insertSql);
          QCOMPARE(sql.buildSqlString(insertSql), QString("INSERT INTO `userinfo`  SELECT `meta`.* FROM `meta`"));
       }
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
+
+void TestSql::testUpdateSql()
+{
+   try{
+      Sql sql(m_engine, "userinfo");
+      {
+         QSharedPointer<Update> updateSql = sql.getUpdateSql();
+         updateSql->set({
+                           {"name", "softboy"},
+                           {"age", 21}
+                        });
+         QSharedPointer<Where> where(new Where());
+         where->equalTo("name", "sheneninfo");
+         updateSql->where(where);
+         //qDebug() << sql.buildSqlString(updateSql);
+         QCOMPARE(sql.buildSqlString(updateSql), QString("UPDATE `userinfo` SET `age` = 21, `name` = 'softboy' WHERE `name` = 'sheneninfo'"));
+      }
+      
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

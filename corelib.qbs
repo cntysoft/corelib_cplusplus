@@ -180,6 +180,8 @@ Product
            "sql/sql.h",
            "sql/table_identifier.cpp",
            "sql/table_identifier.h",
+           "sql/update.cpp",
+           "sql/update.h",
            "tablegateway/table_gateway.h",
        ]
    }

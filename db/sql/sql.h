@@ -11,6 +11,7 @@
 #include "db/sql/abstract_sql.h"
 #include "db/sql/select.h"
 #include "db/sql/insert.h"
+#include "db/sql/update.h"
 #include "kernel/errorinfo.h"
 
 namespace sn{
@@ -39,6 +40,7 @@ public:
    QSharedPointer<Delete> getDeleteSql(const QString &table = QString());
    QSharedPointer<Select> getSelectSql(const QString &table = QString());
    QSharedPointer<Insert> getInsertSql(const QString &table = QString());
+   QSharedPointer<Update> getUpdateSql(const QString &table = QString());
 protected:
    Engine& m_engine;
    TableIdentifier m_table;

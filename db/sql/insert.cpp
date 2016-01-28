@@ -161,6 +161,7 @@ Insert& Insert::values(const QMap<QString, QVariant> &values, const QString flag
                       "sn::corelib::db::sql::Select instance already exists as the value source");
    }
    if(Insert::VALUES_SET == flag){
+      m_columns.clear();
       m_columns = values;
    }else if(Insert::VALUES_MERGE == flag){
       QMap<QString, QVariant>::const_iterator it = values.cbegin();
