@@ -22,6 +22,7 @@ private slots:
    void testSelectSql();
    void testExpression();
    void testSubSelect();
+   void testInsertSql();
 protected:
    Engine m_engine;
 };

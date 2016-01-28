@@ -15,8 +15,8 @@ const QString Insert::VALUES_MERGE = "merge";
 const QString Insert::VALUES_SET   = "set";
 
 AbstractSql::ProcessResultPointerType insert_process_insert(AbstractSql *self,const Engine &engine, 
-                                                         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
-                                                         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters)
+                                                         ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                         QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    Insert* insertSql = dynamic_cast<Insert*>(self);
    Q_ASSERT_X(insertSql != 0, "friend function select_process_insert", "self pointer cast failure");
@@ -24,7 +24,7 @@ AbstractSql::ProcessResultPointerType insert_process_insert(AbstractSql *self,co
       throw ErrorInfo(QString("friend function select_process_insert self pointer cast failure"));
    }
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
-   if(insertSql->m_select.isNull()){
+   if(!insertSql->m_select.isNull()){
       result->isNull = true;
       return result;
    }
@@ -42,16 +42,53 @@ AbstractSql::ProcessResultPointerType insert_process_insert(AbstractSql *self,co
       QVariant value = it.value();
       columns.append(engine.quoteFieldName(columnName));
       if(is_scalar(value) && nullptr != parameterContainer){
-         values.append(engine.formatParameterName(column));
+         values.append(engine.formatParameterName(columnName));
          parameterContainer->offsetSet("column", value);
       }else{
+         
          values.append(insertSql->resolveColumnValue(value, engine, parameterContainer));
       }
       it++;
    }
    result->isNull = false;
    result->type = AbstractSql::ProcessResultType::String;
-   result->value = QVariant(QString(")"));
+   QString sql = QString(insertSql->m_specifications.value(Insert::SPECIFICATION_INSERT).toString())
+         .arg(insertSql->resolveTable(insertSql->m_table, engine, parameterContainer))
+         .arg(columns.join(", "))
+         .arg(values.join(", "));
+   result->value = QVariant(sql);
+   return result;
+}
+
+AbstractSql::ProcessResultPointerType insert_process_select(AbstractSql *self,const Engine &engine, 
+                                                         ParameterContainer *parameterContainer, QMap<QString, QString>&, 
+                                                         QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   Insert* insertSql = dynamic_cast<Insert*>(self);
+   Q_ASSERT_X(insertSql != 0, "friend function select_process_insert", "self pointer cast failure");
+   if(0 == insertSql){
+      throw ErrorInfo(QString("friend function select_process_insert self pointer cast failure"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   if(insertSql->m_select.isNull()){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::String;
+   QString selectSql = insertSql->processSubSelect(insertSql->m_select, engine, parameterContainer);
+   QStringList columns;
+   QMap<QString, QVariant>::const_iterator it = insertSql->m_columns.cbegin();
+   QMap<QString, QVariant>::const_iterator endMarker = insertSql->m_columns.cend();
+   while(it != endMarker){
+      columns.append(engine.quoteFieldName(it.key()));
+      it++;
+   }
+   QString sql = QString(insertSql->m_specifications.value(Insert::SPECIFICATION_SELECT).toString())
+         .arg(insertSql->resolveTable(insertSql->m_table, engine, parameterContainer))
+         .arg(!columns.isEmpty() ? QString("(%1)").arg(columns.join(", ")) : "")
+         .arg(selectSql);
+   result->value = QVariant(sql);
    return result;
 }
 
@@ -84,9 +121,17 @@ Insert& Insert::into(const TableIdentifier &table)
    return *this;
 }
 
-Insert& Insert::addColumn(const QString &columnName, const QVariant &value)
+Insert& Insert::addColumn(const QString &name, const QVariant &value)
 {
-   m_columns.insert(columnName, value);
+   m_columns.insert(name, value);
+   return *this;
+}
+
+Insert& Insert::removeColumn(const QString &name)
+{
+   if(m_columns.contains(name)){
+      m_columns.remove(name);
+   }
    return *this;
 }
 
@@ -96,7 +141,20 @@ Insert& Insert::columns(const QMap<QString, QVariant> &columns)
    return *this;
 }
 
-Insert& Insert::values(const QMap<QString, QVariant> &values, const QString flag = Insert::VALUES_SET)throw(ErrorInfo)
+QVariant Insert::getColumn(const QString &name)
+{
+   if(m_columns.contains(name)){
+      return m_columns.value(name);
+   }
+   return QVariant();
+}
+
+bool Insert::hasColumn(const QString &name)
+{
+   return m_columns.contains(name);
+}
+
+Insert& Insert::values(const QMap<QString, QVariant> &values, const QString flag)throw(ErrorInfo)
 {
    if(!m_select.isNull() && Insert::VALUES_MERGE == flag){
       throw ErrorInfo("An array of values cannot be provided with the merge flag when a "
@@ -104,7 +162,7 @@ Insert& Insert::values(const QMap<QString, QVariant> &values, const QString flag
    }
    if(Insert::VALUES_SET == flag){
       m_columns = values;
-   }else{
+   }else if(Insert::VALUES_MERGE == flag){
       QMap<QString, QVariant>::const_iterator it = values.cbegin();
       QMap<QString, QVariant>::const_iterator endMarker = values.cend();
       while(it != endMarker){
@@ -115,13 +173,22 @@ Insert& Insert::values(const QMap<QString, QVariant> &values, const QString flag
    return *this;
 }
 
-Insert& Insert::values(const QSharedPointer<Select> &select, const QString flag = Insert::VALUES_SET)throw(ErrorInfo)
+Insert& Insert::values(const QSharedPointer<Select> &select, const QString flag)throw(ErrorInfo)
 {
-   if(Insert::VALUES_MERGE){
+   if(Insert::VALUES_MERGE == flag){
       throw ErrorInfo("A sn::corelib::db::sql::Select instance cannot be provided with the merge flag");
    }
    m_select = select;
    return *this;
+}
+
+Insert::RawState Insert::getRawState()const
+{
+   RawState state;
+   state.table = m_table;
+   state.columns = m_columns.keys();
+   state.values = m_columns.values();
+   return state;
 }
 
 }//sql

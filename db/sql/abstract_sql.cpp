@@ -190,7 +190,7 @@ QString AbstractSql::resolveColumnValue(const QVariant &column, const Engine &en
       return "NULL";
    }
    //到这里应该是字符串了
-   return isIdentifier ? fromTable+engine.quoteIdentifierInFragment(vcolumn.toString()) : engine.quoteValue(vcolumn.toString());
+   return isIdentifier ? fromTable+engine.quoteIdentifierInFragment(vcolumn.toString()) : engine.quoteValue(vcolumn);
 }
 
 

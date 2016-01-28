@@ -63,13 +63,22 @@ QSharedPointer<Delete> Sql::getDeleteSql(const QString &table)
    return QSharedPointer<Delete>(new Delete(m_table));
 }
 
-QSharedPointer<Select> Sql::getSelectSql(const QString &table)throw(ErrorInfo)
+QSharedPointer<Select> Sql::getSelectSql(const QString &table)
 {
    if(!table.isEmpty()){
       TableIdentifier targetTable(table);
       return QSharedPointer<Select>(new Select(targetTable));
    }
    return QSharedPointer<Select>(new Select(m_table));
+}
+
+QSharedPointer<Insert> Sql::getInsertSql(const QString &table)
+{
+   if(!table.isEmpty()){
+      TableIdentifier targetTable(table);
+      return QSharedPointer<Insert>(new Insert(targetTable));
+   }
+   return QSharedPointer<Insert>(new Insert(m_table));
 }
 
 QString Sql::buildSqlString(QSharedPointer<AbstractSql> sqlObject)

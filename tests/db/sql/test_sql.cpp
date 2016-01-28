@@ -2,6 +2,7 @@
 #include <QtTest/QtTest>
 #include "db/sql/sql.h"
 #include "db/sql/delete.h"
+#include "db/sql/insert.h"
 #include "db/sql/table_identifier.h"
 #include "db/sql/abstract_sql.h"
 #include "db/sql/predicate/predicate.h"
@@ -23,6 +24,7 @@ namespace db{
 using sn::corelib::db::sql::Sql;
 using sn::corelib::db::sql::Delete;
 using sn::corelib::db::sql::Select;
+using sn::corelib::db::sql::Insert;
 using sn::corelib::db::sql::TableIdentifier;
 using sn::corelib::db::sql::AbstractSql;
 using sn::corelib::db::sql::AbstractPreparableSql;
@@ -334,6 +336,30 @@ void TestSql::testSubSelect()
    }
 }
 
+void TestSql::testInsertSql()
+{
+   try{
+      Sql sql(m_engine, "userinfo");
+      {
+         QSharedPointer<Insert> insertSql = sql.getInsertSql();
+         insertSql->values({
+                              {"name", "softboy"},
+                              {"age", 21}
+                           });
+         //qDebug() << sql.buildSqlString(insertSql);
+         QCOMPARE(sql.buildSqlString(insertSql), QString("INSERT INTO `userinfo` (`age`, `name`) VALUES (21, 'softboy')"));
+      }
+      {
+         QSharedPointer<Insert> insertSql = sql.getInsertSql();
+         QSharedPointer<Select> selectSql(new Select("meta"));
+         insertSql->values(selectSql);
+         //qDebug() << sql.buildSqlString(insertSql);
+         QCOMPARE(sql.buildSqlString(insertSql), QString("INSERT INTO `userinfo`  SELECT `meta`.* FROM `meta`"));
+      }
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
 
 }//db
 }//corelibtest

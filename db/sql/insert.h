@@ -26,12 +26,19 @@ public:
    const static QString SPECIFICATION_SELECT;
    const static QString VALUES_MERGE;
    const static QString VALUES_SET;
+   struct RawState
+   {
+      TableIdentifier table;
+      QStringList columns;
+      QList<QVariant> values;
+   };
+   
 public:
 public:
-   friend ProcessResultPointerType select_process_select(AbstractSql *self,const Engine &engine, 
+   friend ProcessResultPointerType insert_process_select(AbstractSql *self,const Engine &engine, 
                                                          ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                          QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
-   friend ProcessResultPointerType select_process_insert(AbstractSql *self,const Engine &engine, 
+   friend ProcessResultPointerType insert_process_insert(AbstractSql *self,const Engine &engine, 
                                                          ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
                                                          QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
@@ -39,11 +46,15 @@ public:
    Insert(const QString &table, const QString &schema = QString());
    Insert& into(const TableIdentifier &table = TableIdentifier());
    Insert& into(const QString &table, const QString &schema = QString());
-   Insert& addColumn(const QString &columnName, const QVariant &value);
+   Insert& addColumn(const QString &name, const QVariant &value);
+   Insert& removeColumn(const QString &name);
+   QVariant getColumn(const QString &name);
+   bool hasColumn(const QString &name);
    Insert& columns(const QMap<QString, QVariant> &columns);
    Insert& select(QSharedPointer<Select> select);
    Insert& values(const QMap<QString, QVariant> &values, const QString flag = Insert::VALUES_SET)throw(ErrorInfo);
    Insert& values(const QSharedPointer<Select> &select, const QString flag = Insert::VALUES_SET)throw(ErrorInfo);
+   RawState getRawState()const;
 protected:
    TableIdentifier m_table;
    QSharedPointer<Select> m_select;
