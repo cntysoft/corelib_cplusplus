@@ -413,6 +413,8 @@ QString AbstractSql::resolveTable(const QVariant &vtable, const Engine &engine, 
    return tableName;
 }
 
+AbstractSql::~AbstractSql()
+{}
 
 }//sql
 }//db

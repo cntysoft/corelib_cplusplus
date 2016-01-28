@@ -50,6 +50,7 @@ public:
    using SpecificationFuncPtr = ProcessResultPointerType (*)(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResultPointerType> &parameters);
 public:
    virtual QString getSqlString(const Engine &engine);
+   virtual ~AbstractSql();
 protected:
    QString buildSqlString(const Engine &engine, ParameterContainer *parameterContainer = nullptr);
    QString createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters)throw(ErrorInfo);
