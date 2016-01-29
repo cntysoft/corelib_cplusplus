@@ -24,6 +24,7 @@ public:
    QPair<QString, QString> getTableAndSchema()const;
    bool isNull()const;
    TableIdentifier& reset();
+   QString toString()const;
 protected:
    QString m_table;
    QString m_schema;

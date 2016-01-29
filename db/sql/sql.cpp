@@ -90,6 +90,16 @@ QSharedPointer<Update> Sql::getUpdateSql(const QString &table)
    return QSharedPointer<Update>(new Update(m_table));
 }
 
+QSharedPointer<CreateTable> Sql::getCreateTableSql(const QString &table)
+{
+   if(!table.isEmpty()){
+      TableIdentifier targetTable(table);
+      return QSharedPointer<CreateTable>(new CreateTable(targetTable));
+   }
+   return QSharedPointer<CreateTable>(new CreateTable(m_table));
+}
+
+
 QString Sql::buildSqlString(QSharedPointer<AbstractSql> sqlObject)
 {
    return m_platfrom.setSubject(sqlObject).getSqlString(m_engine);

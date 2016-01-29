@@ -101,16 +101,26 @@ QString SN_CORELIB_EXPORT format_str(const QString &format, const QStringList &a
    if(args.isEmpty()){
       result = format;
    }else if(args.size() <= 9){
-      format_str_cycle(format, args, result);
+      result = format;
+      int total = 0;
+      QRegularExpression regex("%\\d+|%s");
+      QRegularExpressionMatchIterator it = regex.globalMatch(format);
+      while(it.hasNext()){
+         QRegularExpressionMatch mret = it.next();
+         result.replace(mret.capturedStart(), mret.capturedLength(), QString("%%1").arg(total+1));
+         total++;
+      }
+      
+      format_str_cycle(result, args, result);
    }else{
-      QRegularExpression regex("%\\d+");
+      QRegularExpression regex("%\\d+|%s");
       QRegularExpressionMatchIterator it = regex.globalMatch(format);
       result = format;
       int total = 0;
       int cycle = 0;
       while(it.hasNext()){
          QRegularExpressionMatch mret = it.next();
-         result.replace(mret.capturedTexts().first(), QString("%%1").arg(total+1));
+         result.replace(mret.capturedStart(), mret.capturedLength(), QString("%%1").arg(total+1));
          int mod = total % 9;
          if(0 == mod){
             cycle++;

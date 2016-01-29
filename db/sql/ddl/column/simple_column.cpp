@@ -39,6 +39,27 @@ Blob::Blob(const QString &name, const QVariant & length, bool nullable,
    m_type = "BLOB";
 }
 
+Char::Char(const QString &name, const QVariant & length, bool nullable,
+           const QVariant &defaultValue, const QMap<QString, QVariant> &options)
+   : AbstractLengthColumn(name, length, nullable, defaultValue, options)
+{
+   m_type = "CHAR";
+}
+
+Varchar::Varchar(const QString &name, const QVariant & length, bool nullable,
+           const QVariant &defaultValue, const QMap<QString, QVariant> &options)
+   : AbstractLengthColumn(name, length, nullable, defaultValue, options)
+{
+   m_type = "VARCHAR";
+}
+
+Text::Text(const QString &name, const QVariant & length, bool nullable,
+           const QVariant &defaultValue, const QMap<QString, QVariant> &options)
+   : AbstractLengthColumn(name, length, nullable, defaultValue, options)
+{
+   m_type = "TEXT";
+}
+
 Boolean::Boolean(const QString &name, bool nullable, const QVariant &defaultValue, 
                  const QMap<QString, QVariant> &options)
    : AbstractColumn(name, nullable, defaultValue, options)
@@ -53,13 +74,6 @@ Boolean& Boolean::setNullable()
    return *this;
 }
 
-Char::Char(const QString &name, const QVariant & length, bool nullable,
-           const QVariant &defaultValue, const QMap<QString, QVariant> &options)
-   : AbstractLengthColumn(name, length, nullable, defaultValue, options)
-{
-   m_type = "CHAR";
-}
-
 Date::Date(const QString &name, bool nullable, const QVariant &defaultValue, 
            const QMap<QString, QVariant> &options)
    : AbstractColumn(name, nullable, defaultValue, options)
@@ -68,13 +82,41 @@ Date::Date(const QString &name, bool nullable, const QVariant &defaultValue,
 }
 
 Datetime::Datetime(const QString &name, bool nullable, const QVariant &defaultValue, 
-           const QMap<QString, QVariant> &options)
+                   const QMap<QString, QVariant> &options)
    : AbstractColumn(name, nullable, defaultValue, options)
 {
    m_type = "DATE";
 }
 
+Time::Time(const QString &name, bool nullable, const QVariant &defaultValue, 
+                   const QMap<QString, QVariant> &options)
+   : AbstractColumn(name, nullable, defaultValue, options)
+{
+   m_type = "TIME";
+}
 
+Timestamp::Timestamp(const QString &name, bool nullable, const QVariant &defaultValue, 
+                     const QMap<QString, QVariant> &options)
+   : AbstractTimestampColumn(name, nullable, defaultValue, options)
+{
+   
+}
+
+Decimal::Decimal(const QString &name, const QVariant &digits, 
+                 const QVariant &decimal, bool nullable, const QVariant &defaultValue, 
+                 const QMap<QString, QVariant> &options)
+   :AbstractPrecisionColumn(name, digits, decimal, nullable, defaultValue, options)
+{
+   m_type = "DECIMAL";
+}
+
+Float::Float(const QString &name, const QVariant &digits, 
+             const QVariant &decimal, bool nullable, const QVariant &defaultValue, 
+             const QMap<QString, QVariant> &options)
+   :AbstractPrecisionColumn(name, digits, decimal, nullable, defaultValue, options)
+{
+   m_type = "DECIMAL";
+}
 
 }//column
 }//ddl

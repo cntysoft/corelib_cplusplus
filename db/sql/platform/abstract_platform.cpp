@@ -24,28 +24,32 @@ AbstractPlatform& AbstractPlatform::setTypeDecorator(const QString &type, QShare
    return *this;
 }
 
-QMap<QString, QSharedPointer<AbstractSql>>& AbstractPlatform::getDecorators()
+AbstractPlatform::DecoratorPoolType AbstractPlatform::getDecorators()const
 {
    return m_decorators;
 }
 
 QSharedPointer<AbstractSql> AbstractPlatform::getTypeDecorator(QSharedPointer<AbstractSql> subject)
 {
-//   QString className(subject->metaObject()->className());
-//   DecoratorPoolType::const_iterator it = m_decorators.cbegin();
-//   while(it != m_decorators.cend()){
-//      if(className == it.key()){
-//         return it.value();
-//      }
-//      it++;
-//   }
+   DecoratorPoolType::const_iterator it = m_decorators.cbegin();
+   while(it != m_decorators.cend()){
+      QSharedPointer<AbstractSql> decorator = it.value();
+      if(it.key() == decorator->getDecoratorClassName()){
+         decorator->setSubject(subject);
+         return decorator;
+      }
+      it++;
+   }
    return subject;
 }
 
-QString AbstractPlatform::getSqlString(Engine &engine)
+QString AbstractPlatform::getSqlString(Engine&)
 {
-   return QString("asdasdas");
+   return QString();
 }
+
+AbstractPlatform::~AbstractPlatform()
+{}
 
 }//platform
 }//sql

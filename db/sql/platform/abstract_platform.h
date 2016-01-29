@@ -27,8 +27,10 @@ public:
    virtual AbstractPlatform& setSubject(QSharedPointer<AbstractSql> subject);
    AbstractPlatform& setTypeDecorator(const QString& type, QSharedPointer<AbstractSql> decorator);
    QSharedPointer<AbstractSql> getTypeDecorator(QSharedPointer<AbstractSql> subject);
-   QMap<QString, QSharedPointer<AbstractSql>>& getDecorators();
+public:
    virtual QString getSqlString(Engine &engine);
+   virtual DecoratorPoolType getDecorators()const;
+   virtual ~AbstractPlatform();
 protected:
    QSharedPointer<AbstractSql> m_subject;
    DecoratorPoolType m_decorators;

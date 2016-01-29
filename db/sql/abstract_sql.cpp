@@ -229,11 +229,15 @@ QString AbstractSql::processSubSelect(QSharedPointer<Select> subSelect, const En
    return decorator->buildSqlString(engine, parameterContainer);
 }
 
-
-
 QString AbstractSql::getSqlString(const Engine &engine)
 {
    return buildSqlString(engine);
+}
+
+AbstractSql& AbstractSql::setSubject(QSharedPointer<AbstractSql> subject)
+{
+   m_subject = subject;
+   return *this;
 }
 
 QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> expression, const engine::Engine &engine, 
@@ -308,77 +312,14 @@ QString AbstractSql::processExpression(const QSharedPointer<AbstractExpression> 
             }
             strValues.insert(vIndex, engine.quoteValue(value));
          }else if(type == AbstractExpression::TYPE_LITERAL){
-            strValues[vIndex] = value.toString();
+            strValues.insert(vIndex, value.toString());
          }
       }
       // After looping the values, interpolate them into the sql string
       // (they might be placeholder names, or values)
       
       QString tpl = subParts[0].toString();
-      switch (valueCount) {
-      case 1:
-      {
-         tpl = tpl.arg(strValues.at(0));
-         break;
-      }
-      case 2:
-      {
-         tpl = tpl.arg(strValues.at(0), strValues.at(1));
-         break;
-      }
-      case 3:
-      {
-         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
-                       strValues.at(2));
-         break;
-      }
-      case 4:
-      {
-         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
-                       strValues.at(2), strValues.at(3));
-         break;
-      }
-      case 5:
-      {
-         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
-                       strValues.at(2), strValues.at(3),
-                       strValues.at(4));
-         break;
-      }
-      case 6:
-      {
-         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
-                       strValues.at(2), strValues.at(3),
-                       strValues.at(4), strValues.at(5));
-         break;
-      }
-      case 7:
-      {
-         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
-                       strValues.at(2), strValues.at(3),
-                       strValues.at(4), strValues.at(5),
-                       strValues.at(6));
-         break;
-      }
-      case 8:
-      {
-         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
-                       strValues.at(2), strValues.at(3),
-                       strValues.at(4), strValues.at(5),
-                       strValues.at(6), strValues.at(7));
-         break;
-      }
-      case 9:
-      {
-         tpl = tpl.arg(strValues.at(0), strValues.at(1), 
-                       strValues.at(2), strValues.at(3),
-                       strValues.at(4), strValues.at(5),
-                       strValues.at(6), strValues.at(7),
-                       strValues.at(8));
-         break;
-      }
-      }
-      sql += tpl;
+      sql += format_str(tpl, strValues);
    }
    return sql;
 }
@@ -411,6 +352,11 @@ QString AbstractSql::resolveTable(const QVariant &vtable, const Engine &engine, 
       tableName = engine.quoteTableName(schema)+engine.getIdentifierSeparator()+tableName;
    }
    return tableName;
+}
+
+QString AbstractSql::getDecoratorClassName()const
+{
+   return QString();
 }
 
 AbstractSql::~AbstractSql()

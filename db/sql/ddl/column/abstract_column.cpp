@@ -15,7 +15,7 @@ AbstractColumn::AbstractColumn(const QString &name, bool nullable, const QVarian
      m_isNullable(nullable),
      m_name(name),
      m_options(options),
-     m_specification("%1 %2"),
+     m_specification("%s %s"),
      m_type("INTEGER")
 {
 }
@@ -74,17 +74,17 @@ AbstractColumn& AbstractColumn::addConstraint(const QSharedPointer<AbstractConst
 AbstractExpression::ExpressionDataType AbstractColumn::getExpressionData()const
 {
    QString spec(m_specification);
-   QStringList params;
+   QList<QVariant> params;
    params.append(m_name);
    params.append(m_type);
-   QStringList types{
+   QList<QVariant> types{
       AbstractColumn::TYPE_IDENTIFIER, AbstractColumn::TYPE_LITERAL
    };
    if(!m_isNullable){
       spec += " NOT NULL";
    }
    if(!m_default.isNull()){
-      spec += " DEFAULT %3";
+      spec += " DEFAULT %s";
    }
    QList<QVariant> data{
       QList<QVariant>{
@@ -197,9 +197,16 @@ AbstractPrecisionColumn& AbstractPrecisionColumn::setDecimal(int decimal)
 QString AbstractPrecisionColumn::getLengthExpression()const
 {
    if(!m_decimal.isNull()){
-      return QString("%1,%2").arg(m_length.toInt(), m_decimal.toInt());
+      return QString("%1, %2").arg(m_length.toInt(), m_decimal.toInt());
    }
    return QString("%1").arg(m_length.toInt());
+}
+
+AbstractTimestampColumn::AbstractTimestampColumn(const QString &name, bool nullable, const QVariant &defaultValue, 
+                                                 const QMap<QString, QVariant> &options)
+   : AbstractColumn(name, nullable, defaultValue, options)
+{
+   
 }
 
 }//column

@@ -65,6 +65,9 @@ protected:
 class SN_CORELIB_EXPORT AbstractTimestampColumn : public AbstractColumn
 {
 public:
+   AbstractTimestampColumn(const QString &name = QString(), bool nullable = false,
+                  const QVariant &defaultValue = QVariant(), const QMap<QString, QVariant> &options = QMap<QString, QVariant>());
+public:
    virtual ExpressionDataType getExpressionData() const;
 };
 

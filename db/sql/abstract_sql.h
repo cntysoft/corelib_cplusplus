@@ -49,7 +49,11 @@ public:
    using ProcessResultPointerType = QSharedPointer<ProcessResult>;
    using SpecificationFuncPtr = ProcessResultPointerType (*)(AbstractSql *self, const Engine &engine, ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, QMap<QString, ProcessResultPointerType> &parameters);
 public:
+   AbstractSql& setSubject(QSharedPointer<AbstractSql> subject);
+public:
    virtual QString getSqlString(const Engine &engine);
+   //内部使用
+   virtual QString getDecoratorClassName()const;
    virtual ~AbstractSql();
 protected:
    QString buildSqlString(const Engine &engine, ParameterContainer *parameterContainer = nullptr);
@@ -66,6 +70,7 @@ protected:
                              QString namedParameterPrefix = QString());
    QString resolveColumnValue(const QVariant &column, const Engine &engine,
                               ParameterContainer *parameterContainer = nullptr, QString namedParameterPrefix = QString());
+protected:
    virtual QString processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
                             ParameterContainer *parameterContainer = nullptr)throw(ErrorInfo);
 protected:
@@ -74,6 +79,7 @@ protected:
    QMap<QString, QVariant> m_processInfo;
    QMap<QString, int> m_instanceParameterIndex;
    QMap<QString, SpecificationFuncPtr> m_specificationFnPtrs;
+   QSharedPointer<AbstractSql> m_subject;
 };
 
 }//sql

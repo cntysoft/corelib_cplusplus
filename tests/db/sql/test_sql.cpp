@@ -4,6 +4,8 @@
 #include "db/sql/delete.h"
 #include "db/sql/insert.h"
 #include "db/sql/update.h"
+#include "db/sql/ddl/column/simple_column.h"
+#include "db/sql/ddl/create_table.h"
 #include "db/sql/table_identifier.h"
 #include "db/sql/abstract_sql.h"
 #include "db/sql/predicate/predicate.h"
@@ -32,12 +34,14 @@ using sn::corelib::db::sql::AbstractSql;
 using sn::corelib::db::sql::AbstractPreparableSql;
 using sn::corelib::db::sql::predicate::PredicateSet;
 using sn::corelib::instanceof;
+using sn::corelib::format_str;
 using sn::corelib::db::sql::Where;
 using sn::corelib::db::sql::Having;
 using sn::corelib::db::sql::AbstractExpression;
 using sn::corelib::db::sql::Expression;
 using sn::corelib::ErrorInfo;
-
+using sn::corelib::db::sql::ddl::CreateTable;
+using namespace sn::corelib::db::sql::ddl::column;
 
 
 TestSql::TestSql()
@@ -380,6 +384,20 @@ void TestSql::testUpdateSql()
          //QCOMPARE(sql.buildSqlString(updateSql), QString("UPDATE `userinfo` SET `age` = 21, `name` = 'softboy' WHERE `name` = 'sheneninfo'"));
       }
       
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
+
+void TestSql::testCreateTable()
+{
+   Sql sql(m_engine, "userinfo");
+   try{
+      QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
+      createTableSql->addColumn(QSharedPointer<Date>(new Date("inputTime", true)));
+      createTableSql->addColumn(QSharedPointer<Text>(new Text("content")));
+      //qDebug() << createTableSql->getSqlString(m_engine);
+      QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    `inputTime` DATE,\n    `content` TEXT NOT NULL \n)"));
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

@@ -26,9 +26,12 @@ public:
    virtual QString getSqlString(Engine &engine);
    Platform& setTypeDecorator(const QString& type, QSharedPointer<AbstractSql> decorator, Engine::PlatformType platformType);
    Platform& setTypeDecorator(const QString& type, QSharedPointer<AbstractSql> decorator);
+public:
+   virtual DecoratorPoolType getDecorators()const;
 protected:
    Engine& m_engine;
    QMap<Engine::PlatformType, DecoratorPoolType> m_decorators;
+   Engine::PlatformType m_defaultPlatform;
 };
 
 

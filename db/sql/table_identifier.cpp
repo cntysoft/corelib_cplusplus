@@ -59,6 +59,18 @@ TableIdentifier& TableIdentifier::reset()
    return *this;
 }
 
+QString TableIdentifier::toString()const
+{
+   QString ret;
+   if(!m_schema.isEmpty()){
+      ret += m_schema+".";
+   }
+   if(!m_table.isEmpty()){
+      ret += m_table;
+   }
+   return ret;
+}
+
 }//sql
 }//db
 }//corelib
