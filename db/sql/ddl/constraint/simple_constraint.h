@@ -43,6 +43,31 @@ public:
    UniqueKey(const QStringList &columns = QStringList(), const QString &name = QString());
 };
 
+class SN_CORELIB_EXPORT ForeignKey : public AbstractConstraint
+{
+public:
+   ForeignKey(const QString &name, const QStringList columns, 
+              const QString &referenceTable, const QStringList &referenceColumn,
+              const QString &onDeleteRule = QString(), const QString &onUpdateRule = QString());
+   ForeignKey& setReferenceTable(const QString &referenceTable);
+   const QString& getReferenceTable()const;
+   ForeignKey& setReferenceColumn(const QStringList &referenceColumn);
+   const QStringList& getReferenceColumn()const;
+   ForeignKey& setOnDeleteRule(const QString &onDeleteRule);
+   const QString& getOnDeleteRule()const;
+   ForeignKey& setOnUpdateRule(const QString &onUpdateRule);
+   const QString& getOnUpdateRule()const;
+public:
+   virtual ExpressionDataType getExpressionData()const;
+protected:
+   QString m_onDeleteRule;
+   QString m_onUpdateRule;
+   QStringList m_referenceColumn;
+   QString m_referenceTable;
+   QStringList m_referenceSpecification;
+   
+};
+
 
 }//constraint
 }//ddl

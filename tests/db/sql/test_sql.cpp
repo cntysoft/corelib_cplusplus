@@ -403,10 +403,11 @@ void TestSql::testCreateTable()
 //      }
       {
          QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
-         createTableSql->addConstraint(QSharedPointer<Check>(new Check(QString("name > 1"), QString("name_check"))));
-         createTableSql->addConstraint(QSharedPointer<PrimaryKey>(new PrimaryKey({"name", "age"}, "primaryKey")));
-         //qDebug() << createTableSql->getSqlString(m_engine);
-         QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    CONSTRAINT `name_check` CHECK (name > 1),\n    CONSTRAINT `primaryKey` PRIMARY KEY (`name`, `age`) \n)"));
+         //createTableSql->addConstraint(QSharedPointer<Check>(new Check(QString("name > 1"), QString("name_check"))));
+//         createTableSql->addConstraint(QSharedPointer<PrimaryKey>(new PrimaryKey({"name", "age"}, "primaryKey")));
+         createTableSql->addConstraint(QSharedPointer<ForeignKey>(new ForeignKey("foreign", {"user_id", "address_id"}, "meta", {"id", "aid"})));
+         qDebug() << createTableSql->getSqlString(m_engine);
+         //QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    CONSTRAINT `name_check` CHECK (name > 1),\n    CONSTRAINT `primaryKey` PRIMARY KEY (`name`, `age`) \n)"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
