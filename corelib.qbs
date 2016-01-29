@@ -160,6 +160,8 @@ Product
            "sql/ddl/column/simple_column.h",
            "sql/ddl/constraint/abstract_constraint.cpp",
            "sql/ddl/constraint/abstract_constraint.h",
+           "sql/ddl/constraint/simple_constraint.cpp",
+           "sql/ddl/constraint/simple_constraint.h",
            "sql/ddl/create_table.cpp",
            "sql/ddl/create_table.h",
            "sql/delete.cpp",

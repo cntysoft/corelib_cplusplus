@@ -82,8 +82,9 @@ AbstractSql::ProcessResultPointerType createtable_process_constraints(AbstractSq
       result->isNull = true;
       return result;
    }
+   result->isNull = false;
    result->type = AbstractSql::ProcessResultType::Array;
-   QStringList sqls;
+   QList<QVariant> sqls;
    std::for_each(createSql->m_constraints.cbegin(), createSql->m_constraints.cend(), [&sqls, &createSql, &engine](const QSharedPointer<AbstractConstraint> &constraint){
       sqls.append(createSql->processExpression(constraint, engine));
    });
@@ -134,10 +135,12 @@ CreateTable::CreateTable(const TableIdentifier &table, bool isTemporary)
    QVariant constraintSpecs{
       QMap<QString, QVariant>{
          {
-            "\n    %1", 
-            QMap<QString, QVariant>{
-               {"1" , "%1"},
-               {"combinedby", ",\n    "}
+            "\n    %1",
+            QList<QVariant>{
+               QMap<QString, QVariant>{
+                  {"1" , "%1"},
+                  {"combinedby", ",\n    "}
+               }
             }
          }
       }
@@ -187,7 +190,7 @@ CreateTable& CreateTable::addColumn(QSharedPointer<AbstractColumn> column)
    return *this;
 }
 
-CreateTable& CreateTable::addConstraint(QSharedPointer<AbstractConstraint> &constraint)
+CreateTable& CreateTable::addConstraint(QSharedPointer<AbstractConstraint> constraint)
 {
    m_constraints.append(constraint);
    return *this;

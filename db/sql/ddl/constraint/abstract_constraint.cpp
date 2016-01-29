@@ -1,4 +1,5 @@
 #include "abstract_constraint.h"
+#include "global/common_funcs.h"
 
 namespace sn{
 namespace corelib{
@@ -6,6 +7,8 @@ namespace db{
 namespace sql{
 namespace ddl{
 namespace constraint{
+
+using sn::corelib::format_str;
 
 AbstractConstraint::AbstractConstraint(const QStringList &columns, const QString &name)
    : m_columnSpecification(" (%s)"),
@@ -47,8 +50,8 @@ AbstractConstraint& AbstractConstraint::addColumn(const QString &column)
 AbstractExpression::ExpressionDataType AbstractConstraint::getExpressionData()const
 {
    int colCount = m_columns.size();
-   QStringList newSpecTypes;
-   QStringList values;
+   QList<QVariant> newSpecTypes;
+   QList<QVariant> values;
    QString newSpec;
    if(!m_name.isEmpty()){
       newSpec += m_namedSpecification;
@@ -57,13 +60,15 @@ AbstractExpression::ExpressionDataType AbstractConstraint::getExpressionData()co
    }
    newSpec += m_specification;
    if(colCount > 0){
-      values.append(m_columns);
+      std::for_each(m_columns.cbegin(), m_columns.cend(), [&values](const QString &column){
+         values.append(column);
+      });
       QStringList newSpecParts;
       for(int i = 0; i < colCount; i++){
          newSpecParts.append("%s");
          newSpecTypes.append(AbstractExpression::TYPE_IDENTIFIER);
       }
-      newSpec += QString(m_columnSpecification).arg(newSpecParts.join(", "));
+      newSpec += format_str(m_columnSpecification, {newSpecParts.join(", ")});
    }
    return QList<QVariant>{
       QList<QVariant>{

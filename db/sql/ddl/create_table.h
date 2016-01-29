@@ -59,7 +59,7 @@ public:
    CreateTable& setTable(const TableIdentifier &table = TableIdentifier());
    CreateTable& setTable(const QString &table, const QString &schema = QString());
    CreateTable& addColumn(QSharedPointer<AbstractColumn> column);
-   CreateTable& addConstraint(QSharedPointer<AbstractConstraint> &constraint);
+   CreateTable& addConstraint(QSharedPointer<AbstractConstraint> constraint);
    RawState getRawState()const;
 protected:
    TableIdentifier m_table;
