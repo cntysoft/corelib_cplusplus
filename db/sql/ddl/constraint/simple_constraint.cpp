@@ -64,7 +64,7 @@ ForeignKey::ForeignKey(const QString &name, const QStringList columns,
      m_onUpdateRule(onUpdateRule),
      m_referenceColumn(referenceColumn),
      m_referenceTable(referenceTable),
-     m_referenceSpecification({"REFERENCES %s ", "ON DELETE %s ON UPDATE %s"})
+     m_referenceSpecification({"REFERENCES %s ", " ON DELETE %s ON UPDATE %s"})
 {
    m_columnSpecification = "FOREIGN KEY (%s) ";
 }

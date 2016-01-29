@@ -99,6 +99,15 @@ QSharedPointer<CreateTable> Sql::getCreateTableSql(const QString &table)
    return QSharedPointer<CreateTable>(new CreateTable(m_table));
 }
 
+QSharedPointer<DropTable> Sql::getDropTableSql(const QString &table)
+{
+   if(!table.isEmpty()){
+      TableIdentifier targetTable(table);
+      return QSharedPointer<DropTable>(new DropTable(targetTable));
+   }
+   return QSharedPointer<DropTable>(new DropTable(m_table));
+}
+
 
 QString Sql::buildSqlString(QSharedPointer<AbstractSql> sqlObject)
 {

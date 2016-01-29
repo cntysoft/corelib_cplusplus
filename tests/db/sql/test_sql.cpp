@@ -7,6 +7,7 @@
 #include "db/sql/ddl/column/simple_column.h"
 #include "db/sql/ddl/constraint/simple_constraint.h"
 #include "db/sql/ddl/create_table.h"
+#include "db/sql/ddl/drop_table.h"
 #include "db/sql/table_identifier.h"
 #include "db/sql/abstract_sql.h"
 #include "db/sql/predicate/predicate.h"
@@ -42,6 +43,7 @@ using sn::corelib::db::sql::AbstractExpression;
 using sn::corelib::db::sql::Expression;
 using sn::corelib::ErrorInfo;
 using sn::corelib::db::sql::ddl::CreateTable;
+using sn::corelib::db::sql::ddl::DropTable;
 using namespace sn::corelib::db::sql::ddl::column;
 using namespace sn::corelib::db::sql::ddl::constraint;
 
@@ -394,17 +396,17 @@ void TestSql::testCreateTable()
 {
    Sql sql(m_engine, "userinfo");
    try{
-//      {
-//         QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
-//         createTableSql->addColumn(QSharedPointer<Date>(new Date("inputTime", true)));
-//         createTableSql->addColumn(QSharedPointer<Text>(new Text("content")));
-//         qDebug() << createTableSql->getSqlString(m_engine);
-//         //QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    `inputTime` DATE,\n    `content` TEXT NOT NULL \n)"));
-//      }
+      //      {
+      //         QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
+      //         createTableSql->addColumn(QSharedPointer<Date>(new Date("inputTime", true)));
+      //         createTableSql->addColumn(QSharedPointer<Text>(new Text("content")));
+      //         qDebug() << createTableSql->getSqlString(m_engine);
+      //         //QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    `inputTime` DATE,\n    `content` TEXT NOT NULL \n)"));
+      //      }
       {
          QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
          //createTableSql->addConstraint(QSharedPointer<Check>(new Check(QString("name > 1"), QString("name_check"))));
-//         createTableSql->addConstraint(QSharedPointer<PrimaryKey>(new PrimaryKey({"name", "age"}, "primaryKey")));
+         //         createTableSql->addConstraint(QSharedPointer<PrimaryKey>(new PrimaryKey({"name", "age"}, "primaryKey")));
          createTableSql->addConstraint(QSharedPointer<ForeignKey>(new ForeignKey("foreign", {"user_id", "address_id"}, "meta", {"id", "aid"})));
          qDebug() << createTableSql->getSqlString(m_engine);
          //QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    CONSTRAINT `name_check` CHECK (name > 1),\n    CONSTRAINT `primaryKey` PRIMARY KEY (`name`, `age`) \n)"));
@@ -413,6 +415,21 @@ void TestSql::testCreateTable()
       qDebug() << exp.toString();
    }
 }
+
+void TestSql::testDropTable()
+{
+   Sql sql(m_engine, TableIdentifier("userinfo", "ds"));
+   try{
+      {
+         QSharedPointer<DropTable> dropTableSql = sql.getDropTableSql();
+         qDebug() << dropTableSql->getSqlString(m_engine);
+         QCOMPARE(dropTableSql->getSqlString(m_engine), QString("DROP TABLE `ds`.`userinfo`"));
+      }
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
+
 
 }//db
 }//corelibtest

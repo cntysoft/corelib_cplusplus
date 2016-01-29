@@ -164,6 +164,8 @@ Product
            "sql/ddl/constraint/simple_constraint.h",
            "sql/ddl/create_table.cpp",
            "sql/ddl/create_table.h",
+           "sql/ddl/drop_table.cpp",
+           "sql/ddl/drop_table.h",
            "sql/delete.cpp",
            "sql/delete.h",
            "sql/expression.cpp",
