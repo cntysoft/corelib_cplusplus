@@ -151,6 +151,11 @@ AbstractExpression::ExpressionDataType AbstractTimestampColumn::getExpressionDat
       params.append(m_default.toString());
       types.append(AbstractExpression::TYPE_VALUE);
    }
+   if(m_options.contains("on_update")){
+      spec += " %s";
+      params.append("ON UPDATE CURRENT_TIMESTAMP");
+      types.append(AbstractExpression::TYPE_LITERAL);
+   }
    QList<QVariant> data{
       QList<QVariant>{
          spec, params, types

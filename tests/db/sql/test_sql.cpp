@@ -396,20 +396,21 @@ void TestSql::testCreateTable()
 {
    Sql sql(m_engine, "userinfo");
    try{
-      //      {
-      //         QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
-      //         createTableSql->addColumn(QSharedPointer<Date>(new Date("inputTime", true)));
-      //         createTableSql->addColumn(QSharedPointer<Text>(new Text("content")));
-      //         qDebug() << createTableSql->getSqlString(m_engine);
-      //         //QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    `inputTime` DATE,\n    `content` TEXT NOT NULL \n)"));
-      //      }
       {
          QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
-         //createTableSql->addConstraint(QSharedPointer<Check>(new Check(QString("name > 1"), QString("name_check"))));
-         //         createTableSql->addConstraint(QSharedPointer<PrimaryKey>(new PrimaryKey({"name", "age"}, "primaryKey")));
+         createTableSql->addColumn(QSharedPointer<Date>(new Date("inputTime", true)));
+         createTableSql->addColumn(QSharedPointer<Text>(new Text("content")));
+         createTableSql->addColumn(QSharedPointer<Timestamp>(new Timestamp("inputTime", false, 12123, {{"on_update", "cascade"}})));
+         //qDebug() << createTableSql->getSqlString(m_engine);
+         QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    `inputTime` DATE,\n    `content` TEXT NOT NULL,\n    `inputTime` TIMESTAMP NOT NULL DEFAULT '12123' ON UPDATE CURRENT_TIMESTAMP \n)"));
+      }
+      {
+         QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
+         createTableSql->addConstraint(QSharedPointer<Check>(new Check(QString("name > 1"), QString("name_check"))));
+         createTableSql->addConstraint(QSharedPointer<PrimaryKey>(new PrimaryKey({"name", "age"}, "primaryKey")));
          createTableSql->addConstraint(QSharedPointer<ForeignKey>(new ForeignKey("foreign", {"user_id", "address_id"}, "meta", {"id", "aid"})));
-         qDebug() << createTableSql->getSqlString(m_engine);
-         //QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    CONSTRAINT `name_check` CHECK (name > 1),\n    CONSTRAINT `primaryKey` PRIMARY KEY (`name`, `age`) \n)"));
+         //qDebug() << createTableSql->getSqlString(m_engine);
+         QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    CONSTRAINT `name_check` CHECK (name > 1),\n    CONSTRAINT `primaryKey` PRIMARY KEY (`name`, `age`),\n    CONSTRAINT `foreign` FOREIGN KEY (`user_id`, `address_id`) REFERENCES `meta` (`id`, `aid`) ON DELETE  ON UPDATE  \n)"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();

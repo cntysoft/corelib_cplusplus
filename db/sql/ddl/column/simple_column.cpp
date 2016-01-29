@@ -99,7 +99,7 @@ Timestamp::Timestamp(const QString &name, bool nullable, const QVariant &default
                      const QMap<QString, QVariant> &options)
    : AbstractTimestampColumn(name, nullable, defaultValue, options)
 {
-   
+   m_type = "TIMESTAMP";
 }
 
 Decimal::Decimal(const QString &name, const QVariant &digits, 
