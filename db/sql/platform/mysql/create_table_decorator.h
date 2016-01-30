@@ -1,5 +1,5 @@
-#ifndef CREATE_TABLE_DECORATOR_H
-#define CREATE_TABLE_DECORATOR_H
+#ifndef SN_CORELIB_DB_SQL_PLATFORM_MYSQL_CREATE_TABLE_DECORATOR_H 
+#define SN_CORELIB_DB_SQL_PLATFORM_MYSQL_CREATE_TABLE_DECORATOR_H
 
 #include "global/global.h"
 #include "db/sql/ddl/create_table.h"
@@ -16,7 +16,7 @@ using sn::corelib::db::sql::ddl::CreateTable;
 class SN_CORELIB_EXPORT CreateTableDecorator : public CreateTable
 {
 public:
-   virtual QString getDecoratorClassName()const;
+   
 };
 
 }//mysql
@@ -26,4 +26,4 @@ public:
 }//corelib
 }//sn
 
-#endif // CREATE_TABLE_DECORATOR_H
+#endif // SN_CORELIB_DB_SQL_PLATFORM_MYSQL_CREATE_TABLE_DECORATOR_H

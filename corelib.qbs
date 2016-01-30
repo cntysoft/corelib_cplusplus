@@ -180,6 +180,8 @@ Product
            "sql/platform/abstract_platform.h",
            "sql/platform/mysql/create_table_decorator.cpp",
            "sql/platform/mysql/create_table_decorator.h",
+           "sql/platform/mysql/select_decorator.cpp",
+           "sql/platform/mysql/select_decorator.h",
            "sql/platform/platform.cpp",
            "sql/platform/platform.h",
            "sql/platform/platform_types.cpp",

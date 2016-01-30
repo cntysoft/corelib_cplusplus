@@ -155,6 +155,7 @@ public:
    const QSharedPointer<Having>& getHaving()const;
    Select& reset(const QString &part)throw(ErrorInfo);
    RawState getRawState()const;
+   virtual QString getDecoratorClassName()const;
 protected:
    QPair<QString, QString> resolveTable(const TableIdentifier &table, const Engine &engine, 
                                         ParameterContainer *parameterContainer = nullptr);
@@ -164,6 +165,8 @@ protected:
                                         const Engine &engine, ParameterContainer *parameterContainer = nullptr);
    using AbstractSql::resolveTable;
    QString renderTable(const QString &table, const QString &alias = QString());
+protected:
+   virtual void localizeVariables();
 protected:
    TableIdentifier m_table;
    bool m_tableReadOnly = false;

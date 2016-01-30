@@ -454,6 +454,18 @@ void TestSql::testAlterTable()
    }
 }
 
+void TestSql::testSelectDecorator()
+{
+   Sql sql(m_engine, TableIdentifier("userinfo", "ds"));
+   try{
+      QSharedPointer<Select> selectSql = sql.getSelectSql();
+      selectSql->offset(12);
+      qDebug() << sql.buildSqlString(selectSql);
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
+
 }//db
 }//corelibtest
 QTEST_MAIN(corelibtest::db::TestSql)

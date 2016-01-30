@@ -205,6 +205,11 @@ CreateTable::RawState CreateTable::getRawState()const
    return state;
 }
 
+QString CreateTable::getDecoratorClassName()const
+{
+   return QString("sn::corelib::db::sql::platform::mysql::CreateTableDecorator");
+}
+
 }//ddl
 }//sql
 }//db

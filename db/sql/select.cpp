@@ -373,7 +373,7 @@ AbstractSql::ProcessResultPointerType select_process_limit(AbstractSql *self,con
       parameterContainer->offsetSet("limit", selectSql->m_limit.toInt(), ParameterContainer::TYPE_INTEGER);
       result->value = QVariant(QList<QVariant>{QVariant(engine.formatParameterName("limit"))});
    }else{
-      result->value = QVariant(QList<QVariant>{QVariant(QVariant(engine.quoteValue(selectSql->m_limit.toInt())))});
+      result->value = QVariant(QList<QVariant>{QVariant(engine.quoteValue(selectSql->m_limit.toInt()))});
    }
    return result;
 }
@@ -898,6 +898,34 @@ Select::RawState Select::getRawState()const
    state.joins = m_joins;
    return state;
 }
+
+QString Select::getDecoratorClassName()const
+{
+   return QString("sn::corelib::db::sql::platform::mysql::SelectDecorator");
+}
+
+void Select::localizeVariables()
+{
+   if(!m_isNeedLocalizeVariables || m_subject.isNull()){
+      return;
+   }
+   AbstractSql::localizeVariables();
+   QSharedPointer<Select> castedSelectSubject = m_subject.dynamicCast<Select>();
+   m_table = castedSelectSubject->m_table;
+   m_tableReadOnly = castedSelectSubject->m_tableReadOnly;
+   m_prefixColumnsWithTable = castedSelectSubject->m_prefixColumnsWithTable;
+   m_quantifier = castedSelectSubject->m_quantifier;
+   m_columns = castedSelectSubject->m_columns;
+   m_where = castedSelectSubject->m_where;
+   m_having = castedSelectSubject->m_having;
+   m_group = castedSelectSubject->m_group;
+   m_order = castedSelectSubject->m_order;
+   m_limit = castedSelectSubject->m_limit;
+   m_offset = castedSelectSubject->m_offset;
+   m_combine = castedSelectSubject->m_combine;
+   m_joins = castedSelectSubject->m_joins;
+}
+
 }//sql
 }//db
 }//corelib

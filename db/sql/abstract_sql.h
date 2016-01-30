@@ -73,6 +73,7 @@ protected:
 protected:
    virtual QString processSubSelect(QSharedPointer<Select> subSelect, const Engine &engine, 
                             ParameterContainer *parameterContainer = nullptr)throw(ErrorInfo);
+   virtual void localizeVariables();
 protected:
    QStringList m_specKeys;
    QMap<QString, QVariant> m_specifications;
@@ -80,6 +81,7 @@ protected:
    QMap<QString, int> m_instanceParameterIndex;
    QMap<QString, SpecificationFuncPtr> m_specificationFnPtrs;
    QSharedPointer<AbstractSql> m_subject;
+   bool m_isNeedLocalizeVariables = false;
 };
 
 }//sql

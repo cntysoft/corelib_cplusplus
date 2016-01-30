@@ -39,19 +39,19 @@ Platform& Platform::setTypeDecorator(const QString &type, QSharedPointer<Abstrac
 
 QSharedPointer<AbstractSql> Platform::getTypeDecorator(QSharedPointer<AbstractSql> subject, Engine::PlatformType platformType)
 {
-//   if(!m_decorators.contains(platformType)){
-//      return subject;
-//   }
-//   DecoratorPoolType& decorators = m_decorators[platformType];
-//   DecoratorPoolType::const_iterator it = decorators.cbegin();
-//   while(it != decorators.cend()){
-//      QSharedPointer<AbstractSql> decorator = it.value();
-//      if(it.key() == decorator->getDecoratorClassName()){
-//         decorator->setSubject(subject);
-//         return decorator;
-//      }
-//      it++;
-//   }
+   if(!m_decorators.contains(platformType)){
+      return subject;
+   }
+   DecoratorPoolType& decorators = m_decorators[platformType];
+   DecoratorPoolType::const_iterator it = decorators.cbegin();
+   while(it != decorators.cend()){
+      QSharedPointer<AbstractSql> decorator = it.value();
+      if(it.key() == subject->getDecoratorClassName()){
+         decorator->setSubject(subject);
+         return decorator;
+      }
+      it++;
+   }
    return subject;
 }
 

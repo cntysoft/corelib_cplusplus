@@ -61,6 +61,7 @@ public:
    CreateTable& addColumn(QSharedPointer<AbstractColumn> column);
    CreateTable& addConstraint(QSharedPointer<AbstractConstraint> constraint);
    RawState getRawState()const;
+   virtual QString getDecoratorClassName()const;
 protected:
    TableIdentifier m_table;
    QList<QSharedPointer<AbstractColumn>> m_columns;

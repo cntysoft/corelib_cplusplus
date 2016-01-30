@@ -29,6 +29,7 @@ AbstractSql& AbstractSql::setSpecificationFn(const QString &name, SpecificationF
 
 QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *parameterContainer)
 {
+   localizeVariables();
    QMap<QString, QString> sqls;
    QMap<QString, ProcessResultPointerType> parameters;
    QStringList::const_iterator keyIterator = m_specKeys.cbegin();
@@ -61,6 +62,17 @@ QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *pa
    });
    
    return sqlList.join(' ').replace(QRegularExpression("[\\n|,]*$"), "");
+}
+
+void AbstractSql::localizeVariables()
+{
+   if(!m_isNeedLocalizeVariables || m_subject.isNull()){
+      return;
+   }
+   m_specKeys = m_subject->m_specKeys;
+   m_specifications = m_subject->m_specifications;
+   m_processInfo = m_subject->m_processInfo;
+   m_instanceParameterIndex = m_subject->m_instanceParameterIndex;
 }
 
 QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters)throw(ErrorInfo)
