@@ -168,6 +168,8 @@ Product
            "sql/ddl/create_table.h",
            "sql/ddl/drop_table.cpp",
            "sql/ddl/drop_table.h",
+           "sql/ddl/index/index.cpp",
+           "sql/ddl/index/index.h",
            "sql/delete.cpp",
            "sql/delete.h",
            "sql/expression.cpp",

@@ -439,12 +439,15 @@ void TestSql::testAlterTable()
    try{
       {
          QSharedPointer<AlterTable> alterTableSql = sql.getAlterTableSql();
-         qDebug() << alterTableSql->getSqlString(m_engine);
          alterTableSql->dropColumn("address");
-         qDebug() << alterTableSql->getSqlString(m_engine);
+         //qDebug() << alterTableSql->getSqlString(m_engine);
+         QCOMPARE(alterTableSql->getSqlString(m_engine), QString("ALTER TABLE `ds`.`userinfo`\n DROP COLUMN `address`"));
          alterTableSql->addColumn(QSharedPointer<Char>(new Char("info", 12, false, "x")));
-         qDebug() << alterTableSql->getSqlString(m_engine);
-         //QCOMPARE(dropTableSql->getSqlString(m_engine), QString("DROP TABLE `ds`.`userinfo`"));
+         //qDebug() << alterTableSql->getSqlString(m_engine);
+         QCOMPARE(alterTableSql->getSqlString(m_engine), QString("ALTER TABLE `ds`.`userinfo`\n ADD COLUMN `info` CHAR NOT NULL DEFAULT 'x',\n DROP COLUMN `address`"));
+         alterTableSql->addConstraint(QSharedPointer<AbstractConstraint>(new Check(QString("id > 12"), QString("id_check"))));
+         //qDebug() << alterTableSql->getSqlString(m_engine);
+         QCOMPARE(alterTableSql->getSqlString(m_engine), QString("ALTER TABLE `ds`.`userinfo`\n ADD COLUMN `info` CHAR NOT NULL DEFAULT 'x',\n DROP COLUMN `address`,\n ADD CONSTRAINT `id_check` CHECK (id > 12)"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();

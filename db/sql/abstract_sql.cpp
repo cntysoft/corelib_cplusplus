@@ -60,7 +60,7 @@ QString AbstractSql::buildSqlString(const Engine &engine, ParameterContainer *pa
       }
    });
    
-   return sqlList.join(' ');
+   return sqlList.join(' ').replace(QRegularExpression("[\\n|,]*$"), "");
 }
 
 QString AbstractSql::createSqlFromSpecificationAndParameters(const QVariant &specification, const QList<QVariant> &parameters)throw(ErrorInfo)

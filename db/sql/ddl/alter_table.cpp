@@ -237,7 +237,7 @@ AlterTable::AlterTable(const TableIdentifier &table)
          }
       }
    };
-   m_specifications.insert(AlterTable::ADD_CONSTRAINTS, dropConstraintsSpec);
+   m_specifications.insert(AlterTable::DROP_CONSTRAINTS, dropConstraintsSpec);
    
    m_specificationFnPtrs.insert(AlterTable::TABLE, altertable_process_table);
    m_specificationFnPtrs.insert(AlterTable::ADD_COLUMNS, altertable_process_add_columns);
