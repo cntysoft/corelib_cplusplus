@@ -154,6 +154,8 @@ Product
            "sql/abstract_preparable_sql.h",
            "sql/abstract_sql.cpp",
            "sql/abstract_sql.h",
+           "sql/ddl/alter_table.cpp",
+           "sql/ddl/alter_table.h",
            "sql/ddl/column/abstract_column.cpp",
            "sql/ddl/column/abstract_column.h",
            "sql/ddl/column/simple_column.cpp",

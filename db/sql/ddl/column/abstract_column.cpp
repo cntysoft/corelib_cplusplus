@@ -85,6 +85,8 @@ AbstractExpression::ExpressionDataType AbstractColumn::getExpressionData()const
    }
    if(!m_default.isNull()){
       spec += " DEFAULT %s";
+      params.append(m_default.toString());
+      types.append(AbstractExpression::TYPE_VALUE);
    }
    QList<QVariant> data{
       QList<QVariant>{

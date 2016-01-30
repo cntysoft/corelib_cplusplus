@@ -108,6 +108,14 @@ QSharedPointer<DropTable> Sql::getDropTableSql(const QString &table)
    return QSharedPointer<DropTable>(new DropTable(m_table));
 }
 
+QSharedPointer<AlterTable> Sql::getAlterTableSql(const QString &table)
+{
+   if(!table.isEmpty()){
+      TableIdentifier targetTable(table);
+      return QSharedPointer<AlterTable>(new AlterTable(targetTable));
+   }
+   return QSharedPointer<AlterTable>(new AlterTable(m_table));
+}
 
 QString Sql::buildSqlString(QSharedPointer<AbstractSql> sqlObject)
 {

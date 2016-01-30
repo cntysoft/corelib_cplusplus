@@ -8,6 +8,7 @@
 #include "db/sql/ddl/constraint/simple_constraint.h"
 #include "db/sql/ddl/create_table.h"
 #include "db/sql/ddl/drop_table.h"
+#include "db/sql/ddl/alter_table.h"
 #include "db/sql/table_identifier.h"
 #include "db/sql/abstract_sql.h"
 #include "db/sql/predicate/predicate.h"
@@ -44,6 +45,7 @@ using sn::corelib::db::sql::Expression;
 using sn::corelib::ErrorInfo;
 using sn::corelib::db::sql::ddl::CreateTable;
 using sn::corelib::db::sql::ddl::DropTable;
+using sn::corelib::db::sql::ddl::AlterTable;
 using namespace sn::corelib::db::sql::ddl::column;
 using namespace sn::corelib::db::sql::ddl::constraint;
 
@@ -431,6 +433,23 @@ void TestSql::testDropTable()
    }
 }
 
+void TestSql::testAlterTable()
+{
+   Sql sql(m_engine, TableIdentifier("userinfo", "ds"));
+   try{
+      {
+         QSharedPointer<AlterTable> alterTableSql = sql.getAlterTableSql();
+         qDebug() << alterTableSql->getSqlString(m_engine);
+         alterTableSql->dropColumn("address");
+         qDebug() << alterTableSql->getSqlString(m_engine);
+         alterTableSql->addColumn(QSharedPointer<Char>(new Char("info", 12, false, "x")));
+         qDebug() << alterTableSql->getSqlString(m_engine);
+         //QCOMPARE(dropTableSql->getSqlString(m_engine), QString("DROP TABLE `ds`.`userinfo`"));
+      }
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
 
 }//db
 }//corelibtest

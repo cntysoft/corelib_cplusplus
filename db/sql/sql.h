@@ -14,6 +14,7 @@
 #include "db/sql/update.h"
 #include "db/sql/ddl/create_table.h"
 #include "db/sql/ddl/drop_table.h"
+#include "db/sql/ddl/alter_table.h"
 #include "kernel/errorinfo.h"
 
 namespace sn{
@@ -27,6 +28,7 @@ using sn::corelib::db::engine::Engine;
 using sn::corelib::db::sql::AbstractSql;
 using sn::corelib::db::sql::ddl::CreateTable;
 using sn::corelib::db::sql::ddl::DropTable;
+using sn::corelib::db::sql::ddl::AlterTable;
 
 class SN_CORELIB_EXPORT Sql
 {
@@ -47,6 +49,7 @@ public:
    QSharedPointer<Update> getUpdateSql(const QString &table = QString());
    QSharedPointer<CreateTable> getCreateTableSql(const QString &table = QString());
    QSharedPointer<DropTable> getDropTableSql(const QString &table = QString());
+   QSharedPointer<AlterTable> getAlterTableSql(const QString &table = QString());
 protected:
    Engine& m_engine;
    TableIdentifier m_table;
