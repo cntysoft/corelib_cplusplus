@@ -25,6 +25,27 @@ const QStringList& AbstractSource::getSchemas()
    return m_schemasData;
 }
 
+void AbstractSource::getTableNames(QStringList &tableNames, QString schema, bool includeViews)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadTableNameData(schema);
+   if(includeViews){
+      tableNames = m_schemasTablesData[schema].keys();
+      return;
+   }
+   QMap<QString, QMap<QString, QString>> &schemaTablesData = m_schemasTablesData[schema];
+   QMap<QString, QMap<QString, QString>>::const_iterator it = schemaTablesData.cbegin();
+   QMap<QString, QMap<QString, QString>>::const_iterator endMarker = schemaTablesData.cend();
+   while(it != endMarker){
+      if("BASE TABLE" == it.value().value("table_type")){
+         tableNames.append(it.key());
+      }
+      it++;
+   }
+}
+
 
 AbstractSource::~AbstractSource()
 {}

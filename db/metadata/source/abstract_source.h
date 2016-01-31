@@ -18,19 +18,22 @@ using sn::corelib::db::engine::Engine;
 
 class SN_CORELIB_EXPORT AbstractSource
 {
+public:
    const static QString __DEFAULT_SCHEMA__;
 public:
    AbstractSource(QSharedPointer<Engine> engine);
    const QStringList& getSchemas();
+   void getTableNames(QStringList &tableNames, QString schema = QString(), bool includeViews = false);
 public:
    virtual ~AbstractSource();
 protected:
    virtual void loadSchemaData() = 0;
+   virtual void loadTableNameData(const QString &schema) = 0;
 protected:
    QSharedPointer<Engine> m_engine;
    QString m_defaultSchema;
    QStringList m_schemasData;
-   QMap<QString, QStringList> m_schemasTablesData;
+   QMap<QString, QMap<QString, QMap<QString, QString>>> m_schemasTablesData;
 };
 
 

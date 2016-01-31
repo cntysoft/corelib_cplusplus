@@ -33,6 +33,13 @@ const QStringList& Metadata::getSchemas()
    return m_source->getSchemas();
 }
 
+QStringList Metadata::getTableNames(QString schema, bool includeViews)
+{
+   QStringList tableNames;
+   m_source->getTableNames(tableNames, schema, includeViews);
+   return tableNames;
+}
+
 }//metadata
 }//db
 }//corelib

@@ -10,10 +10,11 @@ namespace db{
 using sn::corelib::ErrorInfo;
 
 
-void TestDb::testGetSchemas()
+void TestDb::testMetadata()
 {
    try{
-      qDebug() << m_metadata->getSchemas();
+      //qDebug() << m_metadata->getSchemas();
+      qDebug() << m_metadata->getTableNames("cloudcontroller_devel");
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

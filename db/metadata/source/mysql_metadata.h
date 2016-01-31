@@ -19,6 +19,7 @@ public:
    MysqlMetadata(QSharedPointer<Engine> engine);
 public:
    virtual void loadSchemaData();
+   virtual void loadTableNameData(const QString &schema);
 };
 
 }//source

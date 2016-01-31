@@ -25,6 +25,7 @@ public:
    Metadata(QSharedPointer<Engine> engine);
 public:
    const QStringList& getSchemas();
+   QStringList getTableNames(QString schema = QString(), bool includeViews = false);
 protected:
    AbstractSource* createSourceFromEngine()throw(ErrorInfo);
 protected:
