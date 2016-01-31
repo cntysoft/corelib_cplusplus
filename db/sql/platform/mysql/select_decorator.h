@@ -20,6 +20,10 @@ public:
          AbstractSql *self,const Engine &engine, 
          ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
          QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
+   friend ProcessResultPointerType selectdecorator_process_offset(
+         AbstractSql *self,const Engine &engine, 
+         ParameterContainer *parameterContainer, QMap<QString, QString> &sqls, 
+         QMap<QString, AbstractSql::ProcessResultPointerType> &parameters);
 public:
    SelectDecorator(const QString &table, const QString &schema);
    SelectDecorator(const TableIdentifier &table = TableIdentifier());

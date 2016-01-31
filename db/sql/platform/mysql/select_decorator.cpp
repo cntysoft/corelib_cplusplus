@@ -8,8 +8,8 @@ namespace platform{
 namespace mysql{
 
 AbstractSql::ProcessResultPointerType selectdecorator_process_limit(AbstractSql *self,const Engine &engine, 
-                                                           ParameterContainer* parameterContainer, QMap<QString, QString>&, 
-                                                           QMap<QString, AbstractSql::ProcessResultPointerType>&)
+                                                                    ParameterContainer* parameterContainer, QMap<QString, QString>&, 
+                                                                    QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    SelectDecorator* selectSql = dynamic_cast<SelectDecorator*>(self);
    Q_ASSERT_X(selectSql != 0, "limit friend function selectdecorator_process_limit", "self pointer cast fail");
@@ -39,6 +39,39 @@ AbstractSql::ProcessResultPointerType selectdecorator_process_limit(AbstractSql 
    return result;
 }
 
+AbstractSql::ProcessResultPointerType selectdecorator_process_offset(AbstractSql *self,const Engine &engine, 
+                                                                     ParameterContainer* parameterContainer, QMap<QString, QString>&, 
+                                                                     QMap<QString, AbstractSql::ProcessResultPointerType>&)
+{
+   SelectDecorator* selectSql = dynamic_cast<SelectDecorator*>(self);
+   Q_ASSERT_X(selectSql != 0, "limit friend function selectdecorator_process_offset", "self pointer cast fail");
+   if(0 == selectSql){
+      throw ErrorInfo(QString("limit friend function selectdecorator_process_offset self pointer cast fail"));
+   }
+   QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
+   
+   if(selectSql->m_limit.isNull() && !selectSql->m_offset.isNull()){
+      result->type = AbstractSql::ProcessResultType::Array;
+      result->isNull = false;
+      result->value.setValue(QList<QVariant>{""});
+      return result;
+   }
+   if(selectSql->m_offset.isNull()){
+      result->isNull = true;
+      return result;
+   }
+   result->isNull = false;
+   result->type = AbstractSql::ProcessResultType::Array;
+   if(nullptr != parameterContainer){
+      parameterContainer->offsetSet("offset", selectSql->m_offset.toInt(), ParameterContainer::TYPE_INTEGER);
+      result->value = QVariant(QList<QVariant>{QVariant(engine.formatParameterName("offset"))});
+   }else{
+      result->value = QVariant(QList<QVariant>{QVariant(engine.quoteValue(selectSql->m_offset.toInt()))});
+   }
+   return result;
+}
+
+
 SelectDecorator::SelectDecorator(const QString &table, const QString &schema)
    : SelectDecorator(TableIdentifier(table, schema))
 {
@@ -48,7 +81,7 @@ SelectDecorator::SelectDecorator(const TableIdentifier &table)
    : Select(table)
 {
    m_specificationFnPtrs.insert(Select::LIMIT, selectdecorator_process_limit);
-//   m_specificationFnPtrs.insert(Select::OFFSET, select_process_offset);
+   m_specificationFnPtrs.insert(Select::OFFSET, selectdecorator_process_offset);
    m_isNeedLocalizeVariables = true;
 }
 
