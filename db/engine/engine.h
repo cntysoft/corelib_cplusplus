@@ -18,6 +18,7 @@ namespace engine{
 
 class SN_CORELIB_EXPORT Engine
 {
+   Q_DISABLE_COPY(Engine)
 public:
    enum class PlatformType
    {
@@ -53,7 +54,7 @@ public:
 public:
    Engine(const QString &driverType, QMap<QString, QString> connectionParams);
    QSqlDatabase& getDbConnection();
-   QString& getCurrentSchema();
+   const QString& getCurrentSchema();
    void query(const QString& sql, QueryMode queryMode = QueryMode::Prepare);
    QString quoteValue(const QVariant &value) const;
    QString quoteIdentifier(const QString &identifier, IdentifierType type)const;

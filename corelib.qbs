@@ -146,8 +146,12 @@ Product
            "engine/parameter_container.h",
            "engine/statement_container.cpp",
            "engine/statement_container.h",
+           "metadata/metadata.cpp",
            "metadata/metadata.h",
-           "rowgateway/row_gateway.h",
+           "metadata/source/abstract_source.cpp",
+           "metadata/source/abstract_source.h",
+           "metadata/source/mysql_metadata.cpp",
+           "metadata/source/mysql_metadata.h",
            "sql/abstract_expression.cpp",
            "sql/abstract_expression.h",
            "sql/abstract_preparable_sql.cpp",
@@ -204,7 +208,6 @@ Product
            "sql/table_identifier.h",
            "sql/update.cpp",
            "sql/update.h",
-           "tablegateway/table_gateway.h",
        ]
    }
 }

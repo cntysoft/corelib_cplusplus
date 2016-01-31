@@ -1,15 +1,11 @@
 import qbs 1.0
 CoreLibAutoTest
 {
-    files: [
-    ]
    testName: "db"
-   Group {
-      name: "sql"
-      prefix: name+"/"
-      files: [
-           "test_sql.h",
-           "test_sql.cpp",
-       ]
-   }
+   files : [
+        "test_db.cpp",
+        "test_db.h",
+        "test_sql.cpp",
+        "test_metadata.cpp",
+    ]
 }

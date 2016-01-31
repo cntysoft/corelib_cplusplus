@@ -72,7 +72,7 @@ QSqlDatabase& Engine::getDbConnection()
    return m_database;
 }
 
-QString& Engine::getCurrentSchema()
+const QString& Engine::getCurrentSchema()
 {
    return m_dbname;
 }

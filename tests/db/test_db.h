@@ -1,19 +1,21 @@
 #ifndef DB_ADAPTER_TEST_SQL_H
 #define DB_ADAPTER_TEST_SQL_H
-
+#include <QSharedPointer>
 #include <QObject>
 #include "db/engine/engine.h"
+#include "db/metadata/metadata.h"
 
 namespace corelibtest{
 namespace db{
 
 using sn::corelib::db::engine::Engine;
+using sn::corelib::db::metadata::Metadata;
 
-class TestSql : public QObject
+class TestDb : public QObject
 {
    Q_OBJECT
 public:
-   TestSql();
+   TestDb();
 private slots:
    void initTestCase();
    void testSqlTableName();
@@ -30,7 +32,9 @@ private slots:
    void testSelectDecorator();
    void testCreateTableDecorator();
 protected:
-   Engine m_engine;
+   
+   QSharedPointer<Engine> m_engine;
+   QSharedPointer<Metadata> m_metadata;
 };
 
 }//db

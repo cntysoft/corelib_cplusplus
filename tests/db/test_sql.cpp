@@ -1,13 +1,13 @@
 #include <algorithm>
-#include <QtTest/QtTest>
 #include <QSharedPointer>
 #include <QDebug>
 #include <QMap>
 #include <QString>
 #include <QList>
 #include <QStringList>
+#include <QtTest/QtTest>
+#include "test_db.h"
 
-#include "test_sql.h"
 #include "db/sql/sql.h"
 #include "db/sql/delete.h"
 #include "db/sql/insert.h"
@@ -53,32 +53,17 @@ using sn::corelib::db::sql::ddl::AlterTable;
 using namespace sn::corelib::db::sql::ddl::column;
 using namespace sn::corelib::db::sql::ddl::constraint;
 
-TestSql::TestSql()
-   : m_engine(Engine::QMYSQL, {
-{"host", "127.0.0.1"},
-{"username","root"},
-{"password", "cntysoft"},
-{"dbname", "meta_info_devel"}
-})
-{
-   
-}
 
-void TestSql::initTestCase()
-{
-   qRegisterMetaType<QSharedPointer<QString>>("StrPtr1");
-   qRegisterMetaType<QSharedPointer<int>>("StrPtr");
-}
 
-void TestSql::testSqlTableName()
+void TestDb::testSqlTableName()
 {
-   Sql sql(m_engine, "userinfo");
+   Sql sql(*m_engine.data(), "userinfo");
    QCOMPARE(sql.getTableName(), QString("userinfo"));
 }
 
-void TestSql::testDeleteSql()
+void TestDb::testDeleteSql()
 {
-   Sql sql(m_engine, "userinfo");
+   Sql sql(*m_engine.data(), "userinfo");
    {
       QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
       TableIdentifier& table = deleteSql->getTable();
@@ -96,10 +81,10 @@ void TestSql::testDeleteSql()
    }
 }
 
-void TestSql::testWherePredicate()
+void TestDb::testWherePredicate()
 {
    try{
-      Sql sql(m_engine, "userinfo");
+      Sql sql(*m_engine.data(), "userinfo");
       {
          QSharedPointer<Delete> deleteSql = sql.getDeleteSql();
          QSharedPointer<Where> where(new Where);
@@ -185,10 +170,10 @@ void TestSql::testWherePredicate()
 
 
 
-void TestSql::testSelectSql()
+void TestDb::testSelectSql()
 {
    try{
-      Sql sql(m_engine, "userinfo");
+      Sql sql(*m_engine.data(), "userinfo");
       {
          QSharedPointer<Select> selectSql = sql.getSelectSql();
          QCOMPARE(sql.buildSqlString(selectSql), QString("SELECT `userinfo`.* FROM `userinfo`"));
@@ -313,10 +298,10 @@ void TestSql::testSelectSql()
    }
 }
 
-void TestSql::testExpression()
+void TestDb::testExpression()
 {
    try{
-      Sql sql(m_engine, "userinfo");
+      Sql sql(*m_engine.data(), "userinfo");
       {
          QSharedPointer<Select> selectSql = sql.getSelectSql();
          QSharedPointer<Select> selectSql1 = sql.getSelectSql("meta");
@@ -333,10 +318,10 @@ void TestSql::testExpression()
    }
 }
 
-void TestSql::testSubSelect()
+void TestDb::testSubSelect()
 {
    try{
-      Sql sql(m_engine, "userinfo");
+      Sql sql(*m_engine.data(), "userinfo");
       {
          QSharedPointer<Select> selectSql = sql.getSelectSql();
          QSharedPointer<Select> selectSql1 = sql.getSelectSql();
@@ -351,10 +336,10 @@ void TestSql::testSubSelect()
    }
 }
 
-void TestSql::testInsertSql()
+void TestDb::testInsertSql()
 {
    try{
-      Sql sql(m_engine, "userinfo");
+      Sql sql(*m_engine.data(), "userinfo");
       {
          QSharedPointer<Insert> insertSql = sql.getInsertSql();
          insertSql->values({
@@ -376,10 +361,10 @@ void TestSql::testInsertSql()
    }
 }
 
-void TestSql::testUpdateSql()
+void TestDb::testUpdateSql()
 {
    try{
-      Sql sql(m_engine, "userinfo");
+      Sql sql(*m_engine.data(), "userinfo");
       {
          QSharedPointer<Update> updateSql = sql.getUpdateSql();
          updateSql->set({
@@ -398,69 +383,69 @@ void TestSql::testUpdateSql()
    }
 }
 
-void TestSql::testCreateTable()
+void TestDb::testCreateTable()
 {
-   Sql sql(m_engine, "userinfo");
+   Sql sql(*m_engine.data(), "userinfo");
    try{
       {
          QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
          createTableSql->addColumn(QSharedPointer<Date>(new Date("inputTime", true)));
          createTableSql->addColumn(QSharedPointer<Text>(new Text("content")));
          createTableSql->addColumn(QSharedPointer<Timestamp>(new Timestamp("inputTime", false, 12123, {{"on_update", "cascade"}})));
-         //qDebug() << createTableSql->getSqlString(m_engine);
-         QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    `inputTime` DATE,\n    `content` TEXT NOT NULL,\n    `inputTime` TIMESTAMP NOT NULL DEFAULT '12123' ON UPDATE CURRENT_TIMESTAMP \n)"));
+         //qDebug() << createTableSql->getSqlString(*m_engine.data());
+         QCOMPARE(createTableSql->getSqlString(*m_engine.data()), QString("CREATE TABLE `userinfo` ( \n    `inputTime` DATE,\n    `content` TEXT NOT NULL,\n    `inputTime` TIMESTAMP NOT NULL DEFAULT '12123' ON UPDATE CURRENT_TIMESTAMP \n)"));
       }
       {
          QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
          createTableSql->addConstraint(QSharedPointer<Check>(new Check(QString("name > 1"), QString("name_check"))));
          createTableSql->addConstraint(QSharedPointer<PrimaryKey>(new PrimaryKey({"name", "age"}, "primaryKey")));
          createTableSql->addConstraint(QSharedPointer<ForeignKey>(new ForeignKey("foreign", {"user_id", "address_id"}, "meta", {"id", "aid"})));
-         //qDebug() << createTableSql->getSqlString(m_engine);
-         QCOMPARE(createTableSql->getSqlString(m_engine), QString("CREATE TABLE `userinfo` ( \n    CONSTRAINT `name_check` CHECK (name > 1),\n    CONSTRAINT `primaryKey` PRIMARY KEY (`name`, `age`),\n    CONSTRAINT `foreign` FOREIGN KEY (`user_id`, `address_id`) REFERENCES `meta` (`id`, `aid`) ON DELETE  ON UPDATE  \n)"));
+         //qDebug() << createTableSql->getSqlString(*m_engine.data());
+         QCOMPARE(createTableSql->getSqlString(*m_engine.data()), QString("CREATE TABLE `userinfo` ( \n    CONSTRAINT `name_check` CHECK (name > 1),\n    CONSTRAINT `primaryKey` PRIMARY KEY (`name`, `age`),\n    CONSTRAINT `foreign` FOREIGN KEY (`user_id`, `address_id`) REFERENCES `meta` (`id`, `aid`) ON DELETE  ON UPDATE  \n)"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }
 }
 
-void TestSql::testDropTable()
+void TestDb::testDropTable()
 {
-   Sql sql(m_engine, TableIdentifier("userinfo", "ds"));
+   Sql sql(*m_engine.data(), TableIdentifier("userinfo", "ds"));
    try{
       {
          QSharedPointer<DropTable> dropTableSql = sql.getDropTableSql();
-         qDebug() << dropTableSql->getSqlString(m_engine);
-         QCOMPARE(dropTableSql->getSqlString(m_engine), QString("DROP TABLE `ds`.`userinfo`"));
+         qDebug() << dropTableSql->getSqlString(*m_engine.data());
+         QCOMPARE(dropTableSql->getSqlString(*m_engine.data()), QString("DROP TABLE `ds`.`userinfo`"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }
 }
 
-void TestSql::testAlterTable()
+void TestDb::testAlterTable()
 {
-   Sql sql(m_engine, TableIdentifier("userinfo", "ds"));
+   Sql sql(*m_engine.data(), TableIdentifier("userinfo", "ds"));
    try{
       {
          QSharedPointer<AlterTable> alterTableSql = sql.getAlterTableSql();
          alterTableSql->dropColumn("address");
-         //qDebug() << alterTableSql->getSqlString(m_engine);
-         QCOMPARE(alterTableSql->getSqlString(m_engine), QString("ALTER TABLE `ds`.`userinfo`\n DROP COLUMN `address`"));
+         //qDebug() << alterTableSql->getSqlString(*m_engine.data());
+         QCOMPARE(alterTableSql->getSqlString(*m_engine.data()), QString("ALTER TABLE `ds`.`userinfo`\n DROP COLUMN `address`"));
          alterTableSql->addColumn(QSharedPointer<Char>(new Char("info", 12, false, "x")));
-         //qDebug() << alterTableSql->getSqlString(m_engine);
-         QCOMPARE(alterTableSql->getSqlString(m_engine), QString("ALTER TABLE `ds`.`userinfo`\n ADD COLUMN `info` CHAR NOT NULL DEFAULT 'x',\n DROP COLUMN `address`"));
+         //qDebug() << alterTableSql->getSqlString(*m_engine.data());
+         QCOMPARE(alterTableSql->getSqlString(*m_engine.data()), QString("ALTER TABLE `ds`.`userinfo`\n ADD COLUMN `info` CHAR NOT NULL DEFAULT 'x',\n DROP COLUMN `address`"));
          alterTableSql->addConstraint(QSharedPointer<AbstractConstraint>(new Check(QString("id > 12"), QString("id_check"))));
-         //qDebug() << alterTableSql->getSqlString(m_engine);
-         QCOMPARE(alterTableSql->getSqlString(m_engine), QString("ALTER TABLE `ds`.`userinfo`\n ADD COLUMN `info` CHAR NOT NULL DEFAULT 'x',\n DROP COLUMN `address`,\n ADD CONSTRAINT `id_check` CHECK (id > 12)"));
+         //qDebug() << alterTableSql->getSqlString(*m_engine.data());
+         QCOMPARE(alterTableSql->getSqlString(*m_engine.data()), QString("ALTER TABLE `ds`.`userinfo`\n ADD COLUMN `info` CHAR NOT NULL DEFAULT 'x',\n DROP COLUMN `address`,\n ADD CONSTRAINT `id_check` CHECK (id > 12)"));
       }
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }
 }
 
-void TestSql::testSelectDecorator()
+void TestDb::testSelectDecorator()
 {
-   Sql sql(m_engine, TableIdentifier("userinfo", "ds"));
+   Sql sql(*m_engine.data(), TableIdentifier("userinfo", "ds"));
    try{
       QSharedPointer<Select> selectSql = sql.getSelectSql();
       selectSql->offset(12);
@@ -470,9 +455,9 @@ void TestSql::testSelectDecorator()
    }
 }
 
-void TestSql::testCreateTableDecorator()
+void TestDb::testCreateTableDecorator()
 {
-   Sql sql(m_engine, TableIdentifier("meta"));
+   Sql sql(*m_engine.data(), TableIdentifier("meta"));
    try{
       QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
       createTableSql->addColumn(QSharedPointer<Integer>(new Integer("user_count", false, 123, 
@@ -490,4 +475,3 @@ void TestSql::testCreateTableDecorator()
 
 }//db
 }//corelibtest
-QTEST_MAIN(corelibtest::db::TestSql)
