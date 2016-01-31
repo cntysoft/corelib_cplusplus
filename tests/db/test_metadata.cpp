@@ -13,7 +13,7 @@ using sn::corelib::ErrorInfo;
 void TestDb::testGetSchemas()
 {
    try{
-      qDebug() << m_metadata->getSchemas().toStringList();
+      qDebug() << m_metadata->getSchemas();
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

@@ -24,7 +24,7 @@ public:
    Metadata(Engine *engine);
    Metadata(QSharedPointer<Engine> engine);
 public:
-   const QVariant& getSchemas();
+   const QStringList& getSchemas();
 protected:
    AbstractSource* createSourceFromEngine()throw(ErrorInfo);
 protected:

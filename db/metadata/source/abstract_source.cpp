@@ -19,10 +19,10 @@ AbstractSource::AbstractSource(QSharedPointer<engine::Engine> engine)
    }
 }
 
-const QVariant& AbstractSource::getSchemas()
+const QStringList& AbstractSource::getSchemas()
 {
    loadSchemaData();
-   return m_data["schemas"];
+   return m_schemasData;
 }
 
 

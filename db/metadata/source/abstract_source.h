@@ -21,7 +21,7 @@ class SN_CORELIB_EXPORT AbstractSource
    const static QString __DEFAULT_SCHEMA__;
 public:
    AbstractSource(QSharedPointer<Engine> engine);
-   const QVariant& getSchemas();
+   const QStringList& getSchemas();
 public:
    virtual ~AbstractSource();
 protected:
@@ -29,7 +29,8 @@ protected:
 protected:
    QSharedPointer<Engine> m_engine;
    QString m_defaultSchema;
-   QMap<QString, QVariant> m_data;
+   QStringList m_schemasData;
+   QMap<QString, QStringList> m_schemasTablesData;
 };
 
 

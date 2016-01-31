@@ -28,7 +28,7 @@ AbstractSource* Metadata::createSourceFromEngine()throw(ErrorInfo)
    throw ErrorInfo("Metadata::createSourceFromEngine Platform type not supported");
 }
 
-const QVariant& Metadata::getSchemas()
+const QStringList& Metadata::getSchemas()
 {
    return m_source->getSchemas();
 }
