@@ -307,6 +307,11 @@ AlterTable::RawState AlterTable::getRawState()const
    return state;
 }
 
+QString AlterTable::getDecoratorClassName()const
+{
+   return QString("sn::corelib::db::sql::platform::mysql::AlterTableDecorator");
+}
+
 }//ddl
 }//sql
 }//db

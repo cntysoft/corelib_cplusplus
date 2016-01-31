@@ -178,6 +178,8 @@ Product
            "sql/insert.h",
            "sql/platform/abstract_platform.cpp",
            "sql/platform/abstract_platform.h",
+           "sql/platform/mysql/alter_table_decorator.cpp",
+           "sql/platform/mysql/alter_table_decorator.h",
            "sql/platform/mysql/create_table_decorator.cpp",
            "sql/platform/mysql/create_table_decorator.h",
            "sql/platform/mysql/select_decorator.cpp",

@@ -80,6 +80,8 @@ public:
    AlterTable& addConstraint(const QSharedPointer<AbstractConstraint> constraint);
    
    RawState getRawState()const;
+public:
+   virtual QString getDecoratorClassName()const;
 protected:
    TableIdentifier m_table;
    QList<QSharedPointer<AbstractColumn>> m_addColumns;
