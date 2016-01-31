@@ -148,6 +148,8 @@ Product
            "engine/statement_container.h",
            "metadata/metadata.cpp",
            "metadata/metadata.h",
+           "metadata/object/column_object.cpp",
+           "metadata/object/column_object.h",
            "metadata/source/abstract_source.cpp",
            "metadata/source/abstract_source.h",
            "metadata/source/mysql_metadata.cpp",
