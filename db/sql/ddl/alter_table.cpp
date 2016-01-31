@@ -28,7 +28,7 @@ AbstractSql::ProcessResultPointerType altertable_process_table(
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
    result->isNull = false;
    result->type = AbstractSql::ProcessResultType::Array;
-   result->value = QVariant(QList<QVariant>{
+   result->value.setValue(QList<QVariant>{
                                engine.quoteIdentifierInFragment(alterTableSql->m_table.toString())
                             });
    return result;

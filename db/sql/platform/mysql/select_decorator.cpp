@@ -44,9 +44,9 @@ AbstractSql::ProcessResultPointerType selectdecorator_process_offset(AbstractSql
                                                                      QMap<QString, AbstractSql::ProcessResultPointerType>&)
 {
    SelectDecorator* selectSql = dynamic_cast<SelectDecorator*>(self);
-   Q_ASSERT_X(selectSql != 0, "limit friend function selectdecorator_process_offset", "self pointer cast fail");
+   Q_ASSERT_X(selectSql != 0, "friend function selectdecorator_process_offset", "self pointer cast fail");
    if(0 == selectSql){
-      throw ErrorInfo(QString("limit friend function selectdecorator_process_offset self pointer cast fail"));
+      throw ErrorInfo(QString("friend function selectdecorator_process_offset self pointer cast fail"));
    }
    QSharedPointer<AbstractSql::ProcessResult> result(new AbstractSql::ProcessResult);
    

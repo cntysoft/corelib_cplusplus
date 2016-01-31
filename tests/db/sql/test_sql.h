@@ -28,6 +28,7 @@ private slots:
    void testDropTable();
    void testAlterTable();
    void testSelectDecorator();
+   void testCreateTableDecorator();
 protected:
    Engine m_engine;
 };

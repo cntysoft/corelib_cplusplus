@@ -911,6 +911,7 @@ void Select::localizeVariables()
    }
    AbstractSql::localizeVariables();
    QSharedPointer<Select> castedSelectSubject = m_subject.dynamicCast<Select>();
+   Q_ASSERT_X(!castedSelectSubject.isNull(), "Select::localizeVariables", "downcast failure");
    m_table = castedSelectSubject->m_table;
    m_tableReadOnly = castedSelectSubject->m_tableReadOnly;
    m_prefixColumnsWithTable = castedSelectSubject->m_prefixColumnsWithTable;

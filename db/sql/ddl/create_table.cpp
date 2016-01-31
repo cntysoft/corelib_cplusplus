@@ -88,7 +88,7 @@ AbstractSql::ProcessResultPointerType createtable_process_constraints(AbstractSq
    std::for_each(createSql->m_constraints.cbegin(), createSql->m_constraints.cend(), [&sqls, &createSql, &engine](const QSharedPointer<AbstractConstraint> &constraint){
       sqls.append(createSql->processExpression(constraint, engine));
    });
-   result->value = QVariant(QList<QVariant>{
+   result->value.setValue(QList<QVariant>{
                                sqls
                             });
    return result;
@@ -208,6 +208,20 @@ CreateTable::RawState CreateTable::getRawState()const
 QString CreateTable::getDecoratorClassName()const
 {
    return QString("sn::corelib::db::sql::platform::mysql::CreateTableDecorator");
+}
+
+void CreateTable::localizeVariables()
+{
+   if(!m_isNeedLocalizeVariables || m_subject.isNull()){
+      return;
+   }
+   AbstractSql::localizeVariables();
+   QSharedPointer<CreateTable> castedCreateTableSubject = m_subject.dynamicCast<CreateTable>();
+   Q_ASSERT_X(!castedCreateTableSubject.isNull(), "CreateTable::localizeVariables", "downcast failure");
+   m_table= castedCreateTableSubject->m_table;
+   m_columns = castedCreateTableSubject->m_columns;
+   m_constraints = castedCreateTableSubject->m_constraints;
+   m_isTemporary = castedCreateTableSubject->m_isTemporary;
 }
 
 }//ddl

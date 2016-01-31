@@ -13,6 +13,8 @@ namespace column {
 class SN_CORELIB_EXPORT Integer : public AbstractColumn
 {
 public:
+   Integer(const QString &name = QString(), bool nullable = false,
+                  const QVariant &defaultValue = QVariant(), const QMap<QString, QVariant> &options = QMap<QString, QVariant>());
    virtual ExpressionDataType getExpressionData() const;
 };
 

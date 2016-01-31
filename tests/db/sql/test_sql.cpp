@@ -1,5 +1,13 @@
-#include "test_sql.h"
+#include <algorithm>
 #include <QtTest/QtTest>
+#include <QSharedPointer>
+#include <QDebug>
+#include <QMap>
+#include <QString>
+#include <QList>
+#include <QStringList>
+
+#include "test_sql.h"
 #include "db/sql/sql.h"
 #include "db/sql/delete.h"
 #include "db/sql/insert.h"
@@ -17,12 +25,8 @@
 #include "db/sql/expression.h"
 #include "kernel/errorinfo.h"
 #include "global/common_funcs.h"
-#include <QSharedPointer>
-#include <QDebug>
 #include "global/common_funcs.h"
-#include <QMap>
-#include <QString>
-#include <QList>
+
 
 namespace corelibtest{
 namespace db{
@@ -461,6 +465,24 @@ void TestSql::testSelectDecorator()
       QSharedPointer<Select> selectSql = sql.getSelectSql();
       selectSql->offset(12);
       qDebug() << sql.buildSqlString(selectSql);
+   }catch(ErrorInfo exp){
+      qDebug() << exp.toString();
+   }
+}
+
+void TestSql::testCreateTableDecorator()
+{
+   Sql sql(m_engine, TableIdentifier("meta"));
+   try{
+      QSharedPointer<CreateTable> createTableSql = sql.getCreateTableSql();
+      createTableSql->addColumn(QSharedPointer<Integer>(new Integer("user_count", false, 123, 
+      {
+                                                                       {"unsigned", true},
+                                                                       {"comment", "用户数量"}
+                                                                    }
+                                                                    )));
+      QCOMPARE(sql.buildSqlString(createTableSql), QString("CREATE TABLE `meta` ( \n    `user_count` INTEGER UNSIGNED NOT NULL DEFAULT 123 COMMENT '用户数量' \n)"));
+      //qDebug() << sql.buildSqlString(createTableSql);
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();
    }

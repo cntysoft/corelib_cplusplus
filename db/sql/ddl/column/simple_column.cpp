@@ -7,6 +7,10 @@ namespace sql{
 namespace ddl{
 namespace column {
 
+Integer::Integer(const QString &name, bool nullable, const QVariant &defaultValue, const QMap<QString, QVariant> &options)
+   : AbstractColumn(name, nullable, defaultValue, options)
+{}
+
 AbstractExpression::ExpressionDataType Integer::getExpressionData()const
 {
    ExpressionDataType data = AbstractColumn::getExpressionData();
