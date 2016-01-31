@@ -2,7 +2,7 @@
 #include <QtTest/QtTest>
 
 #include "kernel/errorinfo.h"
-#include "test_metadata.h"
+#include "test_db.h"
 
 namespace corelibtest{
 namespace db{
@@ -10,7 +10,7 @@ namespace db{
 using sn::corelib::ErrorInfo;
 
 
-void TestMetaData::testGetTables()
+void TestDb::testGetSchemas()
 {
    try{
       qDebug() << m_metadata->getSchemas().toStringList();

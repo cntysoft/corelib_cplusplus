@@ -8,13 +8,18 @@
 #include <QSqlDriver>
 #include <QChar>
 #include <QPair>
+#include <QSqlQuery>
+#include <QSharedPointer>
 
 #include "global/global.h"
+#include "kernel/errorinfo.h"
 
 namespace sn{
 namespace corelib{
 namespace db{
 namespace engine{
+
+using sn::corelib::ErrorInfo;
 
 class SN_CORELIB_EXPORT Engine
 {
@@ -55,7 +60,7 @@ public:
    Engine(const QString &driverType, QMap<QString, QString> connectionParams);
    QSqlDatabase& getDbConnection();
    const QString& getCurrentSchema();
-   void query(const QString& sql, QueryMode queryMode = QueryMode::Prepare);
+   QSharedPointer<QSqlQuery> query(const QString& sql, QueryMode queryMode = QueryMode::Execute)throw(ErrorInfo);
    QString quoteValue(const QVariant &value) const;
    QString quoteIdentifier(const QString &identifier, IdentifierType type)const;
    QString quoteTableName(const QString &tableName)const;
@@ -66,6 +71,7 @@ public:
    Engine& setQuoteIdentifiersFlag(bool flag);
    bool getQuoteIdentifiersFlag()const;
    QString formatParameterName(const QString &name)const;
+   QString quoteIdentifierChain(const QStringList &identifierChain);
 protected:
    QPair<QChar, QChar> getQuoteIdentifier()const;
    QString getQuoteIdentifierTo()const;

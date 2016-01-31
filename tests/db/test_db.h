@@ -31,8 +31,9 @@ private slots:
    void testAlterTable();
    void testSelectDecorator();
    void testCreateTableDecorator();
+   //metadata
+   void testGetSchemas();
 protected:
-   
    QSharedPointer<Engine> m_engine;
    QSharedPointer<Metadata> m_metadata;
 };

@@ -1,5 +1,6 @@
 #include <QStringList>
 #include <QSqlField>
+#include <QSqlError>
 #include <QDebug>
 #include <QRegularExpression>
 #include <QRegularExpressionMatchIterator>
@@ -67,6 +68,23 @@ Engine::Engine(const QString &driverType, QMap<QString, QString> connectionParam
    m_platformType = sm_driverToPlatformMap.value(driverType);
 }
 
+QSharedPointer<QSqlQuery> Engine::query(const QString &sql, QueryMode queryMode)throw(ErrorInfo)
+{
+   if(!m_database.isOpen()){
+      if(!m_database.open()){
+         throw ErrorInfo(m_database.lastError().text());
+      }
+   }
+   if(queryMode == QueryMode::Execute){
+      QSharedPointer<QSqlQuery> query(new QSqlQuery(sql, m_database));
+      query->exec();
+      return query;
+   }
+   QSharedPointer<QSqlQuery> query(new QSqlQuery(m_database));
+   query->prepare(sql);
+   return query;
+}
+
 QSqlDatabase& Engine::getDbConnection()
 {
    return m_database;
@@ -109,10 +127,6 @@ QChar Engine::getIdentifierSeparator()const
    return '.';
 }
 
-void Engine::query(const QString &sql, QueryMode queryMode)
-{
-   
-}
 
 Engine::PlatformType Engine::getPlatformType()
 {
@@ -211,6 +225,15 @@ QString Engine::formatParameterName(const QString &name)const
       return "$#";
    }
    return "?";
+}
+
+QString Engine::quoteIdentifierChain(const QStringList &identifierChain)
+{
+   QStringList localChain(identifierChain);
+   std::for_each(localChain.begin(), localChain.end(), [](QString &identifier){
+      identifier.replace("`", "``");
+   });
+   return "`" + localChain.join("`.`") + "`";
 }
 
 }//engine
