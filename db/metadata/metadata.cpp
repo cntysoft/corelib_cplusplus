@@ -40,9 +40,35 @@ QStringList Metadata::getTableNames(QString schema, bool includeViews)
    return tableNames;
 }
 
+QList<QSharedPointer<AbstractTableObject>> Metadata::getTables(QString schema, bool includeViews)
+{
+   QList<QSharedPointer<AbstractTableObject>> tables;
+   m_source->getTables(tables, schema, includeViews);
+   return tables;
+}
+
 QSharedPointer<AbstractTableObject> Metadata::getTable(const QString &tableName, QString schema)throw(ErrorInfo)
 {
    return m_source->getTable(tableName, schema);
+}
+
+QStringList Metadata::getViewNames(QString schema)
+{
+   QStringList viewNames;
+   m_source->getViewNames(viewNames, schema);
+   return viewNames;
+}
+
+QList<QSharedPointer<ViewObject>> Metadata::getViews(QString schema)
+{
+   QList<QSharedPointer<ViewObject>> views;
+   m_source->getViews(views, schema);
+   return views;
+}
+
+QSharedPointer<ViewObject> Metadata::getView(const QString &viewName, QString schema)
+{
+   return m_source->getView(viewName, schema);
 }
 
 QSharedPointer<ColumnObject> Metadata::getColumn(const QString &columnName, const QString &tableName, 
@@ -63,6 +89,12 @@ QStringList Metadata::getColumnNames(const QString &tableName, QString schema)
    QStringList names;
    m_source->getColumnNames(names, tableName, schema);
    return names;
+}
+
+QSharedPointer<ConstraintObject> Metadata::getConstraint(const QString &constraintName, const QString &table, 
+                                               QString schema)
+{
+   return m_source->getConstraint(constraintName, table, schema);
 }
 
 }//metadata

@@ -50,6 +50,21 @@ void AbstractSource::getTableNames(QStringList &tableNames, QString schema, bool
    }
 }
 
+void AbstractSource::getTables(QList<QSharedPointer<AbstractTableObject>> &tables, QString schema, 
+                               bool includeViews)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   QStringList tableNames;
+   getTableNames(tableNames, schema, includeViews);
+   int total = tableNames.size();
+   for(int i = 0; i < total; i++){
+      tables.append(getTable(tableNames[i], schema));
+   }
+   
+}
+
 QSharedPointer<AbstractTableObject> AbstractSource::getTable(const QString &tableName, QString schema)throw(ErrorInfo)
 {
    if(schema.isEmpty()){
@@ -73,7 +88,56 @@ QSharedPointer<AbstractTableObject> AbstractSource::getTable(const QString &tabl
    }else{
       throw ErrorInfo(QString("Table '%1' is of an unsupported type '%2'").arg(tableName).arg(data["table_type"]));
    }
+   QList<QSharedPointer<ColumnObject>> columns;
+   getColumns(columns, tableName, schema);
+   table->setColumns(columns);
    return table;
+}
+
+void AbstractSource::getViewNames(QStringList &viewNames, QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadTableNameData(schema);
+   if(!m_schemasTablesData.contains(schema)){
+      viewNames.clear();
+   }
+   QMap<QString, QMap<QString, QString>> &tablesMap = m_schemasTablesData[schema];
+   QMap<QString, QMap<QString, QString>>::const_iterator it = tablesMap.cbegin();
+   QMap<QString, QMap<QString, QString>>::const_iterator endMarker = tablesMap.cend();
+   while(it != endMarker){
+      if("VIEW" == it.value().value("table_type")){
+         viewNames.append(it.key());
+      }
+      it++;
+   }
+}
+
+void AbstractSource::getViews(QList<QSharedPointer<ViewObject>> &views, QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   QStringList viewNames;
+   getViewNames(viewNames, schema);
+   int total = viewNames.size();
+   for(int i = 0; i < total; i++){
+      views.append(getTable(viewNames[i], schema).dynamicCast<ViewObject>());
+   }
+}
+
+QSharedPointer<ViewObject> AbstractSource::getView(const QString &viewName, QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadTableNameData(schema);
+   QMap<QString, QMap<QString, QString>> &tablesMap = m_schemasTablesData[schema];
+   if(tablesMap.contains(viewName) && tablesMap[viewName].value("table_type") == "VIEW"){
+      return getTable(viewName, schema).dynamicCast<ViewObject>();
+   }
+   return QSharedPointer<ViewObject>();
 }
 
 QSharedPointer<ColumnObject> AbstractSource::getColumn(const QString &columnName, const QString &tableName, 
@@ -102,7 +166,7 @@ QSharedPointer<ColumnObject> AbstractSource::getColumn(const QString &columnName
 }
 
 void AbstractSource::getColumns(QList<QSharedPointer<ColumnObject>> &columns, const QString &tableName, 
-                QString schema)
+                                QString schema)
 {
    if(schema.isEmpty()){
       schema = m_defaultSchema;
@@ -126,6 +190,32 @@ void AbstractSource::getColumnNames(QStringList &columnNames, const QString &tab
       columnNames.clear();
    }
    columnNames = m_tableColumnsData[schema][tableName].keys();
+}
+
+QSharedPointer<ConstraintObject> AbstractSource::getConstraint(const QString &constraintName, const QString &table, 
+                                                               QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadConstraintData(table, schema);
+   if(!m_tableConstraintData.contains(schema) ||
+         !m_tableConstraintData[schema].contains(table) ||
+         !m_tableConstraintData[schema][table].contains(constraintName)){
+      return QSharedPointer<ConstraintObject>();
+   }
+   QMap<QString, QVariant> &info = m_tableConstraintData[schema][table][constraintName];
+   QSharedPointer<ConstraintObject> constraint(new ConstraintObject(constraintName, table, schema));
+   constraint->setType(info["constraint_type"].toString());
+   constraint->setMatchOption(info["match_option"].toString());
+   constraint->setUpdateRule(info["update_rule"].toString());
+   constraint->setDeleteRule(info["delete_rule"].toString());
+   constraint->setColumns(info["columns"].toStringList());
+   constraint->setReferencedTableSchema(info["referenced_table_schema"].toString());
+   constraint->setReferencedTableName(info["referenced_table_name"].toString());
+   constraint->setReferencedColumns(info["referenced_columns"].toStringList());
+   constraint->setCheckClause(info["check_clause"].toString());
+   return constraint;
 }
 
 AbstractSource::~AbstractSource()

@@ -148,6 +148,105 @@ void MysqlMetadata::loadColumnData(const QString &table, const QString &schema)
    m_tableColumnsData[schema].insert(table, columns);
 }
 
+void MysqlMetadata::loadConstraintData(const QString &table, const QString &schema)
+{
+   if(m_tableConstraintData.contains(schema) && m_tableConstraintData[schema].contains(table)){
+      return;
+   }
+   QStringList isColumns;
+   isColumns.append(m_engine->quoteIdentifierChain({"T", "TABLE_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"TC", "CONSTRAINT_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"TC", "CONSTRAINT_TYPE"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "COLUMN_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"RC", "MATCH_OPTION"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"RC", "UPDATE_RULE"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"RC", "DELETE_RULE"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "REFERENCED_TABLE_SCHEMA"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "REFERENCED_TABLE_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "REFERENCED_COLUMN_NAME"}));
+   
+   QStringList args;
+   args.append(isColumns.join(", "));
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "TABLES"}) + " T");
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "TABLE_CONSTRAINTS"}) + " TC");
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"TC", "TABLE_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"TC", "TABLE_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "KEY_COLUMN_USAGE"}) + " KCU");
+   args.append(m_engine->quoteIdentifierChain({"TC", "TABLE_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"KCU", "TABLE_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"TC", "TABLE_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"KCU", "TABLE_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"TC", "CONSTRAINT_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"KCU", "CONSTRAINT_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "REFERENTIAL_CONSTRAINTS"}) + " RC");
+   args.append(m_engine->quoteIdentifierChain({"TC", "CONSTRAINT_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"RC", "CONSTRAINT_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"TC", "CONSTRAINT_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"RC", "CONSTRAINT_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_NAME"}));
+   args.append(m_engine->quoteValue(table));
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_TYPE"}));
+   
+   QString sql = format_str("SELECT %1 FROM %2 INNER JOIN %3 ON %4 = %5 AND %6 = %7 "
+                            "LEFT JOIN %8 ON %9 = %10 AND %11 = %12 AND %13 = %14 "
+                            "LEFT JOIN %15 ON %16 = %17 AND %18 = %19 "
+                            "WHERE %20 = %21 AND %22 IN ('BASE TABLE', 'VIEW')", args);
+   if(schema != AbstractSource::__DEFAULT_SCHEMA__){
+      sql += " AND " + m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}) + 
+            " = " + m_engine->quoteValue(schema);
+   }else{
+      sql += " AND " + m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}) + 
+            " != 'INFORMATION_SCHEMA'";
+   }
+   sql += QString(" ORDER BY CASE %1 WHEN 'PRIMARY KEY' THEN 1 WHEN 'UNIQUE' THEN 2 "
+                  "WHEN 'FOREIGN KEY' THEN 3  ELSE 4 END , %2 , %3")
+         .arg(m_engine->quoteIdentifierChain({"TC", "CONSTRAINT_TYPE"}))
+         .arg(m_engine->quoteIdentifierChain({"TC", "CONSTRAINT_NAME"}))
+         .arg(m_engine->quoteIdentifierChain({"KCU", "ORDINAL_POSITION"}));
+   
+   QSharedPointer<QSqlQuery> query = m_engine->query(sql);
+   QMap<QString, QMap<QString, QVariant>> constraints;
+   QString realName;
+   QString name;
+   bool isFK = false;
+   while(query->next()){
+      if(realName != query->value("CONSTRAINT_NAME").toString()){
+         realName = query->value("CONSTRAINT_NAME").toString();
+         isFK = "FOREIGN KEY" == query->value("CONSTRAINT_TYPE").toString();
+         if(isFK){
+            name = realName;
+         }else{
+            name = "_zf_" + query->value("TABLE_NAME").toString() + "_" + realName;
+         }
+         QMap<QString, QVariant> constraint;
+         constraint.insert("constraint_name", name);
+         constraint.insert("constraint_type", query->value("CONSTRAINT_TYPE"));
+         constraint.insert("table_name", query->value("TABLE_NAME"));
+         constraint.insert("columns", QStringList{});
+         if(isFK){
+            constraint.insert("referenced_table_schema", name);
+            constraint.insert("referenced_table_name", query->value("CONSTRAINT_TYPE"));
+            constraint.insert("referenced_columns", QStringList{});
+            constraint.insert("match_option", query->value("MATCH_OPTION"));
+            constraint.insert("update_rule", query->value("UPDATE_RULE"));
+            constraint.insert("delete_rule", query->value("DELETE_RULE"));
+         }
+         constraints.insert(name, constraint);
+      }
+      QStringList columnNames(constraints[name]["columns"].toStringList());
+      columnNames.append(query->value("COLUMN_NAME").toString());
+      constraints[name]["columns"].setValue(columnNames);
+      if(isFK){
+         QStringList rfcolumnNames(constraints[name]["referenced_columns"].toStringList());
+         rfcolumnNames.append(query->value("REFERENCED_COLUMN_NAME").toString());
+         constraints[name]["referenced_columns"].setValue(rfcolumnNames);
+      }
+   }
+   m_tableConstraintData[schema].insert(table, constraints);
+}
+
 }//source
 }//metadata
 }//db
