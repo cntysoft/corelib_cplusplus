@@ -2,6 +2,7 @@
 #define SN_CORELIB_DB_METADATA_METADATA_H
 
 #include <QSharedPointer>
+#include <QList>
 
 #include "global/global.h"
 #include "kernel/errorinfo.h"
@@ -35,6 +36,8 @@ public:
    QSharedPointer<AbstractTableObject> getTable(const QString &tableName, QString schema = QString())throw(ErrorInfo);
    QSharedPointer<ColumnObject> getColumn(const QString &columnName, const QString &tableName, 
                                           QString schema = QString());
+   QList<QSharedPointer<ColumnObject>> getColumns(const QString &tableName, QString schema = QString());
+   QStringList getColumnNames(const QString &tableName, QString schema = QString());
 protected:
    AbstractSource* createSourceFromEngine()throw(ErrorInfo);
 protected:

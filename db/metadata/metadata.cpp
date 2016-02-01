@@ -51,6 +51,20 @@ QSharedPointer<ColumnObject> Metadata::getColumn(const QString &columnName, cons
    return m_source->getColumn(columnName, tableName, schema);
 }
 
+QList<QSharedPointer<ColumnObject>> Metadata::getColumns(const QString &tableName, QString schema)
+{
+   QList<QSharedPointer<ColumnObject>> columns;
+   m_source->getColumns(columns, tableName, schema);
+   return columns;
+}
+
+QStringList Metadata::getColumnNames(const QString &tableName, QString schema)
+{
+   QStringList names;
+   m_source->getColumnNames(names, tableName, schema);
+   return names;
+}
+
 }//metadata
 }//db
 }//corelib

@@ -36,6 +36,10 @@ public:
    QSharedPointer<AbstractTableObject> getTable(const QString &tableName, QString schema = QString())throw(ErrorInfo);
    QSharedPointer<ColumnObject> getColumn(const QString &columnName, const QString &tableName, 
                                                  QString schema = QString());
+   void getColumns(QList<QSharedPointer<ColumnObject>> &columns, const QString &tableName, 
+                   QString schema = QString());
+   void getColumnNames(QStringList &columnNames, const QString &tableName, 
+                   QString schema = QString());
 public:
    virtual ~AbstractSource();
 protected:

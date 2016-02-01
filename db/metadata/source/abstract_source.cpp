@@ -101,6 +101,33 @@ QSharedPointer<ColumnObject> AbstractSource::getColumn(const QString &columnName
    return column;
 }
 
+void AbstractSource::getColumns(QList<QSharedPointer<ColumnObject>> &columns, const QString &tableName, 
+                QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadColumnData(tableName, schema);
+   QStringList columnNames;
+   getColumnNames(columnNames, tableName, schema);
+   int total = columnNames.size();
+   for(int i = 0; i < total; i++){
+      columns.append(getColumn(columnNames[i], tableName, schema));
+   }
+}
+
+void AbstractSource::getColumnNames(QStringList &columnNames, const QString &tableName, QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadColumnData(tableName, schema);
+   if(!m_tableColumnsData.contains(schema) || !m_tableColumnsData[schema].contains(tableName)){
+      columnNames.clear();
+   }
+   columnNames = m_tableColumnsData[schema][tableName].keys();
+}
+
 AbstractSource::~AbstractSource()
 {}
 
