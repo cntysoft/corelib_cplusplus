@@ -218,6 +218,24 @@ QSharedPointer<ConstraintObject> AbstractSource::getConstraint(const QString &co
    return constraint;
 }
 
+void AbstractSource::getConstraints(QList<QSharedPointer<ConstraintObject>> &constraints, const QString &table, 
+                    QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadConstraintData(table, schema);
+   if(!m_tableConstraintData.contains(schema) || !m_tableConstraintData[schema].contains(table)){
+      constraints.clear();
+      return;
+   }
+   QStringList names(m_tableConstraintData[schema][table].keys());
+   int nameCount = names.size();
+   for(int i = 0; i < nameCount; i++){
+      constraints.append(getConstraint(names[i], table, schema));
+   }
+}
+
 AbstractSource::~AbstractSource()
 {}
 

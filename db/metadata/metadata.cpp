@@ -97,6 +97,13 @@ QSharedPointer<ConstraintObject> Metadata::getConstraint(const QString &constrai
    return m_source->getConstraint(constraintName, table, schema);
 }
 
+QList<QSharedPointer<ConstraintObject>> Metadata::getConstraints(const QString &table, QString schema)
+{
+   QList<QSharedPointer<ConstraintObject>> constraints;
+   m_source->getConstraints(constraints, table, schema);
+   return constraints;
+}
+
 }//metadata
 }//db
 }//corelib

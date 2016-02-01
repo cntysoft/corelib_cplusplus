@@ -52,6 +52,8 @@ public:
    
    QSharedPointer<ConstraintObject> getConstraint(const QString &constraintName, const QString &table, 
                                                   QString schema);
+   void getConstraints(QList<QSharedPointer<ConstraintObject>> &constraints, const QString &table, 
+                       QString schema = QString());
 public:
    virtual ~AbstractSource();
 protected:

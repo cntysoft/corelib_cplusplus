@@ -50,6 +50,7 @@ public:
    
    QSharedPointer<ConstraintObject> getConstraint(const QString &constraintName, const QString &table, 
                                                   QString schema = QString());
+   QList<QSharedPointer<ConstraintObject>> getConstraints(const QString &table, QString schema = QString());
 protected:
    AbstractSource* createSourceFromEngine()throw(ErrorInfo);
 protected:
