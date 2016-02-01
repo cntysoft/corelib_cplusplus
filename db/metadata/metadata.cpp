@@ -40,6 +40,17 @@ QStringList Metadata::getTableNames(QString schema, bool includeViews)
    return tableNames;
 }
 
+QSharedPointer<AbstractTableObject> Metadata::getTable(const QString &tableName, QString schema)throw(ErrorInfo)
+{
+   return m_source->getTable(tableName, schema);
+}
+
+QSharedPointer<ColumnObject> Metadata::getColumn(const QString &columnName, const QString &tableName, 
+                                                 QString schema)
+{
+   return m_source->getColumn(columnName, tableName, schema);
+}
+
 }//metadata
 }//db
 }//corelib

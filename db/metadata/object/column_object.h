@@ -21,6 +21,29 @@ public:
    const QString& getTableName()const;
    ColumnObject& setSchemaName(const QString &schemaName);
    const QString& getSchemaName()const;
+   ColumnObject& setOrdinalPosition(int ordinalPosition);
+   int getOrdinalPosition()const;
+   const QString& getColumnDefault()const;
+   ColumnObject& setColumnDefault(const QString &columnDefault);
+   bool isNullable()const;
+   ColumnObject& setIsNullable(bool flag);
+   const QString& getDataType()const;
+   ColumnObject& setDataType(const QString &dataType);
+   int getCharacterMaximumLength()const;
+   ColumnObject& setCharacterMaximumLength(int characterMaximumLength);
+   int getCharacterOctetLength()const;
+   ColumnObject& setCharacterOctetLength(int characterOctetLength);
+   int getNumericPrecision()const;
+   ColumnObject& setNumericPrecision(int numericPrecision);
+   int getNumericScale()const;
+   ColumnObject& setNumericScale(int numericScale);
+   bool getNumericUnsigned()const;
+   ColumnObject& setNumericUnsigned(bool numericUnsigned);
+   int isNumericUnsigned()const;
+   QMap<QString, QVariant> getErratas()const;
+   ColumnObject& setErratas(const QMap<QString, QVariant> &erratas);
+   QVariant getErrata(const QString &errataName);
+   ColumnObject& setErrata(const QString &errataName, const QVariant &errataValue);
 protected:
    QString m_name;
    QString m_tableName;
@@ -34,7 +57,7 @@ protected:
    int m_numericPrecision;
    int m_numericScale;
    bool m_numericUnsigned;
-   QMap<QString, QString> m_errata;
+   QMap<QString, QVariant> m_errata;
 };
 
 }//object

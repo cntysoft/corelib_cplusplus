@@ -12,7 +12,7 @@ TestDb::TestDb()
 {"host", "127.0.0.1"},
 {"username","root"},
 {"password", "cntysoft"},
-{"dbname", "meta_info_devel"}
+{"dbname", "cloudcontroller_devel"}
 }))
 {
    
