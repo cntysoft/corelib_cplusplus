@@ -1,5 +1,6 @@
 #include "abstract_source.h"
 #include "db/metadata/object/view_object.h"
+#include "db/metadata/object/constraintkey_object.h"
 
 namespace sn{
 namespace corelib{
@@ -9,6 +10,7 @@ namespace source{
 
 using sn::corelib::db::metadata::object::ViewObject;
 using sn::corelib::db::metadata::object::TableObject;
+using sn::corelib::db::metadata::object::ConstraintKeyObject;
 
 const QString AbstractSource::__DEFAULT_SCHEMA__ = "__DEFAULT_SCHEMA__";
 
@@ -219,7 +221,7 @@ QSharedPointer<ConstraintObject> AbstractSource::getConstraint(const QString &co
 }
 
 void AbstractSource::getConstraints(QList<QSharedPointer<ConstraintObject>> &constraints, const QString &table, 
-                    QString schema)
+                                    QString schema)
 {
    if(schema.isEmpty()){
       schema = m_defaultSchema;
@@ -233,6 +235,53 @@ void AbstractSource::getConstraints(QList<QSharedPointer<ConstraintObject>> &con
    int nameCount = names.size();
    for(int i = 0; i < nameCount; i++){
       constraints.append(getConstraint(names[i], table, schema));
+   }
+}
+
+void AbstractSource::getConstraintKeys(QList<QSharedPointer<ConstraintKeyObject>> &keys, const QString &constraint, const QString &table, 
+                       QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadConstraintReferences(table, schema);
+   QMap<QString, QMap<QString, QString>> references;
+   if(m_constraintReferencesData.contains(schema)){
+      QList<QMap<QString, QString>> &items = m_constraintReferencesData[schema];
+      QList<QMap<QString, QString>>::const_iterator it = items.cbegin();
+      QList<QMap<QString, QString>>::const_iterator endMarker = items.cend();
+      while(it != endMarker){
+         QMap<QString, QString> refKeyInfo(*it);
+         qDebug() << refKeyInfo["constraint_name"];
+         if(constraint.endsWith(refKeyInfo["constraint_name"])){
+            references[constraint] = refKeyInfo;
+         }
+         it++;
+      }
+   }
+   
+   loadConstraintDataKeys(schema);
+   if(!m_constraintKeysData.contains(schema)){
+      keys.clear();
+      return;
+   }
+   QList<QMap<QString, QString>> &keysItems = m_constraintKeysData[schema];
+   QList<QMap<QString, QString>>::const_iterator it = keysItems.cbegin();
+   QList<QMap<QString, QString>>::const_iterator endMarker = keysItems.cend();
+   while(it != endMarker){
+      QMap<QString, QString> constraintKeyInfo = *it;
+      if(constraintKeyInfo["table_name"] == table && constraint.endsWith(constraintKeyInfo["constraint_name"])){
+         QSharedPointer<ConstraintKeyObject> key(new ConstraintKeyObject(constraintKeyInfo["column_name"]));
+         key->setOrdinalPosition(constraintKeyInfo["ordinal_position"].toInt());
+         if(references.contains(constraint)){
+            key->setForeignKeyUpdateRule(references[constraint]["update_rule"]);
+            key->setForeignKeyDeleteRule(references[constraint]["delete_rule"]);
+            key->setReferencedTableName(references[constraint]["referenced_table_name"]);
+            key->setReferencedColumnName(references[constraint]["referenced_column_name"]);
+            keys.append(key);
+         }
+      }
+      it++;
    }
 }
 

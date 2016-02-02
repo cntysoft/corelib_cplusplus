@@ -1,6 +1,7 @@
 #include "metadata.h"
 #include "db/metadata/source/mysql_metadata.h"
 
+
 namespace sn{
 namespace corelib{
 namespace db{
@@ -102,6 +103,13 @@ QList<QSharedPointer<ConstraintObject>> Metadata::getConstraints(const QString &
    QList<QSharedPointer<ConstraintObject>> constraints;
    m_source->getConstraints(constraints, table, schema);
    return constraints;
+}
+
+QList<QSharedPointer<ConstraintKeyObject>> Metadata::getConstraintKeys(const QString &constraint, const QString &table, QString schema)
+{
+   QList<QSharedPointer<ConstraintKeyObject>> keys;
+   m_source->getConstraintKeys(keys, constraint, table, schema);
+   return keys;
 }
 
 }//metadata

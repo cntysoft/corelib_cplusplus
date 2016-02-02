@@ -13,6 +13,7 @@
 #include "db/metadata/object/column_object.h"
 #include "db/metadata/object/view_object.h"
 #include "db/metadata/object/constraint_object.h"
+#include "db/metadata/object/constraintkey_object.h"
 
 namespace sn{
 namespace corelib{
@@ -25,6 +26,7 @@ using sn::corelib::db::metadata::object::AbstractTableObject;
 using sn::corelib::db::metadata::object::ColumnObject;
 using sn::corelib::db::metadata::object::ConstraintObject;
 using sn::corelib::db::metadata::object::ViewObject;
+using sn::corelib::db::metadata::object::ConstraintKeyObject;
 using sn::corelib::ErrorInfo;
 
 class SN_CORELIB_EXPORT Metadata
@@ -51,6 +53,7 @@ public:
    QSharedPointer<ConstraintObject> getConstraint(const QString &constraintName, const QString &table, 
                                                   QString schema = QString());
    QList<QSharedPointer<ConstraintObject>> getConstraints(const QString &table, QString schema = QString());
+   QList<QSharedPointer<ConstraintKeyObject>> getConstraintKeys(const QString &constraint, const QString &table, QString schema = QString());
 protected:
    AbstractSource* createSourceFromEngine()throw(ErrorInfo);
 protected:

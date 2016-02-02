@@ -22,6 +22,8 @@ public:
    virtual void loadTableNameData(const QString &schema);
    virtual void loadColumnData(const QString &table, const QString &schema);
    virtual void loadConstraintData(const QString &table, const QString &schema);
+   virtual void loadConstraintReferences(const QString &table, const QString &schema);
+   virtual void loadConstraintDataKeys(const QString &schema);
 };
 
 }//source

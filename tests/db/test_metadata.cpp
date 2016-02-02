@@ -20,7 +20,7 @@ void TestDb::testMetadata()
       //m_metadata->getColumn("sexTypes", "app_sys_user_base_info");
 //      qDebug() << m_metadata->getColumns("app_sys_user_base_info");
       //qDebug() << m_metadata->getColumnNames("app_sys_user_base_info");
-     m_metadata->getConstraints("app_sys_user_base_info");
+     qDebug() << m_metadata->getConstraintKeys("_zf_app_sys_user_base_info_sdfsdfs", "app_sys_user_base_info");
      //qDebug() << view->getName();
    }catch(ErrorInfo exp){
       qDebug() << exp.toString();

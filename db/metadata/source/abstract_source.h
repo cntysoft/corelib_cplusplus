@@ -12,6 +12,7 @@
 #include "db/metadata/object/column_object.h"
 #include "db/metadata/object/view_object.h"
 #include "db/metadata/object/constraint_object.h"
+#include "db/metadata/object/constraintkey_object.h"
 #include "kernel/errorinfo.h"
 
 namespace sn{
@@ -26,6 +27,7 @@ using sn::corelib::db::metadata::object::AbstractTableObject;
 using sn::corelib::db::metadata::object::ColumnObject;
 using sn::corelib::db::metadata::object::ViewObject;
 using sn::corelib::db::metadata::object::ConstraintObject;
+using sn::corelib::db::metadata::object::ConstraintKeyObject;
 
 class SN_CORELIB_EXPORT AbstractSource
 {
@@ -54,6 +56,8 @@ public:
                                                   QString schema);
    void getConstraints(QList<QSharedPointer<ConstraintObject>> &constraints, const QString &table, 
                        QString schema = QString());
+   void getConstraintKeys(QList<QSharedPointer<ConstraintKeyObject>> &keys, const QString &constraint, const QString &table, 
+                          QString schema = QString());
 public:
    virtual ~AbstractSource();
 protected:
@@ -61,6 +65,8 @@ protected:
    virtual void loadTableNameData(const QString &schema) = 0;
    virtual void loadColumnData(const QString &table, const QString &schema) = 0;
    virtual void loadConstraintData(const QString &table, const QString &schema) = 0;
+   virtual void loadConstraintReferences(const QString &table, const QString &schema) = 0;
+   virtual void loadConstraintDataKeys(const QString &schema) = 0;
 protected:
    QSharedPointer<Engine> m_engine;
    QString m_defaultSchema;
@@ -68,6 +74,8 @@ protected:
    QMap<QString, QMap<QString, QMap<QString, QString>>> m_schemasTablesData;
    QMap<QString, QMap<QString, QMap<QString, QMap<QString, QVariant>>>> m_tableColumnsData;
    QMap<QString, QMap<QString, QMap<QString, QMap<QString, QVariant>>>> m_tableConstraintData;
+   QMap<QString, QList<QMap<QString, QString>>> m_constraintReferencesData;
+   QMap<QString, QList<QMap<QString, QString>>> m_constraintKeysData;
 };
 
 

@@ -247,6 +247,108 @@ void MysqlMetadata::loadConstraintData(const QString &table, const QString &sche
    m_tableConstraintData[schema].insert(table, constraints);
 }
 
+void MysqlMetadata::loadConstraintReferences(const QString&, const QString &schema)
+{
+   if(m_constraintReferencesData.contains(schema)){
+      return;
+   }
+   
+   QStringList isColumns;
+   isColumns.append(m_engine->quoteIdentifierChain({"RC", "TABLE_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"RC", "CONSTRAINT_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"RC", "UPDATE_RULE"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"RC", "DELETE_RULE"}));
+   
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "REFERENCED_TABLE_SCHEMA"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "REFERENCED_TABLE_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "REFERENCED_COLUMN_NAME"}));
+   
+   QStringList args;
+   args.append(isColumns.join(", "));
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "TABLES"}) + " T");
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "REFERENTIAL_CONSTRAINTS"}) + " RC");
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"RC", "CONSTRAINT_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"RC", "TABLE_NAME"}));
+   
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "KEY_COLUMN_USAGE"}) + " KCU");
+   args.append(m_engine->quoteIdentifierChain({"RC", "CONSTRAINT_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"KCU", "TABLE_SCHEMA"}));
+   
+   args.append(m_engine->quoteIdentifierChain({"RC", "TABLE_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"KCU", "TABLE_NAME"}));
+   
+   args.append(m_engine->quoteIdentifierChain({"RC", "CONSTRAINT_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"KCU", "CONSTRAINT_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_TYPE"}));
+   QString sql = format_str("SELECT %1 FROM %2 INNER JOIN %3 ON %4 = %5 AND %6 = %7 "
+                            "INNER JOIN %8 ON %9 = %10 AND %11 = %12 AND %13 = %14 "
+                            "WHERE %15 IN ('BASE TABLE', 'VIEW')", args);
+   if(schema != AbstractSource::__DEFAULT_SCHEMA__){
+      sql += " AND " + m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}) + 
+            " = " + m_engine->quoteValue(schema);
+   }else{
+      sql += " AND " + m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}) + 
+            " != 'INFORMATION_SCHEMA'";
+   }
+   QSharedPointer<QSqlQuery> query = m_engine->query(sql);
+   QList<QMap<QString, QString>> data;
+   while(query->next()){
+      QMap<QString, QString> item;
+      item.insert("table_name", query->value("TABLE_NAME").toString());
+      item.insert("constraint_name", query->value("CONSTRAINT_NAME").toString());
+      item.insert("update_rule", query->value("UPDATE_RULE").toString());
+      item.insert("delete_rule", query->value("DELETE_RULE").toString());
+      item.insert("referenced_table_schema", query->value("REFERENCED_TABLE_SCHEMA").toString());
+      item.insert("referenced_table_name", query->value("REFERENCED_TABLE_NAME").toString());
+      item.insert("referenced_column_name", query->value("REFERENCED_COLUMN_NAME").toString());
+      data.append(item);
+   }
+   m_constraintReferencesData.insert(schema, data);
+}
+
+void MysqlMetadata::loadConstraintDataKeys(const QString &schema)
+{
+   if(m_constraintKeysData.contains(schema)){
+      return;
+   }
+   QStringList isColumns;
+   isColumns.append(m_engine->quoteIdentifierChain({"T", "TABLE_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "CONSTRAINT_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "COLUMN_NAME"}));
+   isColumns.append(m_engine->quoteIdentifierChain({"KCU", "ORDINAL_POSITION"}));
+   QStringList args;
+   args.append(isColumns.join(", "));
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "TABLES"}) + " T");
+   args.append(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "KEY_COLUMN_USAGE"}) + " KCU");
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"KCU", "TABLE_SCHEMA"}));
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"KCU", "TABLE_NAME"}));
+   args.append(m_engine->quoteIdentifierChain({"T", "TABLE_TYPE"}));
+   QString sql = format_str("SELECT %1 FROM %2 INNER JOIN %3 ON %4 = %5 AND %6 = %7 "
+                            "WHERE %8 IN ('BASE TABLE', 'VIEW')", args);
+   if(schema != AbstractSource::__DEFAULT_SCHEMA__){
+      sql += " AND " + m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}) + 
+            " = " + m_engine->quoteValue(schema);
+   }else{
+      sql += " AND " + m_engine->quoteIdentifierChain({"T", "TABLE_SCHEMA"}) + 
+            " != 'INFORMATION_SCHEMA'";
+   }
+   QSharedPointer<QSqlQuery> query = m_engine->query(sql);
+   QList<QMap<QString, QString>> data;
+   while(query->next()){
+      QMap<QString, QString> item;
+      item.insert("table_name", query->value("TABLE_NAME").toString());
+      item.insert("constraint_name", query->value("CONSTRAINT_NAME").toString());
+      item.insert("column_name", query->value("COLUMN_NAME").toString());
+      item.insert("ordinal_position", query->value("ORDINAL_POSITION").toString());
+      data.append(item);
+   }
+   m_constraintKeysData.insert(schema, data);
+}
+
 }//source
 }//metadata
 }//db
