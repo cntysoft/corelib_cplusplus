@@ -112,6 +112,25 @@ QList<QSharedPointer<ConstraintKeyObject>> Metadata::getConstraintKeys(const QSt
    return keys;
 }
 
+QSharedPointer<TriggerObject> Metadata::getTrigger(const QString &triggerName, QString schema)
+{
+   return m_source->getTrigger(triggerName, schema);
+}
+
+QList<QSharedPointer<TriggerObject>> Metadata::getTriggers(QString schema)
+{
+   QList<QSharedPointer<TriggerObject>> triggers;
+   m_source->getTriggers(triggers, schema);
+   return triggers;
+}
+
+QStringList Metadata::getTriggerNames(QString schema)
+{
+   QStringList names;
+   m_source->getTriggerNames(names, schema);
+   return names;
+}
+
 }//metadata
 }//db
 }//corelib

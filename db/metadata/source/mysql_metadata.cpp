@@ -349,6 +349,71 @@ void MysqlMetadata::loadConstraintDataKeys(const QString &schema)
    m_constraintKeysData.insert(schema, data);
 }
 
+void MysqlMetadata::loadTriggerData(const QString &schema)
+{
+   if(m_triggersData.contains(schema)){
+      return;
+   }
+   QStringList isColumns;
+   isColumns.append(m_engine->quoteFieldName("TRIGGER_NAME"));
+   isColumns.append(m_engine->quoteFieldName("EVENT_MANIPULATION"));
+   isColumns.append(m_engine->quoteFieldName("EVENT_OBJECT_CATALOG"));
+   
+   isColumns.append(m_engine->quoteFieldName("EVENT_OBJECT_SCHEMA"));
+   isColumns.append(m_engine->quoteFieldName("EVENT_OBJECT_TABLE"));
+   isColumns.append(m_engine->quoteFieldName("ACTION_ORDER"));
+   
+   isColumns.append(m_engine->quoteFieldName("ACTION_CONDITION"));
+   isColumns.append(m_engine->quoteFieldName("ACTION_STATEMENT"));
+   isColumns.append(m_engine->quoteFieldName("ACTION_ORIENTATION"));
+   
+   isColumns.append(m_engine->quoteFieldName("ACTION_TIMING"));
+   isColumns.append(m_engine->quoteFieldName("ACTION_REFERENCE_OLD_TABLE"));
+   isColumns.append(m_engine->quoteFieldName("ACTION_REFERENCE_NEW_TABLE"));
+   
+   isColumns.append(m_engine->quoteFieldName("ACTION_REFERENCE_OLD_ROW"));
+   isColumns.append(m_engine->quoteFieldName("ACTION_REFERENCE_NEW_ROW"));
+   isColumns.append(m_engine->quoteFieldName("CREATED"));
+   QString sql = QString("SELECT %1 FROM %2 WHERE ")
+         .arg(isColumns.join(", "))
+         .arg(m_engine->quoteIdentifierChain({"INFORMATION_SCHEMA", "TRIGGERS"}));
+   if(schema != AbstractSource::__DEFAULT_SCHEMA__){
+      sql += m_engine->quoteFieldName("TRIGGER_SCHEMA") + 
+            " = " + m_engine->quoteValue(schema);
+   }else{
+      sql += m_engine->quoteFieldName("TRIGGER_SCHEMA") + 
+            " != 'INFORMATION_SCHEMA'";
+   }
+   QSharedPointer<QSqlQuery> query = m_engine->query(sql);
+   QMap<QString, QMap<QString, QString>> data;
+   while(query->next()){
+      QMap<QString, QString> item;
+      item.insert("trigger_name", query->value("TRIGGER_NAME").toString());
+      item.insert("event_manipulation", query->value("EVENT_MANIPULATION").toString());
+      item.insert("event_object_catalog", query->value("EVENT_OBJECT_CATALOG").toString());
+      
+      item.insert("event_object_schema", query->value("EVENT_OBJECT_SCHEMA").toString());
+      item.insert("event_object_table", query->value("EVENT_OBJECT_TABLE").toString());
+      item.insert("action_order", query->value("ACTION_ORDER").toString());
+      
+      item.insert("action_condition", query->value("ACTION_CONDITION").toString());
+      item.insert("action_statement", query->value("ACTION_STATEMENT").toString());
+      item.insert("action_orientation", query->value("ACTION_ORIENTATION").toString());
+      
+      item.insert("action_timing", query->value("ACTION_TIMING").toString());
+      item.insert("action_reference_old_table", query->value("ACTION_REFERENCE_OLD_TABLE").toString());
+      item.insert("action_reference_new_table", query->value("ACTION_REFERENCE_NEW_TABLE").toString());
+      
+      item.insert("action_reference_old_row", query->value("ACTION_REFERENCE_OLD_ROW").toString());
+      item.insert("action_reference_new_row", query->value("ACTION_REFERENCE_NEW_ROW").toString());
+      item.insert("created", query->value("CREATED").toString());
+      
+      data.insert(item["trigger_name"], item);
+   }
+   m_triggersData.insert(schema, data);
+   
+}
+
 }//source
 }//metadata
 }//db

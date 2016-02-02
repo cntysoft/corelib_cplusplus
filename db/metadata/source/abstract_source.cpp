@@ -1,3 +1,5 @@
+#include <QDateTime>
+
 #include "abstract_source.h"
 #include "db/metadata/object/view_object.h"
 #include "db/metadata/object/constraintkey_object.h"
@@ -239,7 +241,7 @@ void AbstractSource::getConstraints(QList<QSharedPointer<ConstraintObject>> &con
 }
 
 void AbstractSource::getConstraintKeys(QList<QSharedPointer<ConstraintKeyObject>> &keys, const QString &constraint, const QString &table, 
-                       QString schema)
+                                       QString schema)
 {
    if(schema.isEmpty()){
       schema = m_defaultSchema;
@@ -283,6 +285,60 @@ void AbstractSource::getConstraintKeys(QList<QSharedPointer<ConstraintKeyObject>
       }
       it++;
    }
+}
+
+QSharedPointer<TriggerObject> AbstractSource::getTrigger(const QString &triggerName, QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadTriggerData(schema);
+   if(!m_triggersData.contains(schema) || !m_triggersData[schema].contains(triggerName)){
+      return QSharedPointer<TriggerObject>();
+   }
+   QMap<QString, QString> info = m_triggersData[schema][triggerName];
+   QSharedPointer<TriggerObject> trigger(new TriggerObject());
+   trigger->setName(triggerName);
+   trigger->setEventManipulation(info["event_manipulation"]);
+   trigger->setEventObjectCatalog(info["event_object_catalog"]);
+   trigger->setEventObjectSchema(info["event_object_schema"]);
+   trigger->setEventObjectTable(info["event_object_table"]);
+   trigger->setActionOrder(info["action_order"]);
+   trigger->setActionCondition(info["action_condition"]);
+   trigger->setActionStatement(info["action_statement"]);
+   trigger->setActionOrientation(info["action_orientation"]);
+   trigger->setActionTiming(info["action_timing"]);
+   trigger->setActionReferenceOldTable(info["action_reference_old_table"]);
+   trigger->setActionReferenceNewTable(info["action_reference_new_table"]);
+   trigger->setActionReferenceOldRow(info["action_reference_old_row"]);
+   trigger->setActionReferenceNewRow(info["action_reference_new_row"]);
+   trigger->setCreated(QDateTime::fromString(info["created"]));
+   return trigger;
+}
+
+void AbstractSource::getTriggers(QList<QSharedPointer<TriggerObject>> &triggers, QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   QStringList triggerNames;
+   getTriggerNames(triggerNames, schema);
+   int nameCount = triggerNames.size();
+   for(int i = 0; i < nameCount; i++){
+      triggers.append(getTrigger(triggerNames[i], schema));
+   }
+}
+
+void AbstractSource::getTriggerNames(QStringList &names, QString schema)
+{
+   if(schema.isEmpty()){
+      schema = m_defaultSchema;
+   }
+   loadTriggerData(schema);
+   if(!m_triggersData.contains(schema)){
+      names.clear();
+   }
+   names = m_triggersData[schema].keys();
 }
 
 AbstractSource::~AbstractSource()
