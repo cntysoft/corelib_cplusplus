@@ -1,6 +1,7 @@
 #include "abstract_service.h"
 #include "invoke_meta.h"
 
+#include <QJsonDocument>
 #include <QDebug>
 
 namespace sn{
@@ -19,6 +20,13 @@ void AbstractService::writeInterResponse(const ServiceInvokeRequest &request, Se
 {
    response.setIsFinal(false);
    m_serviceProvider.writeResponseToSocket(request, response);
+}
+
+QByteArray AbstractService::encodeJsonObject(const QVariant &data)
+{
+   QJsonDocument doc = QJsonDocument::fromVariant(data);
+   return doc.toJson();
+   
 }
 
 AbstractService::~AbstractService()

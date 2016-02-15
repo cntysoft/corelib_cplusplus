@@ -2,6 +2,9 @@
 #define SN_CORELIB_NETWORK_RPC_ABSTRACT_SERVICE_H
 
 #include <QObject>
+#include <QVariant>
+#include <QByteArray>
+
 #include "global/global.h"
 #include "network/rpc/service_provider.h"
 
@@ -18,6 +21,7 @@ public:
    virtual ~AbstractService();
 protected:
    void writeInterResponse(const ServiceInvokeRequest &request, ServiceInvokeResponse &response);
+   QByteArray encodeJsonObject(const QVariant &data);
 protected:
    virtual void notifySocketDisconnect(int socketDescriptor);
 protected:
