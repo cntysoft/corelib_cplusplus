@@ -191,6 +191,13 @@ ServiceProvider::~ServiceProvider()
    m_batchDisconnectMode = true;
    disconnectUnderlineSockets();
    m_batchDisconnectMode = false;
+   ServicePoolType::iterator it = m_servicePool.begin();
+   ServicePoolType::iterator endMarker = m_servicePool.end();
+   while(it != endMarker){
+      delete it.value();
+      it++;
+   }
+   m_servicePool.clear();
 }
 
 }//network
