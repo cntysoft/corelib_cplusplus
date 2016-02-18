@@ -47,7 +47,7 @@ void AbstractService::checkRequireFields(const QMap<QString, T> &map, const QStr
    QStringList leak;
    map_has_requires(map, requires, leak);
    if(!leak.isEmpty()){
-      throw_exception(ErrorInfo(StdErrorType::msg(SN_E_API_INVOKE_LEAK_ARGS), SN_E_API_INVOKE_LEAK_ARGS), 
+      throw_exception(ErrorInfo(StdErrorType::msg(SN_E_API_INVOKE_LEAK_ARGS, leak), SN_E_API_INVOKE_LEAK_ARGS), 
                       STD_EXCEPTION_CONTEXT);
    }
 }

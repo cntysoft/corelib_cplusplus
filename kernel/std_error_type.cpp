@@ -1,6 +1,6 @@
 #include "std_error_type.h"
-#include "std_error_code.h"
-#include "common_funcs.h"
+#include "global/std_error_code.h"
+#include "global/common_funcs.h"
 
 namespace sn{
 namespace corelib{

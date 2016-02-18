@@ -52,7 +52,7 @@ bool SN_CORELIB_EXPORT map_has_requires(const QMap<QString, T> &map, const QStri
       }
       rit++;
    }
-   return true;
+   return isOk;
 }
 
 void SN_CORELIB_EXPORT throw_exception(ErrorInfo errorInfo, const QString &context = QString());
