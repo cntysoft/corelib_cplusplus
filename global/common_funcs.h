@@ -2,9 +2,11 @@
 #define SN_CORELIB_GLOBAL_COMMON_FUNCS_H
 
 #include "global.h"
+
 #include <type_traits>
 #include <QVariant>
 #include <QString>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 class QString;
@@ -15,6 +17,7 @@ namespace sn{
 namespace corelib{
 
 class Application;
+class ErrorInfo;
 
 SN_CORELIB_EXPORT QString get_current_user_home_dir();
 SN_CORELIB_EXPORT Application* get_application_ref();
@@ -35,6 +38,24 @@ bool SN_CORELIB_EXPORT instanceof(const T2&)
 QString SN_CORELIB_EXPORT format_str(const QString &format, const QStringList &args = QStringList());
 
 bool SN_CORELIB_EXPORT is_scalar(const QVariant &value);
+
+template<typename T>
+bool SN_CORELIB_EXPORT map_has_requires(const QMap<QString, T> &map, const QStringList &requires, QStringList &leak = QStringList())
+{
+   bool isOk = true;
+   QStringList::const_iterator rit = requires.cbegin();
+   QStringList::const_iterator rendMarker = requires.cend();
+   while(rit != rendMarker){
+      if(!map.contains(*rit)){
+         leak.append(*rit);
+         isOk = false;
+      }
+      rit++;
+   }
+   return true;
+}
+
+void SN_CORELIB_EXPORT throw_exception(ErrorInfo errorInfo, const QString &context = QString());
 
 }//corelib
 }//sn

@@ -8,6 +8,7 @@
 
 #include "common_funcs.h"
 #include "kernel/application.h"
+#include "kernel/errorinfo.h"
 
 namespace sn{
 namespace corelib{
@@ -151,6 +152,14 @@ bool is_scalar(const QVariant &value)
       return true;
    }
    return false;
+}
+
+void SN_CORELIB_EXPORT throw_exception(ErrorInfo errorInfo, const QString &context)
+{
+   if(!context.isEmpty()){
+      errorInfo.setExtraErrorInfo("context", context);
+   }
+   throw errorInfo;
 }
 
 }//corelib

@@ -5,9 +5,9 @@ namespace corelib{
 namespace db{
 namespace sql{
 
-StatementContainerInterface& AbstractPreparableSql::prepareStatement(const Engine&, const StatementContainerInterface&)
+StatementContainerInterface& AbstractPreparableSql::prepareStatement(const Engine&, StatementContainerInterface& statementContainer)
 {
-   
+   return statementContainer;
 }
 
 AbstractPreparableSql::~AbstractPreparableSql()

@@ -57,6 +57,8 @@ Product
          "code_location.cpp",
          "stddir.cpp",
          "stddir.h",
+         "std_error_type.cpp",
+         "std_error_type.h",
       ]
    }
    
@@ -64,12 +66,12 @@ Product
       name : "global"
       prefix : name + '/'
       files : [
-         "global.h",
-         "global.cpp",
-         "common_funcs.cpp",
-         "common_funcs.h",
-         
-      ]
+           "global.h",
+           "global.cpp",
+           "common_funcs.cpp",
+           "common_funcs.h",
+           "std_error_code.h"
+       ]
    }
    
    Group {

@@ -25,8 +25,7 @@ void AbstractService::writeInterResponse(const ServiceInvokeRequest &request, Se
 QByteArray AbstractService::encodeJsonObject(const QVariant &data)
 {
    QJsonDocument doc = QJsonDocument::fromVariant(data);
-   return doc.toJson();
-   
+   return doc.toJson();  
 }
 
 AbstractService::~AbstractService()

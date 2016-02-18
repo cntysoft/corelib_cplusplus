@@ -2,10 +2,8 @@
 
 #include "errorinfo.h"
 
-namespace sn 
-{
-namespace corelib 
-{
+namespace sn{
+namespace corelib{
 class ErrorInfo::ErrorInfoPrivate : public QSharedData
 {
 public:
@@ -14,6 +12,7 @@ public:
    {}
    QList<ErrorItem> items;
    bool internalError;
+   QMap<QString, QVariant> m_extra;
 };
 
 
@@ -23,10 +22,10 @@ ErrorInfo::ErrorInfo(const ErrorInfo &rhs)
    
 }
 
-ErrorInfo::ErrorInfo(const QString &description, const CodeLocation &codeLocation, bool internalError)
+ErrorInfo::ErrorInfo(const QString &description, int errorCode, const CodeLocation &codeLocation, bool internalError)
    :d(new ErrorInfoPrivate)
 {
-   append(description, codeLocation);
+   append(description, errorCode, codeLocation);
    d->internalError = internalError;
 }
 
@@ -39,19 +38,35 @@ ErrorInfo& ErrorInfo::operator=(const ErrorInfo &other)
    return *this;
 }
 
-void ErrorInfo::append(const QString &description, const CodeLocation &codeLocation)
+void ErrorInfo::append(const QString &description, int errorCode, const CodeLocation &codeLocation)
 {
-   d->items.append(ErrorItem(description, codeLocation));
+   d->items.append(ErrorItem(description, errorCode, codeLocation));
 }
 
-void ErrorInfo::prepend(const QString &description, const CodeLocation &codeLocation)
+void ErrorInfo::prepend(const QString &description, int errorCode, const CodeLocation &codeLocation)
 {
-   d->items.prepend(ErrorItem(description, codeLocation));
+   d->items.prepend(ErrorItem(description, errorCode, codeLocation));
 }
 
 QList<ErrorItem> ErrorInfo::getItems() const
 {
    return d->items;
+}
+
+const ErrorItem& ErrorInfo::getFirstErrorItem()const
+{
+   return d->items.first();
+}
+
+ErrorInfo& ErrorInfo::setExtraErrorInfo(const QString &key, const QVariant &value)
+{
+   d->m_extra.insert(key, value);
+   return *this;
+}
+
+const QMap<QString, QVariant>& ErrorInfo::getExtraErrorInfos()const
+{
+   return d->m_extra;
 }
 
 void ErrorInfo::clear()

@@ -296,6 +296,11 @@ void ServiceInvokeResponse::toJson(QString &json) const
    }else{
       rootObject.insert("errorCode", m_error.first);
       rootObject.insert("errorString", m_error.second);
+      QMap<QString, QVariant>::const_iterator it = m_data.cbegin();
+      while(it != m_data.cend()){
+         rootObject.insert(it.key(), QJsonValue::fromVariant(it.value()));
+         it++;
+      }
    }
    if(!m_extraData.isEmpty()){
       rootObject.insert("extraData", QJsonValue(QString(m_extraData.toBase64())));

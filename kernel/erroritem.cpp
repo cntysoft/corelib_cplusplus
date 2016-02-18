@@ -10,6 +10,7 @@ class ErrorItem::ErrorItemPrivate : public QSharedData
 {
 public:
    QString description;
+   int errorCode;
    CodeLocation codeLocation;
 };
 
@@ -21,11 +22,12 @@ ErrorItem::ErrorItem()
 ErrorItem::~ErrorItem()
 {}
 
-ErrorItem::ErrorItem(const QString &description, const CodeLocation &codeLocation)
+ErrorItem::ErrorItem(const QString &description, int errorCode, const CodeLocation &codeLocation)
    :d(new ErrorItemPrivate)
 {
    d->description = description;
    d->codeLocation = codeLocation;
+   d->errorCode = errorCode;
 }
 
 ErrorItem::ErrorItem(const ErrorItem &rhs)
@@ -44,6 +46,11 @@ QString ErrorItem::getDescription() const
    return d->description;
 }
 
+int ErrorItem::getErrorCode()const
+{
+   return d->errorCode;
+}
+
 CodeLocation ErrorItem::getCodeLocation() const
 {
    return d->codeLocation;
@@ -55,7 +62,7 @@ QString ErrorItem::toString() const
    if(!str.isEmpty()){
       str += QLatin1Char(' ');
    }
-   return str += getDescription();
+  return str += getDescription() + QString(" code : %1").arg(getErrorCode());
 }
 
 }//corelib

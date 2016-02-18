@@ -7,16 +7,21 @@
 #include <QString>
 #include <QDebug>
 
+#include "kernel/errorinfo.h"
 #include "service_provider.h"
 #include "abstract_service.h"
 #include "invoke_meta.h"
 #include "service_error_code.h"
+#include "kernel/erroritem.h"
 
 #include <QDebug>
 
 namespace sn{
 namespace corelib{
 namespace network{
+
+using sn::corelib::ErrorInfo;
+using sn::corelib::ErrorItem;
 
 ServiceProvider* ServiceProvider::sm_self = nullptr;
 
@@ -105,10 +110,17 @@ void ServiceProvider::callService(const ServiceInvokeRequest &request)
       return;
    }
    ServiceInvokeResponse response;
-   if(!metaObject->invokeMethod(service, request.getMethod().toLatin1(), Qt::DirectConnection, Q_RETURN_ARG(ServiceInvokeResponse, response), Q_ARG(ServiceInvokeRequest, request))){
+   try{
+      if(!metaObject->invokeMethod(service, request.getMethod().toLatin1(), Qt::DirectConnection, Q_RETURN_ARG(ServiceInvokeResponse, response), Q_ARG(ServiceInvokeRequest, request))){
+         response.setStatus(false);
+         response.setError({SERVICE_INVOKE_METHOD_ERROR, "there is no such member or the parameters did not match"});
+         response.setSerial(request.getSerial());
+      }
+   }catch(ErrorInfo errorInfo){
       response.setStatus(false);
-      response.setError({SERVICE_INVOKE_METHOD_ERROR, "there is no such member or the parameters did not match"});
-      response.setSerial(request.getSerial());
+      const ErrorItem& error = errorInfo.getFirstErrorItem();
+      response.setError({error.getErrorCode(), error.getDescription()});
+      response.setData(errorInfo.getExtraErrorInfos());
    }
    response.setIsFinal(true);
    writeResponseToSocket(request, response);
