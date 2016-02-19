@@ -62,7 +62,11 @@ QString ErrorItem::toString() const
    if(!str.isEmpty()){
       str += QLatin1Char(' ');
    }
-  return str += getDescription() + QString(" code : %1").arg(getErrorCode());
+   str += getDescription();
+   if(getErrorCode() != -1){
+      str += QString(" code : %1").arg(getErrorCode());
+   }
+   return str;
 }
 
 }//corelib
