@@ -7,12 +7,19 @@
 #include <QMap>
 #include <QString>
 #include <QStringList>
+#include <QEventLoop>
 
 #include "global/global.h"
 #include "network/rpc/service_provider.h"
 #include "kernel/errorinfo.h"
 #include "global/common_funcs.h"
 #include "kernel/std_error_type.h"
+#include "network/rpc/service_invoker.h"
+
+QT_BEGIN_NAMESPACE
+class QTcpSocket;
+class QWebSocket;
+QT_END_NAMESPACE
 
 namespace sn{
 namespace corelib{
@@ -35,10 +42,14 @@ protected:
    QByteArray encodeJsonObject(const QVariant &data);
    template<typename T>
    void checkRequireFields(const QMap<QString, T> &map, const QStringList& requires = QStringList())throw(ErrorInfo);
+   QSharedPointer<ServiceInvoker> getServiceInvoker(const QString &host, quint16 port);
 protected:
-   virtual void notifySocketDisconnect(int socketDescriptor);
+   virtual void notifySocketDisconnect(QTcpSocket *socket);
+   virtual void notifySocketDisconnect(QWebSocket *socket);
 protected:
    ServiceProvider& m_serviceProvider;
+   QEventLoop m_eventLoop;
+   QSharedPointer<ServiceInvoker> m_serviceInvoker;
 };
 
 template<typename T>

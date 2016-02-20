@@ -51,7 +51,7 @@ ServiceProvider& ServiceProvider::setUnderlineSocket(int index, QWebSocket *sock
    if(!m_websocketPool.contains(index)){
       m_websocketPool.insert(index, socket);
       //绑定处理函数
-      QObject::connect(socket, &QWebSocket::disconnected, this, &ServiceProvider::socketDisconnectHandler);
+      QObject::connect(socket, &QWebSocket::disconnected, this, &ServiceProvider::webSocketDisconnectHandler);
    }
    return *this;
 }
@@ -62,14 +62,29 @@ void ServiceProvider::socketDisconnectHandler()
    if(nullptr == sockect){
       return;
    }
-   int socketNum = (int)sockect->socketDescriptor();
    QMap<QString, AbstractService*>::const_iterator it = m_servicePool.cbegin();
    while(it != m_servicePool.cend()){
-      it.value()->notifySocketDisconnect(socketNum);
+      it.value()->notifySocketDisconnect(sockect);
       it++;
    }
    if(!m_batchDisconnectMode){
       m_socketPool.remove(m_socketPool.key(sockect));
+   }
+}
+
+void ServiceProvider::webSocketDisconnectHandler()
+{
+   QWebSocket *sockect = qobject_cast<QWebSocket*>(sender());
+   if(nullptr == sockect){
+      return;
+   }
+   QMap<QString, AbstractService*>::const_iterator it = m_servicePool.cbegin();
+   while(it != m_servicePool.cend()){
+      it.value()->notifySocketDisconnect(sockect);
+      it++;
+   }
+   if(!m_batchDisconnectMode){
+      m_websocketPool.remove(m_websocketPool.key(sockect));
    }
 }
 
@@ -122,8 +137,19 @@ void ServiceProvider::callService(const ServiceInvokeRequest &request)
       response.setError({error.getErrorCode(), error.getDescription()});
       response.setData(errorInfo.getExtraErrorInfos());
    }
-   response.setIsFinal(true);
+//   response.setIsFinal(true);
    writeResponseToSocket(request, response);
+}
+
+ServiceProvider& ServiceProvider::loopServicePool(void (*fn)(AbstractService*))
+{
+   ServicePoolType::const_iterator it = m_servicePool.cbegin();
+   ServicePoolType::const_iterator endmarker = m_servicePool.cend();
+   while(it != endmarker){
+      fn(it.value());
+      it++;
+   }
+   return *this;
 }
 
 void ServiceProvider::writeResponseToSocket(const ServiceInvokeRequest &request, const ServiceInvokeResponse &response)

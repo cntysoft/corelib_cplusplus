@@ -34,6 +34,7 @@ public:
    ServiceProvider& addServiceToPool(const QString &key, ServiceInitializerType initializerFn);
    ServiceProvider& setUnderlineSocket(int index, QTcpSocket *socket);
    ServiceProvider& setUnderlineSocket(int index, QWebSocket *socket);
+   ServiceProvider& loopServicePool(void (*)(AbstractService*));
    void disconnectUnderlineSockets();
 public:
    static ServiceProvider& instance();
@@ -44,6 +45,7 @@ protected:
    void initResponseByRequest(const ServiceInvokeRequest &request, ServiceInvokeResponse &response);
 protected slots:
    void socketDisconnectHandler();
+   void webSocketDisconnectHandler();
 protected:
    static ServiceProvider *sm_self;
    ServiceInitializerPoolType m_serviceIntializerPool;

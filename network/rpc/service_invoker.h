@@ -55,7 +55,7 @@ signals:
    void connectedToServerSignal();
    void serverOfflineSignal();
    void requestSendBufferReady();
-   void connectErrorSignal(ErrorType error, const QString &errorString);
+   void connectErrorSignal(const QString &errorString);
    void responseArrived(const ServiceInvokeResponse &response);
 public slots:
    void responseDataReceivedHandler();
@@ -80,5 +80,7 @@ protected:
 }//network
 }//corelib
 }//sn
+Q_DECLARE_METATYPE(sn::corelib::network::ServiceInvoker::ErrorType)
+
 
 #endif // SN_CORELIB_NETWORK_RPC_SERVICE_INVOKER_H

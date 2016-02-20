@@ -58,7 +58,7 @@ Product
          "stddir.cpp",
          "stddir.h",
          "std_error_type.cpp",
-         "std_error_type.h",
+         "std_error_type.h"
       ]
    }
    

@@ -3,6 +3,8 @@
 
 #include <QJsonDocument>
 #include <QDebug>
+#include <QTcpSocket>
+#include <QWebSocket>
 
 namespace sn{
 namespace corelib{
@@ -12,8 +14,20 @@ AbstractService::AbstractService(ServiceProvider &provider)
    : m_serviceProvider(provider)
 {}
 
-void AbstractService::notifySocketDisconnect(int)
+void AbstractService::notifySocketDisconnect(QTcpSocket*)
 {
+}
+
+void AbstractService::notifySocketDisconnect(QWebSocket*)
+{
+}
+
+QSharedPointer<ServiceInvoker> AbstractService::getServiceInvoker(const QString &host, quint16 port)
+{
+   if(m_serviceInvoker.isNull()){
+      m_serviceInvoker.reset(new ServiceInvoker(host, port));
+   }
+   return m_serviceInvoker;
 }
 
 void AbstractService::writeInterResponse(const ServiceInvokeRequest &request, ServiceInvokeResponse &response)

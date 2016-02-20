@@ -64,7 +64,7 @@ void ServiceInvoker::connectErrorHandler(QAbstractSocket::SocketError error, con
    m_status = false;
    m_errorString = errorString;
    if(error != QAbstractSocket::SocketError::RemoteHostClosedError){
-      emit connectErrorSignal(m_error, m_errorString);
+      emit connectErrorSignal(m_errorString);
    }
 }
 
