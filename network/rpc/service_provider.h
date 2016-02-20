@@ -55,7 +55,6 @@ protected:
    bool m_batchDisconnectMode = false;
 };
 
-
 }//network
 }//corelib
 }//sn
