@@ -2,6 +2,7 @@ import qbs 1.0
 Project
 {
    references: [
-      "db/db.qbs"
+      "db/db.qbs",
+      "upgrade/upgrade.qbs"
    ]
 }

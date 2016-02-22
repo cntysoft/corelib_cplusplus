@@ -6,7 +6,7 @@ Product
    targetName : "sncore"
    Depends { 
       name: "Qt"; 
-      submodules: ["core","network","websockets","sql"]
+      submodules: ["core","network","websockets","sql", "qml"]
    }
    Depends { name:"cpp"}
    destinationDirectory: "lib"
@@ -224,4 +224,16 @@ Product
            "sql/update.h",
        ]
    }
+   
+   Group {
+      name: "upgrade"
+      prefix: name+"/"
+      files: [
+           "upgrade_env_script_object.cpp",
+           "upgrade_env_script_object.h",
+           "upgradeenv.cpp",
+           "upgradeenv.h",
+       ]
+   }
+   
 }

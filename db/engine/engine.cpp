@@ -76,8 +76,8 @@ QSharedPointer<QSqlQuery> Engine::query(const QString &sql, QueryMode queryMode)
       }
    }
    if(queryMode == QueryMode::Execute){
-      QSharedPointer<QSqlQuery> query(new QSqlQuery(sql, m_database));
-      query->exec();
+      QSharedPointer<QSqlQuery> query(new QSqlQuery(m_database));
+      query->exec(sql);
       return query;
    }
    QSharedPointer<QSqlQuery> query(new QSqlQuery(m_database));
