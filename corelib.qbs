@@ -120,20 +120,22 @@ Product
       name: "network"
       prefix: name+"/"
       files:[
-         "abstract_multi_thread_server.cpp",
-         "abstract_multi_thread_server.h",
-         "rpc/abstract_service.cpp",
-         "rpc/abstract_service.h",
-         "rpc/invoke_meta.cpp",
-         "rpc/invoke_meta.h",
-         "rpc/service_error_code.h",
-         "rpc/service_invoker.cpp",
-         "rpc/service_invoker.h",
-         "rpc/service_provider.cpp",
-         "rpc/service_provider.h",
-         "rpc/tcpsocket_data_dispatch_worker.cpp",
-         "rpc/tcpsocket_data_dispatch_worker.h",
-      ]
+           "abstract_multi_thread_server.cpp",
+           "abstract_multi_thread_server.h",
+           "rpc/abstract_service.cpp",
+           "rpc/abstract_service.h",
+           "rpc/invoke_meta.cpp",
+           "rpc/invoke_meta.h",
+           "rpc/service_error_code.h",
+           "rpc/service_invoker.cpp",
+           "rpc/service_invoker.h",
+           "rpc/service_provider.cpp",
+           "rpc/service_provider.h",
+           "rpc/tcpsocket_data_dispatch_worker.cpp",
+           "rpc/tcpsocket_data_dispatch_worker.h",
+           "web_service_server.cpp",
+           "web_service_server.h",
+       ]
    }
    
    Group {
