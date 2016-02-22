@@ -9,7 +9,8 @@ const QMap<int, QString> StdErrorType::sm_map{
    {SN_E_FILE_NOT_EXIST, "file : %1 is not exist"},
    {SN_E_DIR_NOT_EXIST , "directory : %1 is not exist"},
    {SN_E_API_INVOKE_LEAK_ARGS, "API Invoke need param %1"},
-   {SN_E_PROTOCOL_ILL_FORMAT, "protocol error"}
+   {SN_E_PROTOCOL_ILL_FORMAT, "protocol error"},
+   {SN_E_EXEC_JS, "exec js error : %1"}
 };
 
 QString StdErrorType::msg(int errorCode, const QStringList &args)throw(ErrorInfo)

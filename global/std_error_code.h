@@ -5,6 +5,7 @@
 #define SN_E_DIR_NOT_EXIST 2
 #define SN_E_API_INVOKE_LEAK_ARGS 3
 #define SN_E_PROTOCOL_ILL_FORMAT 4
+#define SN_E_EXEC_JS 5
 //'E_FILE_NOT_EXIST'                     => array(1, 'file : %s is not exist'),
 //      //数组相关的
 //      'E_ARRAY_KEYS_NOT_EXIST'               => array(2, 'array do not have keys %s'),
