@@ -42,6 +42,11 @@ QByteArray AbstractService::encodeJsonObject(const QVariant &data)
    return doc.toJson();  
 }
 
+QString AbstractService::getErrorContext()
+{
+   return metaObject()->className();
+}
+
 AbstractService::~AbstractService()
 {
 }

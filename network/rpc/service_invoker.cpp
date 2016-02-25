@@ -76,7 +76,7 @@ void ServiceInvoker::disconnectFromServer()
    }
 }
 
-bool ServiceInvoker::request(ServiceInvokeRequest &request, RequestCallbackType callback, void *callbackArgs)
+void ServiceInvoker::request(ServiceInvokeRequest &request, RequestCallbackType callback, void *callbackArgs)
 {
    int serial = ++ServiceInvoker::sm_serial;
    request.setSerial(serial);
@@ -84,7 +84,6 @@ bool ServiceInvoker::request(ServiceInvokeRequest &request, RequestCallbackType 
       m_callbackPool.insert(serial, CallbackUnitType(callback, callbackArgs));
    }
    writeRequestToSocket(request);
-   return true;
 }
 
 void ServiceInvoker::responseDataReceivedHandler()

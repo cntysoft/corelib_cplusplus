@@ -43,6 +43,7 @@ protected:
    template<typename T>
    void checkRequireFields(const QMap<QString, T> &map, const QStringList& requires = QStringList())throw(ErrorInfo);
    QSharedPointer<ServiceInvoker> getServiceInvoker(const QString &host, quint16 port);
+   QString getErrorContext();
 protected:
    virtual void notifySocketDisconnect(QTcpSocket *socket);
    virtual void notifySocketDisconnect(QWebSocket *socket);

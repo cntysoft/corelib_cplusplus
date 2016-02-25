@@ -38,7 +38,7 @@ public:
 public:
    ServiceInvoker(const QString &host, quint16 port);
    ~ServiceInvoker();
-   bool request(ServiceInvokeRequest& request, RequestCallbackType callback = nullptr, void* callbackArgs = nullptr);
+   void request(ServiceInvokeRequest& request, RequestCallbackType callback = nullptr, void* callbackArgs = nullptr);
    ServiceInvokeResponse requestSync(const ServiceInvokeRequest& request);
    void connectToServer();
    void disconnectFromServer();
