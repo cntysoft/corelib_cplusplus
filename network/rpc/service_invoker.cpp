@@ -93,13 +93,13 @@ void ServiceInvoker::responseDataReceivedHandler()
    buffer.open(QIODevice::ReadOnly);
    char byte;
    while(!buffer.atEnd()){
-      buffer.read(&byte, 1);
+      buffer.getChar(&byte);
       if('\r' == byte){
          if(buffer.bytesAvailable() >= 2){
             char forward1;
             char forward2;
-            buffer.read(&forward1, 1);
-            buffer.read(&forward2, 1);
+            buffer.getChar(&forward1);
+            buffer.getChar(&forward2);
             if('\n' == forward1 && '\t' == forward2){
                //解压当前的包
                QDataStream stream(m_packageUnitBuffer);
@@ -110,8 +110,8 @@ void ServiceInvoker::responseDataReceivedHandler()
                m_packageUnitBuffer.clear();
             }else{
                m_packageUnitBuffer.append(byte);
-               m_packageUnitBuffer.append(forward1);
-               m_packageUnitBuffer.append(forward2);
+               buffer.ungetChar(forward2);
+               buffer.ungetChar(forward1);
             }
          }
       }else{
