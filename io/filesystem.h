@@ -4,7 +4,8 @@
 #include <QFileInfoList>
 #include <QDir>
 #include <QFileInfo>
-
+#include <unistd.h>
+#include <sys/stat.h>
 #include "global/global.h"
 
 QT_BEGIN_INCLUDE_NAMESPACE
@@ -39,6 +40,12 @@ public:
    static bool dirExist(const QString &dirPath);
    static bool createPath(const QString &dirPath);
    static bool createDir(const QString &dirName);
+   static bool copyDir(QString source, QString target, bool direct = false);
+   static bool chown(const QString &filename, uid_t user, gid_t group);
+   static bool chmod(const QString &filename, mode_t mode);
+   static QString getErrorString();
+protected:
+   static QString m_errorMsg;
 private:
    template <typename FnType>
    static void doTraverseFs(const QString &path, bool limitDepth = true, int level = 0, int depth = 0, FnType fn = nullptr, FsTraverFlag flag = FsTraverFlag::SelfFirst);

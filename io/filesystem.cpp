@@ -6,10 +6,15 @@
 
 #include "io/filesystem.h"
 
-namespace sn 
+namespace sn{
+namespace corelib{
+
+QString Filesystem::m_errorMsg = "";
+
+QString Filesystem::getErrorString()
 {
-namespace corelib 
-{
+   return m_errorMsg;
+}
 
 QFileInfoList Filesystem::ls(const QString &path, int level)
 {
@@ -93,6 +98,61 @@ bool Filesystem::createPath(const QString &dirPath)
    return QDir(dirPath).mkpath(".");
 }
 
+bool Filesystem::copyDir(QString source, QString target, bool direct)
+{
+   if(!Filesystem::dirExist(source)){
+      m_errorMsg = QString("%1 is not exist").arg(source);
+      return false;
+   }
+   if(!Filesystem::dirExist(target)){
+      m_errorMsg = QString("%1 is not exist").arg(target);
+      return false;
+   }
+   if(source == target.mid(0, source.size())){
+      m_errorMsg = QString("target dir : %1 is subdirectory of source dir : %2").arg(target, source);
+      return false;
+   }
+   if(!direct){
+      target = target+'/'+QFileInfo(source).baseName();
+      while(Filesystem::fileExist(target) && QFileInfo(target).isFile()){
+         target += "_副本";
+      }
+   }
+   if(!Filesystem::fileExist(target)){
+      Filesystem::createDir(target);  
+   }
+   int sourceNameLen = source.size();
+   Filesystem::traverseFs(source, 0, [&](QFileInfo &fileInfo, int){
+      QString sourceFilename = fileInfo.absoluteFilePath();
+      QString str = sourceFilename.mid(sourceNameLen);
+      QString targetFileName = target + str;
+      if(fileInfo.isFile()){
+         Filesystem::copyFile(sourceFilename, targetFileName);
+      }else if(fileInfo.isDir()){
+         Filesystem::createDir(targetFileName);
+      }
+   });
+   return true;
+}
+
+bool Filesystem::chmod(const QString &filename, mode_t mode)
+{
+   if(-1 == ::chmod(filename.toLocal8Bit(), mode)){
+      m_errorMsg = "chmod failure";
+      return false;
+   }
+   return true;
+}
+
+bool Filesystem::chown(const QString &filename, uid_t user, gid_t group)
+{
+   if(-1 == ::chown(filename.toLocal8Bit(), user, group)){
+      m_errorMsg = "chown failure";
+      return false;
+   }
+   return true;
+}
+
 bool Filesystem::isReadable(const QString &filename)
 {
    return QFileInfo(filename).isReadable();
@@ -117,6 +177,7 @@ bool Filesystem::dirExist(const QString &dirPath)
 {
    return QDir(dirPath).exists();
 }
+
 
 }//corelib
 }//sn
