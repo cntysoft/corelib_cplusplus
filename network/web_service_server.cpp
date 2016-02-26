@@ -121,7 +121,7 @@ void WebServiceServer::unboxRequest(const QByteArray &message)
    int i = 0;
    int markPos = -1;
    while(i < length){
-      if(message.at(i) == '\n' && (length - i) >= 2 && message.at(i+1) == '\n' && message.at(i+2) == '\n'){
+      if(message.at(i) == '\r' && (length - i) >= 2 && message.at(i+1) == '\n' && message.at(i+2) == '\r'){
          markPos = i;
          break;
       }else{
