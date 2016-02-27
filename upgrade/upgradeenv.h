@@ -26,11 +26,13 @@ public:
    void exec(const QString &filename)throw(ErrorInfo);
    void changeCurrentDd(const QString &name);
    bool registerContextObject(const QString &name, QObject *object, bool force = false);
+   bool registerContextObject(const QString &name, QJSValue value, bool force = false);
 public:
    void notifyException(const ErrorInfo error);
    void notifyLog(const QString &msg);
    UpgradeEnv& setMetaInfo(const QString &name, const QString &value);
    QString getMetaInfo(const QString &name, const QString &defaultValue = QString());
+   QJSEngine& getJsEngine();
 signals:
    void logMsgSignal(const QString &msg);
    void excpetionSignal(ErrorInfo errorInfo);

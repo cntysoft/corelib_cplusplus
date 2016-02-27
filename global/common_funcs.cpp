@@ -5,10 +5,12 @@
 #include <QRegularExpressionMatchIterator>
 #include <QRegularExpressionMatch>
 #include <QDebug>
+#include <QProcess>
 
 #include "common_funcs.h"
 #include "kernel/application.h"
 #include "kernel/errorinfo.h"
+#include "io/filesystem.h"
 
 namespace sn{
 namespace corelib{
@@ -154,12 +156,35 @@ bool is_scalar(const QVariant &value)
    return false;
 }
 
-void SN_CORELIB_EXPORT throw_exception(ErrorInfo errorInfo, const QString &context)
+void throw_exception(ErrorInfo errorInfo, const QString &context)
 {
    if(!context.isEmpty()){
       errorInfo.setExtraErrorInfo("context", context);
    }
    throw errorInfo;
+}
+
+void dump_mysql_table(const QString &user, const QString &password, 
+                      const QString &dbname, const QString &table, 
+                      const QString &targetDir)
+{
+   QProcess process;
+   QStringList args{
+      QString("-u%1").arg(user),
+            QString("-p%1").arg(password),
+            dbname,
+            table,
+            QString(" > %1/%2.sql").arg(targetDir, table)
+   };
+   if(!Filesystem::fileExist(targetDir)){
+      Filesystem::createPath(targetDir);
+   }
+   process.setWorkingDirectory(targetDir);
+   process.start("mysqldump", args);
+   bool status = process.waitForFinished(-1);
+   if(!status || process.exitCode() != 0){
+      throw ErrorInfo(process.errorString());
+   }
 }
 
 }//corelib

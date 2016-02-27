@@ -48,6 +48,11 @@ void UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
    }
 }
 
+QJSEngine& UpgradeEnv::getJsEngine()
+{
+   return m_engine;
+}
+
 UpgradeEnv& UpgradeEnv::setMetaInfo(const QString &name, const QString &value)
 {
    m_metaInfo.insert(name, value);
@@ -70,6 +75,16 @@ bool UpgradeEnv::registerContextObject(const QString &name, QObject *object, boo
    }
    QJSValue jsObject = m_engine.newQObject(object);
    globalObject.setProperty(name, jsObject);
+   return true;
+}
+
+bool UpgradeEnv::registerContextObject(const QString &name, QJSValue value, bool force)
+{
+   QJSValue globalObject = m_engine.globalObject();
+   if(globalObject.hasProperty(name) && !force){
+      return false;
+   }
+   globalObject.setProperty(name, value);
    return true;
 }
 

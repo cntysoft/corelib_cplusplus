@@ -57,6 +57,10 @@ bool SN_CORELIB_EXPORT map_has_requires(const QMap<QString, T> &map, const QStri
 
 void SN_CORELIB_EXPORT throw_exception(ErrorInfo errorInfo, const QString &context = QString());
 
+void SN_CORELIB_EXPORT dump_mysql_table(const QString &user, const QString &password, 
+                                        const QString &dbname, const QString &table, 
+                                        const QString &targetDir);
+
 }//corelib
 }//sn
 
