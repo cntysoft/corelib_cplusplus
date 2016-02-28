@@ -7,7 +7,7 @@ namespace corelib{
 namespace utils{
 
 const QMap<QString, int> Version::sm_releaseValueMap{
-   {"dev", -6},
+   {"devel", -6},
    {"alpha", -5},
    {"a", -5},
    {"beta", -4},
