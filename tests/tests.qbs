@@ -3,6 +3,7 @@ Project
 {
    references: [
       "db/db.qbs",
-      "upgrade/upgrade.qbs"
+      "upgrade/upgrade.qbs",
+      "utils/utils.qbs"
    ]
 }
