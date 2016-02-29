@@ -8,6 +8,7 @@
 #include "tcpsocket_data_dispatch_worker.h"
 #include <QThread>
 #include <QBuffer>
+#include <QDebug>
 
 #include <QTcpSocket>
 

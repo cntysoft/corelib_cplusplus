@@ -132,6 +132,7 @@ void ServiceProvider::callService(const ServiceInvokeRequest &request)
          response.setSerial(request.getSerial());
       }
    }catch(ErrorInfo errorInfo){
+      response.setSerial(request.getSerial());
       response.setStatus(false);
       const ErrorItem& error = errorInfo.getFirstErrorItem();
       response.setError({error.getErrorCode(), error.getDescription()});

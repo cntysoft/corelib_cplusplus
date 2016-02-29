@@ -131,6 +131,11 @@ bool Version::operator ==(const Version &version)
    return compareTo(version) == 0;
 }
 
+bool Version::operator !=(const Version &version)
+{
+   return compareTo(version) != 0;
+}
+
 int Version::parseVersionNumber(QString part)
 {
    QString str;
