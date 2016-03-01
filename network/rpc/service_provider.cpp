@@ -138,7 +138,6 @@ void ServiceProvider::callService(const ServiceInvokeRequest &request)
       response.setError({error.getErrorCode(), error.getDescription()});
       response.setData(errorInfo.getExtraErrorInfos());
    }
-//   response.setIsFinal(true);
    writeResponseToSocket(request, response);
 }
 
@@ -168,6 +167,7 @@ void ServiceProvider::writeResponseToSocket(const ServiceInvokeRequest &request,
       QString package;
       response.toJson(package);
       socket->sendTextMessage(package);
+      socket->flush();
       socket->flush();
    }else{
       if(!m_socketPool.contains(index)){

@@ -104,8 +104,6 @@ int WebServiceServer::getSocketKeyIndex()
 void WebServiceServer::socketDisconnectedHandler()
 {
    QWebSocket *socket = qobject_cast<QWebSocket *>(sender());
-   qDebug() << "disconnected";
-   
    if (socket) {
       socket->deleteLater();
    }
