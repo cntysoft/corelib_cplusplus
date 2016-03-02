@@ -21,6 +21,11 @@ void AbstractCommand::printConsoleMsg(const char *str, TerminalColor color, bool
    Terminal::writeText(str, color, underline, blink);
 }
 
+void AbstractCommand::printConsoleMsg(const QString &str, TerminalColor color, bool underline, bool blink) const
+{
+   printConsoleMsg(str.toStdString().c_str(), color, underline, blink);
+}
+
 AbstractCommand::~AbstractCommand()
 {
 }

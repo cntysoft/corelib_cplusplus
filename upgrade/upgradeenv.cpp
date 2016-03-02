@@ -37,7 +37,6 @@ void UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
    scriptFile.close();
    QJSValue ret = m_engine.evaluate(contents, filename);
    if(ret.isError()){
-//      throw_exception(ErrorInfo(StdErrorType::msg(SN_E_EXEC_JS, {ret.toString()}), SN_E_EXEC_JS), STD_EXCEPTION_CONTEXT);
       notifyException(ErrorInfo(StdErrorType::msg(SN_E_EXEC_JS, {
                                                      QString("%1  %2  %3 line number : %4")
                                                      .arg(ret.property("name").toString())
