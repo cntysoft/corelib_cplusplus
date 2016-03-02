@@ -26,7 +26,7 @@ UpgradeEnv::UpgradeEnv(const QString &host, const QString &username, const QStri
 }
 
 
-void UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
+bool UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
 {
    QFile scriptFile(filename);
    if (!scriptFile.open(QIODevice::ReadOnly)){
@@ -44,7 +44,9 @@ void UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
                                                      .arg(ret.property("fileName").toString())
                                                      .arg(ret.property("lineNumber").toString())
                                                   }), SN_E_EXEC_JS));
+      return false;
    }
+   return true;
 }
 
 QJSEngine& UpgradeEnv::getJsEngine()
