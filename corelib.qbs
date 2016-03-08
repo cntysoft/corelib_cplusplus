@@ -245,4 +245,14 @@ Product
            "version.h",
        ]
    }
+   Group {
+       files: [
+           "aliyun/dns/dns_api_caller.cpp",
+           "aliyun/dns/dns_api_caller.h",
+           "aliyun/dns/dns_resolve.cpp",
+           "aliyun/dns/dns_resolve.h",
+       ]
+      name : "cloud"
+      prefix : name +"/"
+   }
 }

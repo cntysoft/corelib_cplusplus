@@ -7,6 +7,7 @@
 #include <QVariant>
 #include <QString>
 #include <QStringList>
+#include "kernel/std_error_type.h"
 
 QT_BEGIN_NAMESPACE
 class QString;
@@ -60,6 +61,17 @@ void SN_CORELIB_EXPORT throw_exception(ErrorInfo errorInfo, const QString &conte
 void SN_CORELIB_EXPORT dump_mysql_table(const QString &user, const QString &password, 
                                         const QString &dbname, const QString &table, 
                                         const QString &targetDir);
+
+template<typename T>
+void ensure_map_has_fields(const QMap<QString, T> &map, const QStringList& requires)throw(ErrorInfo)
+{
+   QStringList leak;
+   map_has_requires(map, requires, leak);
+   if(!leak.isEmpty()){
+      throw_exception(ErrorInfo(sn::corelib::StdErrorType::msg(SN_E_API_INVOKE_LEAK_ARGS, leak), SN_E_API_INVOKE_LEAK_ARGS), 
+                      STD_EXCEPTION_CONTEXT);
+   }
+}
 
 }//corelib
 }//sn

@@ -5,7 +5,6 @@
 #include <QStringList>
 
 #include "global/global.h"
-#include "kernel/errorinfo.h"
 
 namespace sn{
 namespace corelib{
@@ -13,7 +12,7 @@ namespace corelib{
 class SN_CORELIB_EXPORT StdErrorType
 {
 public:
-   static QString msg(int errorCode, const QStringList &args = QStringList())throw(ErrorInfo); 
+   static QString msg(int errorCode, const QStringList &args = QStringList()); 
 protected:
    static const QMap<int, QString> sm_map;
 };

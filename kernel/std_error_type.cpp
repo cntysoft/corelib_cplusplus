@@ -1,6 +1,7 @@
 #include "std_error_type.h"
 #include "global/std_error_code.h"
 #include "global/common_funcs.h"
+#include "kernel/errorinfo.h"
 
 namespace sn{
 namespace corelib{
@@ -13,7 +14,7 @@ const QMap<int, QString> StdErrorType::sm_map{
    {SN_E_EXEC_JS, "exec js error : %1"}
 };
 
-QString StdErrorType::msg(int errorCode, const QStringList &args)throw(ErrorInfo)
+QString StdErrorType::msg(int errorCode, const QStringList &args)
 {
    if(!StdErrorType::sm_map.contains(errorCode)){
       throw ErrorInfo(QString("ERROR type %1 is not exist").arg(errorCode));

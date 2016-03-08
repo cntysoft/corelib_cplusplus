@@ -5,6 +5,7 @@
 
 #include "upgradeenv.h"
 #include "kernel/std_error_type.h"
+#include "global/common_funcs.h"
 #include <QDebug>
 
 namespace sn{
@@ -12,6 +13,7 @@ namespace corelib{
 namespace upgrade{
 
 using sn::corelib::StdErrorType;
+using sn::corelib::throw_exception;
 
 UpgradeEnv::UpgradeEnv(const QString &host, const QString &username, const QString &password, const QString &dbname)
 {

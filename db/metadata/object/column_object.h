@@ -2,6 +2,8 @@
 #define SN_CORELIB_DB_METADATA_OBJECT_COLUMN_OBJECT_H
 
 #include <QString>
+#include <QMap>
+#include <QVariant>
 
 #include "global/global.h"
 

@@ -12,5 +12,4 @@
    #endif
 #endif
 #include "std_error_code.h"
-#include "common_funcs.h"
 #endif // SN_CORELIB_GLOBAL_H

@@ -3,6 +3,7 @@
 
 #include "stddir.h"
 #include "global/global.h"
+#include "global/common_funcs.h"
 
 namespace sn 
 {
