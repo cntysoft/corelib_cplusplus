@@ -41,7 +41,7 @@ QString SN_CORELIB_EXPORT format_str(const QString &format, const QStringList &a
 bool SN_CORELIB_EXPORT is_scalar(const QVariant &value);
 
 template<typename T>
-bool SN_CORELIB_EXPORT map_has_requires(const QMap<QString, T> &map, const QStringList &requires, QStringList &leak = QStringList())
+bool SN_CORELIB_EXPORT map_has_requires(const QMap<QString, T> &map, const QStringList &requires, QStringList &leak)
 {
    bool isOk = true;
    QStringList::const_iterator rit = requires.cbegin();

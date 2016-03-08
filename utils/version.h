@@ -34,6 +34,7 @@ public:
    bool operator <(const Version &version);
    bool operator <=(const Version &Version);
    bool operator ==(const Version &version);
+   bool operator !=(const Version &version);
 protected:
    int parseVersionNumber(QString part);
    int compareTo(const Version &version);

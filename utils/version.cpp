@@ -7,7 +7,7 @@ namespace corelib{
 namespace utils{
 
 const QMap<QString, int> Version::sm_releaseValueMap{
-   {"dev", -6},
+   {"devel", -6},
    {"alpha", -5},
    {"a", -5},
    {"beta", -4},
@@ -129,6 +129,11 @@ bool Version::operator <=(const Version &version)
 bool Version::operator ==(const Version &version)
 {
    return compareTo(version) == 0;
+}
+
+bool Version::operator !=(const Version &version)
+{
+   return compareTo(version) != 0;
 }
 
 int Version::parseVersionNumber(QString part)

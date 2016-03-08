@@ -28,7 +28,7 @@ UpgradeEnv::UpgradeEnv(const QString &host, const QString &username, const QStri
 }
 
 
-void UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
+bool UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
 {
    QFile scriptFile(filename);
    if (!scriptFile.open(QIODevice::ReadOnly)){
@@ -39,7 +39,6 @@ void UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
    scriptFile.close();
    QJSValue ret = m_engine.evaluate(contents, filename);
    if(ret.isError()){
-//      throw_exception(ErrorInfo(StdErrorType::msg(SN_E_EXEC_JS, {ret.toString()}), SN_E_EXEC_JS), STD_EXCEPTION_CONTEXT);
       notifyException(ErrorInfo(StdErrorType::msg(SN_E_EXEC_JS, {
                                                      QString("%1  %2  %3 line number : %4")
                                                      .arg(ret.property("name").toString())
@@ -47,7 +46,9 @@ void UpgradeEnv::exec(const QString &filename)throw(ErrorInfo)
                                                      .arg(ret.property("fileName").toString())
                                                      .arg(ret.property("lineNumber").toString())
                                                   }), SN_E_EXEC_JS));
+      return false;
    }
+   return true;
 }
 
 QJSEngine& UpgradeEnv::getJsEngine()

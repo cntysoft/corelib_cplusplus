@@ -20,10 +20,11 @@ using sn::corelib::ErrorInfo;
 class SN_CORELIB_EXPORT UpgradeEnv : public QObject
 {
    Q_OBJECT
+   using ExceptionHandlerType = void (*)(ErrorInfo errorInfo);
 public:
    UpgradeEnv(const QString &host, const QString &username, const QString &password, const QString &dbname);
    virtual ~UpgradeEnv();
-   void exec(const QString &filename)throw(ErrorInfo);
+   bool exec(const QString &filename)throw(ErrorInfo);
    void changeCurrentDd(const QString &name);
    bool registerContextObject(const QString &name, QObject *object, bool force = false);
    bool registerContextObject(const QString &name, QJSValue value, bool force = false);
@@ -40,6 +41,7 @@ protected:
    QJSEngine m_engine;
    QSharedPointer<UpgradeEnvScriptObject> m_context;
    QMap<QString, QString> m_metaInfo;
+   ExceptionHandlerType m_exceptionHandler = nullptr;
 };
 
 }//upgrade

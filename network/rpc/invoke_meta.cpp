@@ -331,7 +331,7 @@ QDataStream &operator<<(QDataStream &outStream, const ServiceInvokeResponse &res
       outStream << response.getError();
    }
    bool hasExtraData = false;
-   const QByteArray& extraData = response.getExtraData();
+   const QByteArray& extraData = response.getExtraData().toBase64();
    if(!extraData.isEmpty()){
       hasExtraData = true;
    }
@@ -374,7 +374,7 @@ QDataStream &operator>>(QDataStream &inStream, ServiceInvokeResponse &response)
    if(hasExtraData){
       QByteArray extraData;
       inStream >> extraData;
-      response.setExtraData(extraData);
+      response.setExtraData(QByteArray::fromBase64(extraData));
    }
    return inStream;
 }
