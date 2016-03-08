@@ -15,9 +15,10 @@ TestCloud::TestCloud()
 }
 void TestCloud::initTestCase()
 {
-   m_dnsResolve->addDomainRecord("www.kelecloud.com", "sheneninfo", DnsResolve::A, "127.0.0.1", [](){
+   m_dnsResolve->addDomainRecord("kelecloud.com", "sheneninfo", DnsResolve::A, "127.0.0.1", [](){
       
    });
+   m_eventLoop.exec();
 }
 
 void TestCloud::testAddDomainRecord()

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QSharedPointer>
+#include <QEventLoop>
 
 #include "cloud/aliyun/dns/dns_resolve.h"
 
@@ -22,6 +23,7 @@ private slots:
    void testAddDomainRecord();
 protected:
    QSharedPointer<DnsResolve> m_dnsResolve;
+   QEventLoop m_eventLoop;
 };
 
 }//cloud

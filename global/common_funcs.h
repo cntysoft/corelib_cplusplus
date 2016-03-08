@@ -7,6 +7,7 @@
 #include <QVariant>
 #include <QString>
 #include <QStringList>
+#include <QByteArray>
 #include "kernel/std_error_type.h"
 
 QT_BEGIN_NAMESPACE
@@ -72,6 +73,8 @@ void ensure_map_has_fields(const QMap<QString, T> &map, const QStringList& requi
                       STD_EXCEPTION_CONTEXT);
    }
 }
+
+QString SN_CORELIB_EXPORT hmac_sha1(const QString &key, const QString &secret);
 
 }//corelib
 }//sn
