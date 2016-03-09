@@ -15,15 +15,42 @@ TestCloud::TestCloud()
 }
 void TestCloud::initTestCase()
 {
-   m_dnsResolve->addDomainRecord("kelecloud.com", "sheneninfo", DnsResolve::A, "127.0.0.1", [](){
-      
-   });
-   m_eventLoop.exec();
 }
 
 void TestCloud::testAddDomainRecord()
 {
-   
+   m_dnsResolve->addDomainRecord("kelecloud.com", "abc", DnsResolve::A, "127.0.0.1", [&](const QMap<QString, QVariant> &response){
+      qDebug() << response;
+      m_eventLoop.quit();
+   });
+   m_eventLoop.exec();
+}
+
+void TestCloud::testDeleteDomainRecord()
+{
+   m_dnsResolve->deleteDomainRecord("77608330", [&](const QMap<QString, QVariant> &response){
+      qDebug() << response;
+      m_eventLoop.quit();
+   });
+   m_eventLoop.exec();
+}
+
+void TestCloud::testSetDomainRecordStatus()
+{
+   m_dnsResolve->setDomainRecordStatus("77609081", true, [&](const QMap<QString, QVariant> &response){
+      qDebug() << response;
+      m_eventLoop.quit();
+   });
+   m_eventLoop.exec();
+}
+
+void TestCloud::testDescribeDomainRecords()
+{
+   m_dnsResolve->describeDomainRecords("kelecloud.com", 1, 500, [&](const QMap<QString, QVariant> &response){
+      qDebug() << response;
+      m_eventLoop.quit();
+   });
+   m_eventLoop.exec();
 }
 
 }//cloud

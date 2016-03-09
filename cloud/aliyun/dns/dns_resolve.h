@@ -3,6 +3,8 @@
 
 #include <QSharedPointer>
 #include <QString>
+#include <QMap>
+#include <QVariant>
 
 #include "global/global.h"
 #include "dns_api_caller.h"
@@ -36,6 +38,17 @@ public:
    template<typename CallbackFn>
    void addDomainRecord(const QString &domainName, const QString &key, 
                         RecordType type, const QString &value, CallbackFn callback = nullptr);
+   template<typename CallbackFn>
+   void deleteDomainRecord(const QString &recordId, CallbackFn callback = nullptr);
+   template<typename CallbackFn>
+   void modifyDomainRecord(const QString &recordId, const QString &key, 
+                        RecordType type, const QString &value, CallbackFn callback = nullptr);
+   template<typename CallbackFn>
+   void setDomainRecordStatus(const QString &recordId, bool enabled, CallbackFn callback = nullptr);
+   template<typename CallbackFn>
+   void describeDomainRecords(const QString &domainName, int pageNum = 1, int pageSize = 500, CallbackFn callback = nullptr);
+   template<typename CallbackFn>
+   void describeDomainRecordInfo(const QString &recordId, CallbackFn callback = nullptr);
 protected:
    QSharedPointer<DnsApiCaller> m_caller;
    const static QMap<RecordType, QString> sm_recordTypeMap;
@@ -52,6 +65,63 @@ void DnsResolve::addDomainRecord(const QString &domainName, const QString &key,
       {"RR", key},
       {"Type", DnsResolve::sm_recordTypeMap[type]},
       {"Value", value}
+   });
+   m_caller->callApi(params, callback);
+}
+
+template<typename CallbackFn>
+void DnsResolve::deleteDomainRecord(const QString &recordId, CallbackFn callback)
+{
+   QMap<QString, QString> params({
+      {"Action", "DeleteDomainRecord"},
+      {"RecordId", recordId}
+   });
+   m_caller->callApi(params, callback);
+}
+
+template<typename CallbackFn>
+void DnsResolve::modifyDomainRecord(const QString &recordId, const QString &key, 
+                     RecordType type, const QString &value, CallbackFn callback)
+{
+   QMap<QString, QString> params({
+      {"Action", "UpdateDomainRecord"},
+      {"RecordId", recordId},
+      {"RR", key},
+      {"Type", DnsResolve::sm_recordTypeMap[type]},
+      {"Value", value}
+   });
+   m_caller->callApi(params, callback);
+}
+
+template<typename CallbackFn>
+void DnsResolve::setDomainRecordStatus(const QString &recordId, bool enabled, CallbackFn callback)
+{
+   QMap<QString, QString> params({
+      {"Action", "SetDomainRecordStatus"},
+      {"RecordId", recordId},
+      {"Status", enabled ? "Enable" : "Disable"}
+   });
+   m_caller->callApi(params, callback);
+}
+
+template<typename CallbackFn>
+void DnsResolve::describeDomainRecords(const QString &domainName, int pageNum, int pageSize, CallbackFn callback)
+{
+   QMap<QString, QString> params({
+      {"Action", "DescribeDomainRecords"},
+      {"DomainName", domainName},
+      {"PageNumber", QString("%1").arg(pageNum)},
+      {"PageSize", QString("%1").arg(pageSize)}
+   });
+   m_caller->callApi(params, callback);
+}
+
+template<typename CallbackFn>
+void DnsResolve::describeDomainRecordInfo(const QString &recordId, CallbackFn callback)
+{
+   QMap<QString, QString> params({
+      {"Action", "DescribeDomainRecordInfo"},
+      {"RecordId", recordId},
    });
    m_caller->callApi(params, callback);
 }

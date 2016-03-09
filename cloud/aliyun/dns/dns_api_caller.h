@@ -7,12 +7,17 @@
 #include <QSharedPointer>
 #include <QUrl>
 #include <QNetworkRequest>
+#include <QNetworkReply>
 #include <QObject>
 #include <QMap>
+#include <QVariant>
 #include <QDateTime>
 #include <QTimeZone>
 #include <ctime>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonObject>
 
 #include "global/global.h"
 #include "global/common_funcs.h"
@@ -29,22 +34,22 @@ class SN_CORELIB_EXPORT DnsApiCaller : public QObject
 {
 public:
    const static QString API_ENTRY;
+   using ExtraResponseParser = void (*)(QMap<QString, QVariant>&);
 public:
    DnsApiCaller(const QString &accesseKeyId, const QString &accessKeySecret);
    template<typename CallBackFn>
-   void callApi(const QMap<QString, QString> &params, CallBackFn callback = nullptr);
+   void callApi(const QMap<QString, QString> &params, CallBackFn callback = nullptr, ExtraResponseParser extraResponseParser = nullptr);
 protected:
    QString percentEncode(QString queryStr);
-protected slots:
-   void requestFinishedHandler(QNetworkReply *reply);
 protected:
    QString m_accessKeyId;
    QString m_accessKeySecret;
    QSharedPointer<QNetworkAccessManager> m_networkAccessManager;
+   QMetaObject::Connection m_connection;
 };
 
 template<typename CallBackFn>
-void DnsApiCaller::callApi(const QMap<QString, QString> &params, CallBackFn callback)
+void DnsApiCaller::callApi(const QMap<QString, QString> &params, CallBackFn callback, ExtraResponseParser extraResponseParser)
 {
    QMap<QString, QString> requestParams(params);
    requestParams.insert("Format", "JSON");
@@ -79,9 +84,34 @@ void DnsApiCaller::callApi(const QMap<QString, QString> &params, CallBackFn call
       it++;
    }
    query = query.mid(0, query.size() - 1);
-   qDebug() << DnsApiCaller::API_ENTRY+"?"+query;
    QNetworkRequest request(QUrl(DnsApiCaller::API_ENTRY));
    request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
+   auto requestHandler = [&](QNetworkReply *reply)->void{
+      QByteArray data = reply->readAll();
+      QJsonParseError parseError;
+      QJsonDocument jsonDoc = QJsonDocument::fromJson(data, &parseError);
+      if(parseError.error == QJsonParseError::NoError){
+         QMap<QString, QVariant> response;
+         QJsonObject rootObject = jsonDoc.object();
+         QJsonObject::const_iterator it = rootObject.constBegin();
+         QJsonObject::const_iterator endMarker = rootObject.constEnd();
+         while(it != endMarker){
+            response.insert(it.key(), it.value().toVariant());
+            it++;
+         }
+         if(nullptr != extraResponseParser){
+            extraResponseParser(response);
+         }
+         callback(response);
+      }else{
+         callback(QMap<QString, QVariant>({
+                                            {"Code", "Json parse error"}
+                                         }));
+      }
+      m_networkAccessManager->disconnect(m_connection);
+   };
+   m_connection = connect(m_networkAccessManager.data(), &QNetworkAccessManager::finished, this, 
+                                                requestHandler);
    m_networkAccessManager->post(request, QByteArray().append(query));
 }
 

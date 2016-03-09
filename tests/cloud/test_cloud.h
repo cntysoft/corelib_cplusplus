@@ -21,6 +21,9 @@ public:
 private slots:
    void initTestCase();
    void testAddDomainRecord();
+   void testDeleteDomainRecord();
+   void testSetDomainRecordStatus();
+   void testDescribeDomainRecords();
 protected:
    QSharedPointer<DnsResolve> m_dnsResolve;
    QEventLoop m_eventLoop;

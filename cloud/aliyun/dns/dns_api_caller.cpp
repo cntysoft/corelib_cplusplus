@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QRegularExpression>
 
+
 namespace sn{
 namespace corelib{
 namespace cloud{
@@ -19,7 +20,6 @@ DnsApiCaller::DnsApiCaller(const QString &accesseKeyId, const QString &accessKey
      m_accessKeySecret(accessKeySecret),
      m_networkAccessManager(new QNetworkAccessManager)
 {
-   connect(m_networkAccessManager.data(), &QNetworkAccessManager::finished, this, &DnsApiCaller::requestFinishedHandler);
 }
 
 QString DnsApiCaller::percentEncode(QString queryStr)
@@ -29,12 +29,6 @@ QString DnsApiCaller::percentEncode(QString queryStr)
          .replace(QRegularExpression("\\*"), "%2A")
          .replace(QRegularExpression("%7E", QRegularExpression::CaseInsensitiveOption), "~");
    return encoded;
-}
-
-void DnsApiCaller::requestFinishedHandler(QNetworkReply *reply)
-{
-   QByteArray data = reply->readAll();
-   qDebug() << data;
 }
 
 }//dns

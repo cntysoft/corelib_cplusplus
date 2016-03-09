@@ -190,14 +190,10 @@ void dump_mysql_table(const QString &user, const QString &password,
 
 QString hmac_sha1(const QString &key, const QString &secret)
 {
-   //Length of the text, that will be hashed
-   int   text_lenght;
    //For secret word.
    QByteArray K;
    //Lenght of secret word
-   int   K_lenght;
-   K_lenght = secret.size();
-   text_lenght = key.size();
+   int K_lenght = secret.size();
    //Need to do for XOR operation. Transforms QString to
    //unsigned char
    K = secret.toLocal8Bit();
